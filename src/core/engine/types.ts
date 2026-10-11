@@ -159,6 +159,7 @@ export interface MeetingState {
   readonly risks: number;
   readonly personMinutes: number;
   readonly present: readonly AttendeeId[];
+  readonly releasedAttendeeIds: readonly AttendeeId[];
   readonly peakHeadcount: number;
   readonly seenEventIds: readonly string[];
   readonly spokenAttendeeIds: readonly AttendeeId[];
@@ -175,4 +176,10 @@ export interface MeetingState {
   readonly phase: 'running' | 'ended';
   readonly ending:
     'decision' | 'called-early' | 'time-expired' | 'cancelled' | null;
+}
+
+export interface UtilityRules {
+  readonly costWeight: number;
+  readonly riskWeight: number;
+  readonly costUnit: number;
 }

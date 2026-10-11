@@ -56,3 +56,17 @@ export const PRNG_SHIFT_SECOND = 7;
 export const PRNG_SHIFT_FINAL = 14;
 export const PRNG_OR_FIRST = 1;
 export const PRNG_OR_SECOND = 61;
+
+export const UTILITY_RULES = {
+  costWeight: W_COST,
+  riskWeight: W_RISK,
+  costUnit: UTILITY_COST_PM,
+} as const;
+export const REQUIREMENTS_REASON_KEY = 'requirements-not-met';
+export const CALLBACK_TARGETS: Readonly<Partial<Record<string, string>>> = {
+  'circle-back': 'circle-back-return',
+  'support-training': 'support-follow-up',
+  'p1-bug': 'p1-follow-up',
+};
+export const ARRIVAL_ATTENDEES: Readonly<Partial<Record<string, AttendeeId>>> =
+  { legal: 'legal', 'vp-joins': 'vp' };

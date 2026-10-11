@@ -119,6 +119,7 @@ export const fixtureState = {
   risks: 0,
   personMinutes: 0,
   present: ['priya', 'dev', 'sam', 'morgan', 'gary', 'jordan'],
+  releasedAttendeeIds: [],
   peakHeadcount: 6,
   seenEventIds: [],
   spokenAttendeeIds: [],
