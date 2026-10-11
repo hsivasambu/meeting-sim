@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Task 01 complete. Task 02 automated implementation verified locally and in hosted CI; 02c Vercel/real-device acceptance pending. No gameplay or balance implementation has started.
+Status: D01–D26 remain resolved. Task 01 complete. Task 02 automated implementation verified locally and in hosted CI; 02c preview created but blocked by Vercel Authentication; real-device acceptance pending. Repository public and main protection verified. No gameplay or balance implementation has started.
 
 ## Purpose and source of truth
 
@@ -343,3 +343,25 @@ Outstanding acceptance items:
   No final sharing-order decision has been made from mocked APIs.
 - **Next action: finish task 02c. Next blueprint task: 03 (contracts/RNG), after the task 02
   handoff is accepted.** Stop at task 02; no later task has been implemented.
+
+## Task 02c hosting follow-up — October 11, 2026
+
+- Harry created the Vercel project and supplied the [probe preview](https://meeting-e9pihcccd-hsivasambus-projects.vercel.app/probe.html)
+  and [main deployment](https://meeting-qzacf1hfe-hsivasambus-projects.vercel.app).
+  Deployed source commit remains unverified.
+- Harry reported a LinkedIn redirect to Vercel login. Anonymous verification returned
+  HTTP 302 to Vercel SSO. Neither iOS nor Android capability outcomes are established.
+  Setup instructions and ADR 0002 now record this blocker.
+- Harry explicitly authorized GitHub public visibility. Verified PUBLIC; the earlier
+  private-repository protection restriction is resolved. Main requires pull requests
+  and the strict `quality` check, including administrators; linear history is required,
+  force pushes/deletions are disabled, and only squash merges are allowed.
+- Changes are documentation only: setup instructions, pending probe evidence and this
+  plan. No application, test, threshold or accepted decision changed.
+- Next action: disable Vercel Authentication in the project's Deployment Protection,
+  Save, verify anonymous preview access and its source commit, then repeat the probe
+  on real iOS and Android LinkedIn browsers. Task 02 awaits manual acceptance;
+  PR #1 stays draft and unmerged. Next blueprint task is 03 only after acceptance.
+
+- Follow-up checks: document links, D01–D26 register and assistant-rule consistency passed;
+  Prettier formatting and git diff whitespace checks passed. No code gates changed.

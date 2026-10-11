@@ -21,18 +21,26 @@ Share-sheet cancellation has its own outcome and never becomes a game failure.
 - Hosted [quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38174153522) passed on commit `0989b78`; its published unit/coverage/Playwright reports were downloaded and verified. Hosted E2E: 18 passes, zero skipped, flaky or unexpected outcomes.
 - These are browser emulations/mocks. No real LinkedIn result is inferred from them.
 
+## Hosting evidence — October 11, 2026
+
+Harry supplied the [probe preview](https://meeting-e9pihcccd-hsivasambus-projects.vercel.app/probe.html)
+and reported a LinkedIn redirect to Vercel login. Device/OS/version were not supplied;
+this observation is not attributed to either platform below. Anonymous HTTP verification
+returned 302 to Vercel SSO. Capability checks remain blocked by Deployment Protection;
+no capability success or failure is inferred. The deployed commit remains unverified.
+
 ## Real-device evidence
 
-| Evidence                               | iOS LinkedIn in-app browser | Android LinkedIn in-app browser |
-| -------------------------------------- | --------------------------- | ------------------------------- |
-| Device / OS / LinkedIn version         | Not run                     | Not run                         |
-| Date / preview URL / commit            | Pending preview             | Pending preview                 |
-| Page load / fonts ready / image decode | Not run                     | Not run                         |
-| Native text share / cancellation       | Not run                     | Not run                         |
-| Native PNG share / recipient image     | Not run                     | Not run                         |
-| Clipboard write / selectable fallback  | Not run                     | Not run                         |
-| Download / long-press save             | Not run                     | Not run                         |
-| Leaves and returns cleanly / defects   | Not run                     | Not run                         |
+| Evidence                               | iOS LinkedIn in-app browser  | Android LinkedIn in-app browser |
+| -------------------------------------- | ---------------------------- | ------------------------------- |
+| Device / OS / LinkedIn version         | Not run                      | Not run                         |
+| Date / preview URL / commit            | URL supplied; commit pending | URL supplied; commit pending    |
+| Page load / fonts ready / image decode | Not run                      | Not run                         |
+| Native text share / cancellation       | Not run                      | Not run                         |
+| Native PNG share / recipient image     | Not run                      | Not run                         |
+| Clipboard write / selectable fallback  | Not run                      | Not run                         |
+| Download / long-press save             | Not run                      | Not run                         |
+| Leaves and returns cleanly / defects   | Not run                      | Not run                         |
 
 ## Decision to record after the probe
 

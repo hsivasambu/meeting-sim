@@ -1,13 +1,12 @@
 # Task 02: Vercel preview and LinkedIn probe
 
-The private repository is [hsivasambu/meeting-sim](https://github.com/hsivasambu/meeting-sim).
-Harry requested instructions for creating the Vercel project; no Vercel account was connected
-and no deployment is claimed. The probe entry is `/probe.html` on the task 02 branch.
+The public repository is [hsivasambu/meeting-sim](https://github.com/hsivasambu/meeting-sim).
+Harry created the Vercel project and supplied a preview; its source commit still needs verification. The probe entry is `/probe.html` on the task 02 branch.
 
 ## Create the Vercel project
 
 1. Open [New Project](https://vercel.com/new). Connect the GitHub account and grant the Vercel
-   GitHub app access to **only** the private `hsivasambu/meeting-sim` repository, then import it.
+   GitHub app access to **only** the `hsivasambu/meeting-sim` repository, then import it.
 2. Use project name `meeting-sim`, Framework Preset **Vite**, root directory **.**, Node **24.x**,
    build command **pnpm build**, and output directory **dist**. No server functions are needed.
    These are the settings from the [technical spec](tech-spec.md#build-ci-and-deployment);
@@ -58,14 +57,24 @@ Fill the evidence table in [ADR 0002](adr/0002-linkedin-capability-probe.md). Us
 Only after both device reports are recorded should the later share UI's action order be chosen.
 No game scoring, analytics, storage or event content is involved in this diagnostic.
 
-## GitHub protection limitation
+## GitHub protection resolved
 
-The repository is private, defaults to main, and allows squash merges only.
-The required main-branch protection request returned HTTP 403:
-“Upgrade to GitHub Pro or make this repository public to enable this feature.”
-The private visibility requested by Harry was retained; no protection is claimed.
-Account support for private-repository protection must be resolved before main can have the
-technical spec's enforced PR-only changes and required `quality` check.
+On October 11, Harry authorized public visibility. GitHub visibility is verified PUBLIC.
+Main requires pull requests and the strict `quality` check, including administrators;
+linear history is required, force pushes/deletions are disabled, and only squash merges
+are allowed. The earlier private-repository HTTP 403 restriction is resolved.
+
+## Supplied preview: authentication blocker
+
+Preview: https://meeting-e9pihcccd-hsivasambus-projects.vercel.app/probe.html
+
+Reported main deployment: https://meeting-qzacf1hfe-hsivasambus-projects.vercel.app
+
+Harry reports a LinkedIn redirect to Vercel login. Anonymous verification on October 11
+returned HTTP 302 to Vercel SSO. In the Vercel project, open Deployment Protection,
+turn off Vercel Authentication and Save. This exposes existing project deployments;
+GitHub public visibility does not change this setting. Verify the preview opens in a
+private browser window and confirm its source commit before repeating the real-device probe.
 
 ## Local verification
 
