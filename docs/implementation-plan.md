@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01 and 02 complete. Task 02 accepted on the reported iOS probe pass with Harry-approved Android evidence deferral (risk in ADR 0002). Repository public, main protected, preview accessible. Next task: 03. No gameplay or balance implementation has started.
+Status: D01–D26 remain resolved. Tasks 01–03 complete. Task 03 contracts/RNG and the core coverage gate are verified locally and in hosted CI. Task 02 Android evidence remains explicitly deferred (ADR 0002). Next task: 04. No task 04 gameplay implementation has started.
 
 ## Purpose and source of truth
 
@@ -205,16 +205,16 @@ Start each task by reading the files listed in `CLAUDE.md`. D01–D26 are settle
 
 Record progress below by replacing `not started` with `in progress`, `blocked: Dxx`, or `complete: PR/evidence`. “Complete” requires the task's acceptance evidence and the applicable quality gates; documentation planning alone does not validate the game.
 
-| Milestone            | Tasks         | Status                                                  |
-| -------------------- | ------------- | ------------------------------------------------------- |
-| A — Foundation       | 00–03         | 00, 00b and 01 complete; 02a/b implemented; 02c pending |
-| B — Headless game    | 04–07, 06b    | Not started                                             |
-| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                             |
-| C — Balance evidence | 08b–10        | Not started                                             |
-| D — Browser game     | 11b–15        | Not started                                             |
-| E — Release          | 16–17         | Not started                                             |
+| Milestone            | Tasks         | Status                                                                                                 |
+| -------------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
+| A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002) |
+| B — Headless game    | 04–07, 06b    | Not started                                                                                            |
+| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                            |
+| C — Balance evidence | 08b–10        | Not started                                                                                            |
+| D — Browser game     | 11b–15        | Not started                                                                                            |
+| E — Release          | 16–17         | Not started                                                                                            |
 
-The next action is task 02c: create the Vercel preview using docs/task-02-setup.md and record real iOS/Android LinkedIn evidence in ADR 0002. The next blueprint task is 03 after task 02 acceptance. No later task was implemented.
+The next blueprint task is 04: state transitions and the shared evaluator. Tasks 01–03 are complete; the iOS probe passed and Android evidence was explicitly deferred by Harry (ADR 0002). No task 04 implementation has started.
 
 ## Task 01 completion — October 11, 2026
 
@@ -391,3 +391,111 @@ Status: **Complete and accepted by Harry, with Android evidence explicitly defer
 
 - Document consistency, Prettier and whitespace checks passed for the closure update.
   PR #1 is prepared for review with the iOS evidence and Android risk; it remains unmerged.
+
+## Task 03 result — October 11, 2026
+
+Status: **Implemented and locally verified.** Sources: engine contracts/supporting types,
+randomness/determinism, design data model and the technical spec's gate schedule.
+No accepted decision was reopened; no task 04 logic or live event content was added.
+
+Dependency verification:
+
+- Task 01b complete; frozen-lockfile install passed with Node 24.21.0 / pnpm 10.34.6.
+  The 24-package allowlist and five mandated TS flags were reverified; lockfile unchanged.
+- Task 02 was merged as main commit 0935a18. PR #1's final quality check passed;
+  task 03 starts from that merged baseline on feat/task-03-contracts-rng.
+  Harry's accepted iOS-only probe/Android deferral is retained in ADR 0002.
+
+Implemented review splits (every authored code commit under 400 changed lines):
+
+- **03a / 9484a5b:** readonly locked types, supporting unions, centralized gameplay and
+  algorithm constants, synthetic ContentPack/state fixtures and public type exports. Fixture callback wiring uses
+  the approved support-training → support-follow-up IDs with synthetic copy/effects.
+- **03b.1 / cbfb41a:** original cyrb53 over UTF-16 code units with hash seed zero,
+  explicit unsigned low-32-bit conversion, mulberry32 and independent seed:draw:turn streams.
+  Fixed vectors include empty/ASCII, surrogate pair, combining mark and lone surrogate.
+- **03b.2 / 5e7a5d4:** exact ASCII-sorted integer-ticket weighted selection with one RNG
+  call. Fixture rarity weights are injected so live tuning cannot rewrite rule tests.
+  Tests cover cumulative boundaries, all tickets, invalid inputs and seeded weight properties.
+- **03c / d62e846:** inclusive, conjunctive minute/risk/presence/absence conditions; expert-release
+  requirement checks, zero boundaries, contradictions, fixture serialization and public
+  contract checks. Vitest now enforces core lines >= 90% / branches >= 85% across all
+  existing core files. Colocated tests can import only approved Vitest/fast-check libraries;
+  production restrictions and content boundaries remain enforced.
+- [Contracts/RNG handoff](task-03-contracts.md) documents helper boundaries and vector sources.
+  Engine index has no runtime stubs: gameplay API implementations belong to 04–06 and
+  the live ContentPack importer belongs to 07. Content-table authorship remains task 06b.
+
+Actual check evidence:
+
+- Frozen install, typecheck and zero-warning ESLint/Prettier passed.
+- **57 unit/property tests passed. Core coverage: 90/91 lines (98.90%) and 35/35 branches
+  (100%).** Every existing core file is included; type-only files have zero executable
+  lines/branches. Overall coverage including browser probe helpers is 78.91% lines /
+  85.71% branches; the scheduled floor applies to core, not that overall denominator.
+- Coverage negative check: an unimported, uncovered core file caused the active threshold
+  check to fail. Removed the temporary file and reran the passing suite. Neither include
+  scope nor threshold was reduced. Evidence retained in ignored .tools/task-03-coverage-negative.txt.
+- Seeded lint: all original 18 violations rejected, 3 legal examples accepted; 24 direct
+  dependencies and five TS flags verified. Additional tests verified approved test imports
+  pass while production Vitest, test React and engine/live-content imports fail.
+- Build/size passed: **70,407 / 122,880 gzip JS bytes; deployed media 0 / 409,600 bytes**.
+- **18 E2E checks passed** on Pixel 7 Chromium, iPhone 14 WebKit and desktop Chromium;
+  zero browser errors, no retries/skips. The shell/probe behavior remains intact.
+- Reports: coverage/index.html and coverage-summary.json, test-results/unit.xml,
+  test-results/e2e.json, playwright-report/index.html. Simulation and gameplay goldens
+  are scheduled later and are not claimed as passed.
+- A numeric-literal lint failure was fixed by deriving the locked 45/60 booking and
+  two-turn callback types from constants, preserving the contract without weakening lint.
+  A decimal ticket fixture rounded below the intended boundary; tests now use exact
+  binary boundary fractions and ticket midpoints, plus a regression for the original
+  rounding case. The specified floor(rng × W) formula was not changed.
+
+Outstanding issues and next task:
+
+- No task 03 blocker or new D01–D26 conflict. Android LinkedIn behavior remains a known
+  task 02 risk and must be verified before release; no Android pass is inferred.
+- **Next task: 04 — state transitions, shared evaluator and typed engine errors.**
+  Stop here; no state transitions, score/title formulas, scheduler, live content or UI loop
+  are implemented by task 03.
+
+Hosted task 03 evidence:
+
+- [PR #2](https://github.com/hsivasambu/meeting-sim/pull/2) targets main.
+  [Quality CI](https://github.com/hsivasambu/meeting-sim/actions/runs/38177605264) passed
+  on commit 37ac38d, including frozen install, all active gates and report publishing.
+  Vercel preview status also passed. Downloaded the quality-reports artifact and verified
+  57 unit tests with zero failures/errors, 18 E2E passes with zero skips/flaky/unexpected,
+  core 90/91 covered lines and 35/35 covered branches, and both HTML reports present.
+- PR #2 is ready for review; it remains unmerged. Documentation consistency/format checks
+  passed for this evidence update. The final documentation push reruns the same CI gates.
+- Task 03 is complete. Next task remains 04; no task 04 implementation was started.
+
+## Task 03 review fixes — October 11, 2026
+
+- Validate every rarity weight as a positive safe integer, including unused rarities,
+  before consuming RNG. Fractional, zero, negative and non-finite weights are rejected;
+  unsafe products/totals remain rejected. Fixture-weight injection is retained.
+- Reject duplicate pool IDs before consuming RNG; replace the prior duplicate-acceptance
+  assertion with identical-object, distinct-object and nonadjacent duplicate regressions.
+- Add the required park callback to support-training's absent-Sam fixture presentation
+  and verify every presentation can schedule the approved support-follow-up callback.
+- Add one-line TSDoc naming the relevant design section to all six exported helpers.
+- Synchronize the milestone table and execution handoff with completed tasks 01–03 and
+  next task 04. Historical evidence remains chronological; Android remains a release risk.
+- PR #3 will contain task 03 plus these fixes because PR #2 is still unmerged and #3 did
+  not previously exist. Merge #3 after all active checks pass; close #2 as superseded.
+- Local checks passed: 66 unit/property tests, core lines 98/99 (98.99%) and branches
+  39/39 (100%), typecheck, zero-warning lint/format, build/size (70,407 / 122,880 gzip
+  JS bytes; media 0 / 409,600) and 18 E2E passes without retries/skips/browser errors.
+  Original seeded lint/allowlist/TS checks and document consistency passed; all six
+  required TSDoc comments were verified. Thresholds and dependencies are unchanged.
+- Delivery: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3) supersedes PR #2;
+  Harry authorized its squash merge after passing checks.
+  Task 03 is complete; next task 04. No task 04 code was added.
+
+- Hosted fix [quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38178689878)
+  passed on b30803c, including frozen install, types, lint, all tests/coverage, build/size,
+  all three E2E profiles and report publishing. The final evidence-only commit reruns
+  the same gates before the authorized merge. PR #3 is the delivery/merge record for task 03;
+  PR #2 is superseded. Next task remains 04. Deferred Android validation is still a release risk.
