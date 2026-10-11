@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Task 01 complete. Task 02 automated implementation verified locally; hosted CI and 02c Vercel/real-device acceptance pending. No gameplay or balance implementation has started.
+Status: D01–D26 remain resolved. Task 01 complete. Task 02 automated implementation verified locally and in hosted CI; 02c Vercel/real-device acceptance pending. No gameplay or balance implementation has started.
 
 ## Purpose and source of truth
 
@@ -326,8 +326,8 @@ Evidence:
   Main was initialized from the completed task 01 baseline using a server-side reference;
   no task 02 code was pushed to main. Squash-only merge settings are verified.
 - Draft [PR #1](https://github.com/hsivasambu/meeting-sim/pull/1) targets main.
-  Hosted [quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38174018970)
-  was started; final result will be recorded after it finishes.
+  Hosted [quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38174153522)
+  passed on code commit `0989b78`. Downloaded and verified the published quality-reports artifact: 10 unit tests with zero failures/errors; 18 E2E passes, zero skipped/unexpected/flaky; coverage and Playwright HTML reports present. Artifact size: 361,651 bytes. An initial Vite-config formatting failure was corrected without changing any gate.
 
 Outstanding acceptance items:
 

@@ -18,6 +18,7 @@ Share-sheet cancellation has its own outcome and never becomes a game failure.
 - PNG signature/download, image visibility, 320 px fit, clipboard denial, absent optional
   APIs and native-share cancellation were verified.
 - Unit/property runner: 10 tests passed, including deterministic fast-check size-budget cases.
+- Hosted [quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38174153522) passed on commit `0989b78`; its published unit/coverage/Playwright reports were downloaded and verified. Hosted E2E: 18 passes, zero skipped, flaky or unexpected outcomes.
 - These are browser emulations/mocks. No real LinkedIn result is inferred from them.
 
 ## Real-device evidence
