@@ -205,14 +205,14 @@ Start each task by reading the files listed in `CLAUDE.md`. D01–D26 are settle
 
 Record progress below by replacing `not started` with `in progress`, `blocked: Dxx`, or `complete: PR/evidence`. “Complete” requires the task's acceptance evidence and the applicable quality gates; documentation planning alone does not validate the game.
 
-| Milestone            | Tasks         | Status                                                       |
-| -------------------- | ------------- | ------------------------------------------------------------ |
-| A — Foundation       | 00–03         | 00–03 complete; task 02 Android evidence deferred (ADR 0002) |
-| B — Headless game    | 04–07, 06b    | Not started                                                  |
-| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                  |
-| C — Balance evidence | 08b–10        | Not started                                                  |
-| D — Browser game     | 11b–15        | Not started                                                  |
-| E — Release          | 16–17         | Not started                                                  |
+| Milestone            | Tasks         | Status                                                                                                 |
+| -------------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
+| A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002) |
+| B — Headless game    | 04–07, 06b    | Not started                                                                                            |
+| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                            |
+| C — Balance evidence | 08b–10        | Not started                                                                                            |
+| D — Browser game     | 11b–15        | Not started                                                                                            |
+| E — Release          | 16–17         | Not started                                                                                            |
 
 The next blueprint task is 04: state transitions and the shared evaluator. Tasks 01–03 are complete; the iOS probe passed and Android evidence was explicitly deferred by Harry (ADR 0002). No task 04 implementation has started.
 
@@ -491,5 +491,11 @@ Hosted task 03 evidence:
   Original seeded lint/allowlist/TS checks and document consistency passed; all six
   required TSDoc comments were verified. Thresholds and dependencies are unchanged.
 - Delivery: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3) supersedes PR #2;
-  Harry authorized its squash merge after passing checks. Hosted evidence follows.
+  Harry authorized its squash merge after passing checks.
   Task 03 is complete; next task 04. No task 04 code was added.
+
+- Hosted fix [quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38178689878)
+  passed on b30803c, including frozen install, types, lint, all tests/coverage, build/size,
+  all three E2E profiles and report publishing. The final evidence-only commit reruns
+  the same gates before the authorized merge. PR #3 is the delivery/merge record for task 03;
+  PR #2 is superseded. Next task remains 04. Deferred Android validation is still a release risk.
