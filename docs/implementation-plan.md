@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–04 complete; task 04 state transitions/shared evaluator verified locally, hosted evidence follows below. Task 02 Android evidence remains deferred (ADR 0002). Next task: 05. No task 05 scoring/title implementation has started.
+Status: D01–D26 remain resolved. Tasks 01–04 complete; task 04 state transitions/shared evaluator verified locally and in hosted CI. Task 02 Android evidence remains deferred (ADR 0002). Next task: 05. No task 05 scoring/title implementation has started.
 
 ## Purpose and source of truth
 
@@ -573,3 +573,14 @@ Outstanding issues and next task:
   enforcement and explicit room-booked deadline-path checks, with regressions. Reran all
   active local gates: 108 unit/property and 18 E2E passes, core 188/189 lines and 141/141 branches.
   [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4) contains task 04; it is unmerged.
+
+Hosted task 04 evidence:
+
+- [Quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38179958251) passed
+  on code commit 28684c8, including every active gate and report publishing. Downloaded
+  artifact confirms 108 unit passes with zero failures/errors, 18 E2E passes with zero
+  skipped/flaky/unexpected, core 188/189 lines and 141/141 branches, both HTML reports present.
+- [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4) is ready for review and remains
+  unmerged. Document consistency/format/whitespace checks passed for this evidence update;
+  the final documentation-only head reruns the same active checks.
+- Task 04 complete; next task 05. No known task 04 defect remains and no task 05 work started.
