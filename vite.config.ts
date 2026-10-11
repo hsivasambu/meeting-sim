@@ -23,6 +23,7 @@ export default defineConfig({
     outputFile: { junit: 'test-results/unit.xml' },
     coverage: {
       provider: 'v8',
+      thresholds: { 'src/core/**': { lines: 90, branches: 85 } },
       include: [
         'src/core/**/*.ts',
         'scripts/sizeBudget.ts',
