@@ -1,0 +1,43 @@
+export const probeCopy = {
+  heading: 'LinkedIn capability probe',
+  purpose: 'Open this page inside LinkedIn on a real iPhone and Android phone.',
+  instructions:
+    'Try each action, save the image, and record what happened outside the browser.',
+  warning: 'API availability alone is not proof that sharing or saving works.',
+  imageAlt:
+    'Meeting probe image for testing share, download and long-press save.',
+  sample: "This Could've Been an Email — LinkedIn sharing test.",
+  cardTitle: "This Could've Been an Email",
+  cardBody: 'A diagnostic image. Please try saving or sharing it.',
+  textShare: 'Share text',
+  fileShare: 'Share PNG',
+  clipboard: 'Copy test text',
+  download: 'Download PNG',
+  fallback: 'Selectable text fallback',
+  report: 'Capability report',
+  preparing: 'Preparing image…',
+  retry: 'Retry image preparation',
+  imageFailure: 'Image preparation failed. Text tests still work.',
+  ready: 'Ready',
+  success: 'Succeeded',
+  unsupported: 'Unavailable',
+  cancelled: 'Cancelled',
+  failed: 'Failed or blocked',
+  idle: 'Not tested',
+} as const satisfies Record<string, string>;
+
+export const probeSettings = {
+  origin: 0,
+  width: 1200,
+  height: 627,
+  titleX: 60,
+  titleY: 180,
+  bodyX: 60,
+  bodyY: 260,
+  background: '#f1f5ed',
+  foreground: '#172118',
+  titleFont: 'bold 48px system-ui',
+  bodyFont: '28px system-ui',
+  filename: 'meeting-probe.png',
+  reportIndent: 2,
+} as const;
