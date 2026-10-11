@@ -27,6 +27,11 @@ const boundary = {
     function check(node) {
       const source = node.source?.value;
       if (typeof source !== 'string') return;
+      if (
+        file.endsWith('.test.ts') &&
+        ['vitest', 'fast-check'].includes(source)
+      )
+        return;
       const target = source.startsWith('.')
         ? resolve(dirname(file), source).replaceAll('\\', '/')
         : source;
@@ -333,6 +338,23 @@ export default tseslint.config(
               regex: '^\\..*/engine(?:/index(?:\\.ts)?)?$',
               importNames: mutations,
               message: 'Only store invokes browser engine mutations.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/core/**/*.test.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^(?!\\.|vitest$|fast-check$)',
+              message:
+                'Core tests import only local core modules or approved test libraries.',
             },
           ],
         },

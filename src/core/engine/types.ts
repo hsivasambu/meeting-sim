@@ -1,3 +1,9 @@
+import type {
+  CALLBACK_DELAY,
+  INITIAL_BOOKING_END,
+  REDUCED_BOOKING_END,
+} from './constants';
+
 export type AttendeeId =
   'priya' | 'dev' | 'sam' | 'morgan' | 'gary' | 'jordan' | 'vp' | 'legal';
 export type Rarity = 'common' | 'uncommon' | 'rare';
@@ -19,8 +25,11 @@ export interface Effect {
   readonly minutes: number;
   readonly risks?: number;
   readonly joins?: readonly AttendeeId[];
-  readonly bookingEnd?: 45 | 60;
-  readonly callback?: { readonly eventId: string; readonly afterTurns: 2 };
+  readonly bookingEnd?: typeof REDUCED_BOOKING_END | typeof INITIAL_BOOKING_END;
+  readonly callback?: {
+    readonly eventId: string;
+    readonly afterTurns: typeof CALLBACK_DELAY;
+  };
 }
 export interface Response {
   readonly id: string;
