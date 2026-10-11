@@ -16,7 +16,7 @@ const expertResponses = [
     effect: {
       minutes: 2,
       risks: 1,
-      callback: { eventId: 'fixture-return', afterTurns: 2 },
+      callback: { eventId: 'support-follow-up', afterTurns: 2 },
     },
     line: 'Fixture parked.',
   },
@@ -34,7 +34,7 @@ const ackResponses = [
 export const fixturePack = {
   events: [
     {
-      id: 'fixture-alpha',
+      id: 'support-training',
       kind: 'substantive',
       rarity: 'common',
       speaker: 'sam',
@@ -79,7 +79,7 @@ export const fixturePack = {
   ],
   callbacks: [
     {
-      id: 'fixture-return',
+      id: 'support-follow-up',
       kind: 'callback',
       rarity: 'common',
       speaker: 'priya',
