@@ -18,7 +18,7 @@
     "sim:ci": "tsx sim/run.ts --runs 2000 --policy all",
     "e2e": "playwright test",
     "size": "tsx scripts/checkSize.ts",
-    "check": "pnpm typecheck && pnpm lint"
+    "check": "pnpm typecheck && pnpm lint && pnpm test"
   },
   "dependencies": {
     "react": "19.3.0",

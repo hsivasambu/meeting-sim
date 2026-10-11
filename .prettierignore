@@ -4,3 +4,7 @@ dist/
 pnpm-lock.yaml
 docs/tech-spec.md
 docs/design-doc-v2.md
+
+coverage/
+playwright-report/
+test-results/

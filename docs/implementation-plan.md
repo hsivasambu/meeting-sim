@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Task 01 (01a and 01b) complete locally, October 11, 2026. Task 02 is next. Gameplay and balance validation have not started.
+Status: D01–D26 remain resolved. Tasks 01 and 02 complete. Task 02 accepted on the reported iOS probe pass with Harry-approved Android evidence deferral (risk in ADR 0002). Repository public, main protected, preview accessible. Next task: 03. No gameplay or balance implementation has started.
 
 ## Purpose and source of truth
 
@@ -205,16 +205,16 @@ Start each task by reading the files listed in `CLAUDE.md`. D01–D26 are settle
 
 Record progress below by replacing `not started` with `in progress`, `blocked: Dxx`, or `complete: PR/evidence`. “Complete” requires the task's acceptance evidence and the applicable quality gates; documentation planning alone does not validate the game.
 
-| Milestone            | Tasks         | Status                           |
-| -------------------- | ------------- | -------------------------------- |
-| A — Foundation       | 00–03         | 00, 00b and 01 complete; 02 next |
-| B — Headless game    | 04–07, 06b    | Not started                      |
-| B2 — Vertical slice  | 08a, 11a, 12a | Not started                      |
-| C — Balance evidence | 08b–10        | Not started                      |
-| D — Browser game     | 11b–15        | Not started                      |
-| E — Release          | 16–17         | Not started                      |
+| Milestone            | Tasks         | Status                                                  |
+| -------------------- | ------------- | ------------------------------------------------------- |
+| A — Foundation       | 00–03         | 00, 00b and 01 complete; 02a/b implemented; 02c pending |
+| B — Headless game    | 04–07, 06b    | Not started                                             |
+| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                             |
+| C — Balance evidence | 08b–10        | Not started                                             |
+| D — Browser game     | 11b–15        | Not started                                             |
+| E — Release          | 16–17         | Not started                                             |
 
-The next implementation action is task 02: add the test runners, coverage configuration, Playwright shell smoke and report-producing CI steps, then perform the LinkedIn capability probe on a preview. Stop here: no task 02 implementation or content-table authoring was performed.
+The next action is task 02c: create the Vercel preview using docs/task-02-setup.md and record real iOS/Android LinkedIn evidence in ADR 0002. The next blueprint task is 03 after task 02 acceptance. No later task was implemented.
 
 ## Task 01 completion — October 11, 2026
 
@@ -271,3 +271,123 @@ Outstanding issues and handoff:
 Review note: eslint.config.js exceeds the 300-line SHOULD guideline because it keeps the mandated
 per-folder restrictions and resolved-path checks together in the single tool configuration.
 The lint review split remains below approximately 400 authored lines; no application file exceeds 300 lines.
+
+## Task 02 result — October 11, 2026
+
+Status: **02a and 02b implemented and locally verified; 02c awaits Vercel setup and
+real-device evidence. Task 02 is not fully accepted.** No task 03 work was started.
+
+Sources: technical spec → Testing and quality gates; Build, CI and deployment;
+plan task 02; D19/D26 in ADR 0001. No accepted decision was reopened.
+
+Dependency verification:
+
+- Task 01's document consistency and seeded lint checks were previously recorded.
+  For this task its frozen-lockfile install, typecheck, lint/format, production build
+  and size checks were rerun and passed under fnm Node 24.21.0 / pnpm 10.34.6.
+- The 24-package allowlist and lockfile remain unchanged. No extra dependency was added.
+- Preserved task 01 as local commit `639be25` before creating `chore/task-02-tests-probe`.
+
+Implemented review splits (each authored code commit under approximately 400 changed lines):
+
+- **02a** (`00497f4`): Vitest/fast-check runner, V8/JUnit reports, deployment-budget tests,
+  Playwright configuration and built-shell smoke; pnpm check now includes pnpm test.
+  CI caches the pnpm store/browser binaries, installs with the frozen lockfile,
+  runs all active gates, and uploads coverage/unit/E2E reports even on failures.
+- **02b.1** (`4d6bb24`): approved capability helpers, runtime PNG generation and failure tests.
+  Native-share availability, actual success, cancellation and blocked/unavailable APIs
+  are recorded separately. No game content, storage, analytics or final art was added.
+- **02b.2** (`84b7e2b`): isolated `/probe.html` entry, accessible diagnostic UI, visible
+  share image, file/text sharing, clipboard, download and persistent selectable-text fallback;
+  browser checks for downloads, absent APIs, blocked clipboard, cancellation and 320 px width.
+- **02c handoff:** [Vercel setup and device procedure](task-02-setup.md) and
+  [ADR 0002 evidence table](adr/0002-linkedin-capability-probe.md). Harry requested that the
+  assistant create GitHub privately and provide Vercel instructions; Vercel was not deployed.
+
+Evidence:
+
+- `pnpm install --frozen-lockfile`: passed; pnpm-lock.yaml unchanged.
+- `pnpm check`: typecheck, zero-warning lint/format, and **10 unit/property tests passed**.
+  The size-budget helper has 100% line/branch coverage, including exact limits and a
+  seeded 25-case fast-check property. Coverage includes all existing core files;
+  the core coverage floor activates in task 03, not task 02. Current aggregate coverage
+  is 52.56% lines / 71.42% branches; browser-exercised code is not counted in Vitest coverage.
+- `pnpm build && pnpm size`: passed; **70,407 / 122,880 gzip JS bytes** across all entries
+  and shared/lazy chunks; **0 / 409,600 deployed image/font bytes**. Probe PNGs are generated at runtime.
+- `pnpm e2e`: **18 passed** on Pixel 7 Chromium, iPhone 14 WebKit and desktop Chromium.
+  Every test rejects browser console errors and uncaught exceptions. No retries or skipped tests.
+- Reports exist at `coverage/index.html`, `coverage/coverage-summary.json`,
+  `test-results/unit.xml`, `test-results/e2e.json` and `playwright-report/index.html`.
+  Fixed Playwright output cleanup to preserve the unit report; reran unit and E2E gates.
+  Fixed a redundant variable initialization flagged by ESLint without disabling the rule.
+- Simulation, gameplay goldens/content validation and the core coverage floor are not activated
+  yet. No simulation/balance or real-device result is claimed.
+- Private repository: [hsivasambu/meeting-sim](https://github.com/hsivasambu/meeting-sim).
+  Main was initialized from the completed task 01 baseline using a server-side reference;
+  no task 02 code was pushed to main. Squash-only merge settings are verified.
+- Draft [PR #1](https://github.com/hsivasambu/meeting-sim/pull/1) targets main.
+  Hosted [quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38174153522)
+  passed on code commit `0989b78`. Downloaded and verified the published quality-reports artifact: 10 unit tests with zero failures/errors; 18 E2E passes, zero skipped/unexpected/flaky; coverage and Playwright HTML reports present. Artifact size: 361,651 bytes. An initial Vite-config formatting failure was corrected without changing any gate.
+
+Initial outstanding acceptance items (superseded by follow-ups below):
+
+- **02c / V1:** Harry creates the Vercel project, supplies the preview URL/commit, and records
+  real iOS/Android LinkedIn outcomes in ADR 0002. All real-device rows remain Not run.
+  API checks and mobile browser emulation do not satisfy this requirement.
+- GitHub returned HTTP 403 when enabling main-branch protection for this private repository:
+  “Upgrade to GitHub Pro or make this repository public to enable this feature.”
+  The repository remains private as requested. Required-check/PR-only protection is
+  not enforced; account support for that feature must be resolved. No threshold or
+  repository visibility was changed to work around the restriction.
+- The PR remains draft and unmerged while manual acceptance/protection is outstanding.
+  No final sharing-order decision has been made from mocked APIs.
+- **Next action: finish task 02c. Next blueprint task: 03 (contracts/RNG), after the task 02
+  handoff is accepted.** Stop at task 02; no later task has been implemented.
+
+## Task 02c hosting follow-up — October 11, 2026
+
+- Harry created the Vercel project and supplied the [probe preview](https://meeting-e9pihcccd-hsivasambus-projects.vercel.app/probe.html)
+  and [main deployment](https://meeting-qzacf1hfe-hsivasambus-projects.vercel.app).
+  Deployed source commit remains unverified.
+- Harry reported a LinkedIn redirect to Vercel login. Anonymous verification returned
+  HTTP 302 to Vercel SSO. Neither iOS nor Android capability outcomes are established.
+  Setup instructions and ADR 0002 now record this blocker.
+- Harry explicitly authorized GitHub public visibility. Verified PUBLIC; the earlier
+  private-repository protection restriction is resolved. Main requires pull requests
+  and the strict `quality` check, including administrators; linear history is required,
+  force pushes/deletions are disabled, and only squash merges are allowed.
+- Changes are documentation only: setup instructions, pending probe evidence and this
+  plan. No application, test, threshold or accepted decision changed.
+- Next action: disable Vercel Authentication in the project's Deployment Protection,
+  Save, verify anonymous preview access and its source commit, then repeat the probe
+  on real iOS and Android LinkedIn browsers. Task 02 awaits manual acceptance;
+  PR #1 stays draft and unmerged. Next blueprint task is 03 only after acceptance.
+
+- Follow-up checks: document links, D01–D26 register and assistant-rule consistency passed;
+  Prettier formatting and git diff whitespace checks passed. No code gates changed.
+
+## Task 02 closure — October 11, 2026
+
+Status: **Complete and accepted by Harry, with Android evidence explicitly deferred.**
+
+- Harry reports all real-device LinkedIn probe tests passed on iOS and requests closure.
+  Model, OS/LinkedIn versions, raw report and exact tested commit were not supplied;
+  [ADR 0002](adr/0002-linkedin-capability-probe.md) records user-reported results and limits.
+- Harry has no Android device and explicitly directed proceeding with that risk.
+  Android is Not tested, not passed. The evidence exception does not change an automated
+  gate or the technical spec's two-platform manual release checklist.
+- Anonymous preview verification returned HTTP 200, resolving the Vercel login blocker.
+  Repository visibility PUBLIC and main protection were verified in the prior follow-up.
+- Hosted [quality check](https://github.com/hsivasambu/meeting-sim/actions/runs/38175379739)
+  passed on bfd0918; Vercel reported successful deployment for that PR head.
+- Later sharing retains the spec's native-PNG-first capability-based order and all
+  download/copy/selectable-text and visible-image fallbacks. Verify real Android before release.
+- Remaining risk: unverified Android behavior and limited iOS metadata/build attribution.
+  No known implementation defect remains; supplement device evidence when available.
+- Closure checks: typecheck, zero-warning lint/format and 10 unit/property tests passed;
+  build/size passed (70,407 / 122,880 gzip JS bytes; media 0 / 409,600 bytes);
+  all 18 E2E checks passed without retries or skips. Documentation checks follow below.
+- **Next task: 03 (contracts/RNG).** Task 02 stops here; no task 03 work was started.
+
+- Document consistency, Prettier and whitespace checks passed for the closure update.
+  PR #1 is prepared for review with the iOS evidence and Android risk; it remains unmerged.

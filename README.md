@@ -1,10 +1,10 @@
 # This Could've Been an Email
 
-Task 01 foundation only. The React shell displays the Friday launch objective;
+Task 02 is complete: automated checks and the reported iOS LinkedIn probe passed. Android evidence is deferred with Harry's approval; the risk is recorded in ADR 0002. The React shell displays the Friday launch objective;
 the playable meeting loop is implemented in later tasks.
 
 Read [CLAUDE.md](CLAUDE.md) and [the implementation plan](docs/implementation-plan.md)
-before making changes. Task 02 is next.
+before making changes. See [task 02 setup](docs/task-02-setup.md) for the Vercel preview and real-device probe.
 
 Use Node 24 through fnm and the Corepack-managed pnpm version in package.json:
 
@@ -19,5 +19,5 @@ fnm exec --using 24 cmd /c corepack pnpm dev
 
 On this machine the downloaded fnm executable is `.tools/fnm/fnm.exe`.
 Replace `fnm` with that path if it is not on PATH. No shell profile was changed.
-`pnpm check` currently runs types and lint/format. Test, simulation and E2E scripts
-are reserved for their scheduled tasks and are not part of the active check.
+`pnpm check` runs typecheck, lint/format and Vitest with coverage. `pnpm e2e` runs against the built preview. Simulation scripts
+remain reserved for their scheduled tasks and are not part of the active check.
