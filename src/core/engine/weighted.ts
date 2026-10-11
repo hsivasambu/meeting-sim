@@ -1,22 +1,33 @@
 import { DEFAULT_EVENT_WEIGHT, ONE, ZERO } from './constants';
 import type { MeetingEvent, Rarity } from './types';
 
-// Eligible, unique-ID pool supplied by draw.ts (task 06). No selection/fairness rules here.
+function validateRarityWeights(
+  weights: Readonly<Record<Rarity, number>>,
+): void {
+  for (const rarity of ['common', 'uncommon', 'rare'] as const) {
+    if (!Number.isSafeInteger(weights[rarity]) || weights[rarity] < ONE)
+      throw new RangeError('Invalid rarity weight');
+  }
+}
+
+/** Implements Design Doc v2 → Events and responses → Draw rules: unique-ID integer-weight selection. */
 export function selectWeightedEvent(
   events: readonly MeetingEvent[],
   rng: () => number,
   rarityWeights: Readonly<Record<Rarity, number>>,
 ): MeetingEvent {
+  validateRarityWeights(rarityWeights);
+  const ids = new Set<string>();
   const candidates = events
     .map((event) => {
+      if (ids.has(event.id)) throw new RangeError('Duplicate event ID');
+      ids.add(event.id);
       const weight = event.weight ?? DEFAULT_EVENT_WEIGHT;
       if (!Number.isSafeInteger(weight) || weight < ONE)
         throw new RangeError('Invalid event weight');
       return { event, weight: rarityWeights[event.rarity] * weight };
     })
-    .sort((a, b) =>
-      a.event.id < b.event.id ? -ONE : a.event.id > b.event.id ? ONE : ZERO,
-    );
+    .sort((a, b) => (a.event.id < b.event.id ? -ONE : ONE));
   const total = candidates.reduce(
     (sum, candidate) => sum + candidate.weight,
     ZERO,

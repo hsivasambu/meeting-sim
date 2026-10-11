@@ -21,6 +21,19 @@ const expertResponses = [
     line: 'Fixture parked.',
   },
 ] as const satisfies readonly Response[];
+const absentSupportResponses = [
+  {
+    id: 'park',
+    label: 'Fixture park without expert',
+    technique: 'park',
+    effect: {
+      minutes: 2,
+      risks: 1,
+      callback: { eventId: 'support-follow-up', afterTurns: 2 },
+    },
+    line: 'Fixture parked without expert.',
+  },
+] as const satisfies readonly Response[];
 const ackResponses = [
   {
     id: 'ack',
@@ -45,7 +58,7 @@ export const fixturePack = {
           when: { absent: ['sam'] },
           speaker: 'priya',
           line: 'Fixture alpha without Sam.',
-          responses: ackResponses,
+          responses: absentSupportResponses,
         },
       ],
     },

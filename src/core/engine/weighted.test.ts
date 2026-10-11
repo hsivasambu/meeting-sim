@@ -1,4 +1,4 @@
-import { expect, it } from 'vitest';
+import { expect, it, vi } from 'vitest';
 import fc from 'fast-check';
 import { fixturePack } from './fixtures/packs';
 import { selectWeightedEvent } from './weighted';
@@ -99,9 +99,8 @@ it.each([-0.1, 1, Infinity, NaN])(
     expect(() => choose(pool, () => value)).toThrow(RangeError);
   },
 );
-it('handles one candidate and equal IDs without depending on sort stability', () => {
+it('handles a single candidate', () => {
   expect(choose([example], () => 0.999)).toBe(example);
-  expect(choose([example, example], () => 0)).toBe(example);
 });
 
 it('obeys floor(rng × W) even when a decimal ratio rounds below an integer', () => {
@@ -110,4 +109,65 @@ it('obeys floor(rng × W) even when a decimal ratio rounds below an integer', ()
   );
   expect(Math.floor((56 / 142) * 142)).toBe(55);
   expect(choose(fractionalPool, () => 56 / 142).id).toBe('B');
+});
+
+it.each(['common', 'uncommon', 'rare'] as const)(
+  'rejects invalid %s rarity weights, including unused rarities, before drawing',
+  (rarity) => {
+    for (const invalid of [
+      0,
+      -1,
+      0.5,
+      1.5,
+      NaN,
+      Infinity,
+      Number.MAX_SAFE_INTEGER + 1,
+    ]) {
+      const rng = vi.fn(() => 0);
+      const weights = { ...fixtureWeights, [rarity]: invalid };
+      expect(() => selectWeightedEvent([example], rng, weights)).toThrow(
+        'Invalid rarity weight',
+      );
+      expect(rng).not.toHaveBeenCalled();
+    }
+  },
+);
+it('rejects fractional rarity products even when the total would be an integer', () => {
+  const rng = vi.fn(() => 0);
+  expect(() =>
+    selectWeightedEvent(
+      [
+        { ...example, id: 'a' },
+        { ...example, id: 'b' },
+      ],
+      rng,
+      { ...fixtureWeights, common: 0.5 },
+    ),
+  ).toThrow('Invalid rarity weight');
+  expect(rng).not.toHaveBeenCalled();
+});
+it.each([
+  [example, example],
+  [example, { ...example, weight: 2 }],
+  [example, { ...example, id: 'different' }, example],
+])('rejects duplicate IDs before drawing', (...events) => {
+  const rng = vi.fn(() => 0);
+  expect(() => choose(events, rng)).toThrow('Duplicate event ID');
+  expect(rng).not.toHaveBeenCalled();
+});
+it('accepts positive safe-integer rarity weights and rejects unsafe products', () => {
+  const rng = vi.fn(() => 0);
+  expect(
+    selectWeightedEvent([example], rng, { common: 1, uncommon: 1, rare: 1 }),
+  ).toBe(example);
+  expect(rng).toHaveBeenCalledTimes(1);
+  rng.mockClear();
+  expect(() =>
+    selectWeightedEvent([{ ...example, weight: 2 }], rng, {
+      common: Number.MAX_SAFE_INTEGER,
+      uncommon: 1,
+      rare: 1,
+    }),
+  ).toThrow('Invalid total weight');
+  expect(rng).not.toHaveBeenCalled();
 });

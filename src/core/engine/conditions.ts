@@ -1,6 +1,7 @@
 import type { Condition, MeetingState } from './types';
 
 // Conditions are conjunctions; all numeric bounds are inclusive.
+/** Implements Design Doc v2 → Event schema and roster → Data model. */
 export function matchesCondition(
   state: MeetingState,
   condition?: Condition,

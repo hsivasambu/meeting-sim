@@ -21,6 +21,7 @@ import {
   PRNG_OR_SECOND,
 } from './constants';
 
+/** Implements Design Doc v2 → Events and responses → Randomness and seeds. */
 export function cyrb53(seed: string): number {
   let low = HASH_INITIAL_LOW;
   let high = HASH_INITIAL_HIGH;
@@ -38,11 +39,13 @@ export function cyrb53(seed: string): number {
     Math.imul(low ^ (low >>> HASH_SHIFT_HIGH), HASH_FINAL_HIGH);
   return UINT32_RANGE * (high & HASH_HIGH_MASK) + (low >>> ZERO);
 }
+/** Implements Design Doc v2 → Events and responses → Randomness and seeds. */
 export function hashSeed(seed: string): number {
   return cyrb53(seed) >>> ZERO;
 }
 // mulberry32 by Tommy Ettinger; explicit wrapping preserves long-lived streams.
 // https://github.com/bryc/code/blob/master/jshash/PRNGs.md#mulberry32
+/** Implements Design Doc v2 → Events and responses → Randomness and seeds. */
 export function mulberry32(seed: number): () => number {
   let state = seed >>> ZERO;
   return () => {
@@ -57,6 +60,7 @@ export function mulberry32(seed: number): () => number {
     return ((mixed ^ (mixed >>> PRNG_SHIFT_FINAL)) >>> ZERO) / UINT32_RANGE;
   };
 }
+/** Implements Design Doc v2 → Events and responses → Randomness and seeds. */
 export function drawRng(seed: string, turn: number): () => number {
   return mulberry32(hashSeed(seed + ':draw:' + turn));
 }

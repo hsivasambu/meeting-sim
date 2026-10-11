@@ -30,7 +30,7 @@ selectWeightedEvent takes an eligible unique-ID pool, one RNG function and injec
 positive integer rarity weights. It multiplies each rarity weight by event weight
 (default one), sorts by ASCII ID comparisons, computes floor(sample × total weight),
 and picks the first cumulative sum strictly greater than that ticket. Invalid event
-weights, unsafe/empty totals or RNG samples outside [0, 1) throw RangeError before a
+or rarity weights, duplicate IDs, unsafe/empty totals or RNG samples outside [0, 1) throw RangeError before a
 selection is returned. Eligibility, variant materialization, scheduling and the public
 getDrawCandidates distribution contract remain task 06 work.
 Tests inject fixture weights instead of asserting live tuning. They cover every ticket,

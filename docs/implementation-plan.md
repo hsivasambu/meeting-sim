@@ -205,16 +205,16 @@ Start each task by reading the files listed in `CLAUDE.md`. D01–D26 are settle
 
 Record progress below by replacing `not started` with `in progress`, `blocked: Dxx`, or `complete: PR/evidence`. “Complete” requires the task's acceptance evidence and the applicable quality gates; documentation planning alone does not validate the game.
 
-| Milestone            | Tasks         | Status                                                  |
-| -------------------- | ------------- | ------------------------------------------------------- |
-| A — Foundation       | 00–03         | 00, 00b and 01 complete; 02a/b implemented; 02c pending |
-| B — Headless game    | 04–07, 06b    | Not started                                             |
-| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                             |
-| C — Balance evidence | 08b–10        | Not started                                             |
-| D — Browser game     | 11b–15        | Not started                                             |
-| E — Release          | 16–17         | Not started                                             |
+| Milestone            | Tasks         | Status                                                       |
+| -------------------- | ------------- | ------------------------------------------------------------ |
+| A — Foundation       | 00–03         | 00–03 complete; task 02 Android evidence deferred (ADR 0002) |
+| B — Headless game    | 04–07, 06b    | Not started                                                  |
+| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                  |
+| C — Balance evidence | 08b–10        | Not started                                                  |
+| D — Browser game     | 11b–15        | Not started                                                  |
+| E — Release          | 16–17         | Not started                                                  |
 
-The next action is task 02c: create the Vercel preview using docs/task-02-setup.md and record real iOS/Android LinkedIn evidence in ADR 0002. The next blueprint task is 03 after task 02 acceptance. No later task was implemented.
+The next blueprint task is 04: state transitions and the shared evaluator. Tasks 01–03 are complete; the iOS probe passed and Android evidence was explicitly deferred by Harry (ADR 0002). No task 04 implementation has started.
 
 ## Task 01 completion — October 11, 2026
 
@@ -470,3 +470,26 @@ Hosted task 03 evidence:
 - PR #2 is ready for review; it remains unmerged. Documentation consistency/format checks
   passed for this evidence update. The final documentation push reruns the same CI gates.
 - Task 03 is complete. Next task remains 04; no task 04 implementation was started.
+
+## Task 03 review fixes — October 11, 2026
+
+- Validate every rarity weight as a positive safe integer, including unused rarities,
+  before consuming RNG. Fractional, zero, negative and non-finite weights are rejected;
+  unsafe products/totals remain rejected. Fixture-weight injection is retained.
+- Reject duplicate pool IDs before consuming RNG; replace the prior duplicate-acceptance
+  assertion with identical-object, distinct-object and nonadjacent duplicate regressions.
+- Add the required park callback to support-training's absent-Sam fixture presentation
+  and verify every presentation can schedule the approved support-follow-up callback.
+- Add one-line TSDoc naming the relevant design section to all six exported helpers.
+- Synchronize the milestone table and execution handoff with completed tasks 01–03 and
+  next task 04. Historical evidence remains chronological; Android remains a release risk.
+- PR #3 will contain task 03 plus these fixes because PR #2 is still unmerged and #3 did
+  not previously exist. Merge #3 after all active checks pass; close #2 as superseded.
+- Local checks passed: 66 unit/property tests, core lines 98/99 (98.99%) and branches
+  39/39 (100%), typecheck, zero-warning lint/format, build/size (70,407 / 122,880 gzip
+  JS bytes; media 0 / 409,600) and 18 E2E passes without retries/skips/browser errors.
+  Original seeded lint/allowlist/TS checks and document consistency passed; all six
+  required TSDoc comments were verified. Thresholds and dependencies are unchanged.
+- Delivery: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3) supersedes PR #2;
+  Harry authorized its squash merge after passing checks. Hosted evidence follows.
+  Task 03 is complete; next task 04. No task 04 code was added.
