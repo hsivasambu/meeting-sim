@@ -1,6 +1,6 @@
 # This Could've Been an Email
 
-Tasks 01–03 are complete. Task 03 adds engine types, conditions, deterministic RNG and the core coverage gate; see docs/task-03-contracts.md. The reported iOS LinkedIn probe passed. Android evidence is deferred with Harry's approval; the risk is recorded in ADR 0002. The React shell displays the Friday launch objective;
+Tasks 01–04 are complete. State actions, preview and resolution are available in the engine; see docs/task-04-transitions.md. Task 03 adds engine types, conditions, deterministic RNG and the core coverage gate; see docs/task-03-contracts.md. The reported iOS LinkedIn probe passed. Android evidence is deferred with Harry's approval; the risk is recorded in ADR 0002. The React shell displays the Friday launch objective;
 the playable meeting loop is implemented in later tasks.
 
 Read [CLAUDE.md](CLAUDE.md) and [the implementation plan](docs/implementation-plan.md)

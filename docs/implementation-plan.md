@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–03 complete. Task 03 contracts/RNG and the core coverage gate are verified locally and in hosted CI. Task 02 Android evidence remains explicitly deferred (ADR 0002). Next task: 04. No task 04 gameplay implementation has started.
+Status: D01–D26 remain resolved. Tasks 01–04 complete; task 04 state transitions/shared evaluator verified locally, hosted evidence follows below. Task 02 Android evidence remains deferred (ADR 0002). Next task: 05. No task 05 scoring/title implementation has started.
 
 ## Purpose and source of truth
 
@@ -208,13 +208,13 @@ Record progress below by replacing `not started` with `in progress`, `blocked: D
 | Milestone            | Tasks         | Status                                                                                                 |
 | -------------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
 | A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002) |
-| B — Headless game    | 04–07, 06b    | Not started                                                                                            |
+| B — Headless game    | 04–07, 06b    | 04 complete; 05–07 and 06b not started                                                                 |
 | B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                            |
 | C — Balance evidence | 08b–10        | Not started                                                                                            |
 | D — Browser game     | 11b–15        | Not started                                                                                            |
 | E — Release          | 16–17         | Not started                                                                                            |
 
-The next blueprint task is 04: state transitions and the shared evaluator. Tasks 01–03 are complete; the iOS probe passed and Android evidence was explicitly deferred by Harry (ADR 0002). No task 04 implementation has started.
+The next blueprint task is 05: utility/score/title modules and exact scoring fixtures. Tasks 01–04 are complete; Android evidence remains explicitly deferred (ADR 0002). No task 05 implementation has started.
 
 ## Task 01 completion — October 11, 2026
 
@@ -499,3 +499,72 @@ Hosted task 03 evidence:
   all three E2E profiles and report publishing. The final evidence-only commit reruns
   the same gates before the authorized merge. PR #3 is the delivery/merge record for task 03;
   PR #2 is superseded. Next task remains 04. Deferred Android validation is still a release risk.
+
+## Task 04 result — October 11, 2026
+
+Status: **Implemented and locally verified.** Sources: technical spec Engine contracts,
+Turn order and endings, Content/evaluation contract and activated gate schedule; design
+Game state model, Core loop/Anytime actions, Draw rules and Scoring/Decisions.
+No D01–D26 decision was reopened and no task 05 or 06 functionality was implemented.
+
+Dependencies and scope:
+
+- Task 03 is merged on main as e6773a1 (PR #3), including all five review fixes.
+  Frozen-lockfile installation passed under Node 24.21.0 / pnpm 10.34.6; packages,
+  lockfile, five strict TS flags and the 90% lines / 85% branches gate remain unchanged.
+- Public index now exposes initialState, release, callIt, resolve and previewResponse
+  with locked signatures. EngineError and its code union are type exports; internal
+  helpers and tunable utility rules stay out of the runtime public surface.
+- Additive releasedAttendeeIds tracks releases authoritatively, preventing re-entry
+  without reading narrative logs. Existing state fields were retained.
+- Engine state actions and materialized-response evaluation need no live content lookup;
+  they import no content. ContentPack-based pool lookup/materialization stays in task 06,
+  and the live pack remains task 07. No stub pack or fabricated live event was added.
+
+Review splits, each authored code commit below 400 changed lines:
+
+- **04a / f273eb0 (266 lines):** starting state, owner/minimum-safe release, counter-based
+  Call it endings, typed programmer errors, authoritative release tracking and frozen fixtures/tests.
+- **04b / 7eb7a14 (296 lines):** single applyEffect clamp implementation, pre-join integer
+  billing, attendance/booking effects, effective utility and read-only previews. Internal
+  rules tests inject synthetic utility weights rather than asserting live tuning.
+- **04c.1 / 7474f7c (167 lines):** atomic resolution, enabled-response decision quality,
+  fixed prior qualities, full-effect deadline crossing, decision-before-expiry priority,
+  callback n+2 scheduling/repeat/collision guards and public wrappers.
+- **04c.2 / 74bf417 (358 lines):** resolution edge cases and seeded valid-action properties.
+  Test files remain below 300 lines; engine helpers carry design-section TSDoc.
+
+Verification evidence:
+
+- Typecheck, zero-warning ESLint/Prettier and **106 unit/property tests passed**.
+  Core coverage: **187/188 lines (99.47%)**, **141/141 branches (100%)** across all existing
+  core files. Only the prior unreachable weighted-ticket guard is uncovered.
+- fast-check seed 41004: 150 generated seed/action sequences, up to 35 steps, each replayed.
+  Frozen-input nonmutation, preview/result agreement, P/R bounds, unique legal headcounts,
+  nondecreasing clocks and integer cost pass. This is transition evidence; full draw runs,
+  50-turn termination, goldens and simulation remain scheduled later.
+- Fixed fixtures cover refusals/new snapshots, pending-speaker release, disabled experts,
+  zero-minute email, independent park count, short booking already expired, full billing
+  past deadlines, simultaneous success/expiry, designated joins, no re-entry, persisted
+  quality, callback repeats/collisions/illegal contexts, ended actions and malformed effects.
+- Preview does not log, increment turns or schedule callbacks. Resolution records narrative
+  resolve/join entries at the post-effect minute; quality uses pre-resolution state. Log
+  contents never determine action legality, counters or endings.
+- Build/size passed: **70,407 / 122,880 gzip JS bytes**, deployed images/fonts **0 / 409,600**.
+- **18 E2E checks passed** across Pixel 7 Chromium, iPhone 14 WebKit and desktop Chromium,
+  no browser errors, retries or skips. Existing shell/probe behavior remains intact.
+- Original 18 seeded lint violations rejected; 3 legal imports accepted; 24-package allowlist
+  and all five TS flags verified. Document consistency and whitespace checks passed.
+- Reports: coverage/coverage-summary.json and index.html, test-results/unit.xml and
+  e2e.json, playwright-report/index.html. No threshold, test or dependency was weakened.
+
+Outstanding issues and next task:
+
+- No task 04 blocker or known implementation defect. The requirements-not-met reason key
+  is an opaque engine identifier, not player copy; its display text belongs in future content/UI.
+- Task 02 Android LinkedIn behavior remains unverified with Harry's accepted deferral;
+  verify before release. No Android success is inferred.
+- **Next task: 05 — utility, score and titles, with exact worked-example fixtures.**
+  Internal utility evaluation already exists because task 04 decision records require it;
+  task 05 adds score/title APIs. Draw distribution, fairness and scheduler consumption remain
+  task 06. Stop here; no later task code was added.
