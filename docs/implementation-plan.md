@@ -536,8 +536,8 @@ Review splits, each authored code commit below 400 changed lines:
 
 Verification evidence:
 
-- Typecheck, zero-warning ESLint/Prettier and **106 unit/property tests passed**.
-  Core coverage: **187/188 lines (99.47%)**, **141/141 branches (100%)** across all existing
+- Typecheck, zero-warning ESLint/Prettier and **108 unit/property tests passed**.
+  Core coverage: **188/189 lines (99.47%)**, **141/141 branches (100%)** across all existing
   core files. Only the prior unreachable weighted-ticket guard is uncovered.
 - fast-check seed 41004: 150 generated seed/action sequences, up to 35 steps, each replayed.
   Frozen-input nonmutation, preview/result agreement, P/R bounds, unique legal headcounts,
@@ -568,3 +568,8 @@ Outstanding issues and next task:
   Internal utility evaluation already exists because task 04 decision records require it;
   task 05 adds score/title APIs. Draw distribution, fairness and scheduler consumption remain
   task 06. Stop here; no later task code was added.
+
+- Final task 04 review added maximum-ten-minute effect validation, callback minimum-one-minute
+  enforcement and explicit room-booked deadline-path checks, with regressions. Reran all
+  active local gates: 108 unit/property and 18 E2E passes, core 188/189 lines and 141/141 branches.
+  [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4) contains task 04; it is unmerged.

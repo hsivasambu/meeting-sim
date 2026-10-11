@@ -21,6 +21,8 @@ Resolution rechecks requirements after releases, values only enabled responses a
 state, records null for one/equal-valued choices, and preserves every earlier quality. It then
 records effects/joins and advances the turn, with decision ahead of time-expired. Narrative
 resolve/join entries use the resulting minute; they are never an input to rules.
+Effects allow at most ten minutes; zero minutes require email and are forbidden for callbacks.
+Every room-booked path explicitly supplies its 45/60-minute deadline.
 Callbacks schedule from the old turn at n+2, with approved parent/target/technique checks and
 no repeated target or due-turn collision. They are not consumed here: draw/fairness/callback
 consumption belong to task 06. Ended meetings cannot resolve more events.

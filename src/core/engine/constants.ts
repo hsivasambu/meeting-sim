@@ -70,3 +70,5 @@ export const CALLBACK_TARGETS: Readonly<Partial<Record<string, string>>> = {
 };
 export const ARRIVAL_ATTENDEES: Readonly<Partial<Record<string, AttendeeId>>> =
   { legal: 'legal', 'vp-joins': 'vp' };
+
+export const MAX_RESPONSE_MINUTES = 10;

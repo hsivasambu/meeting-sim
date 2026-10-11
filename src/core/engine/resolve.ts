@@ -26,9 +26,15 @@ function validateContext(event: PresentedEvent, response: Response): void {
       (joins.length !== ONE || joins[ZERO] !== expected))
   )
     throw new EngineError('invalid-join');
-  if (response.effect.bookingEnd !== undefined && event.id !== 'room-booked')
+  if (
+    (response.effect.bookingEnd !== undefined) !==
+    (event.id === 'room-booked')
+  )
     throw new EngineError('invalid-effect');
-  if (response.effect.minutes === ZERO && response.technique !== 'email')
+  if (
+    response.effect.minutes === ZERO &&
+    (response.technique !== 'email' || event.kind === 'callback')
+  )
     throw new EngineError('invalid-effect');
 }
 function schedule(

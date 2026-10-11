@@ -266,3 +266,17 @@ it('provides the locked public signatures without exposing tuning or live conten
     turn: 1,
   });
 });
+
+it('rejects zero-minute callbacks and omitted room-booked deadline paths', () => {
+  const response: Response = {
+    ...fixtureResponse,
+    technique: 'email',
+    effect: { minutes: 0 },
+  };
+  expect(() =>
+    run(pending([response], {}, { id: 'support-follow-up', kind: 'callback' })),
+  ).toThrow('invalid-effect');
+  expect(() =>
+    run(pending([fixtureResponse], {}, { id: 'room-booked' })),
+  ).toThrow('invalid-effect');
+});

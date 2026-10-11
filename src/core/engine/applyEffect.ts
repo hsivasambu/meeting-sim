@@ -1,5 +1,6 @@
 import {
   ZERO,
+  MAX_RESPONSE_MINUTES,
   PROGRESS_MAX,
   RISKS_MAX,
   MAX_HEADCOUNT,
@@ -19,6 +20,7 @@ function validateEffect(effect: Effect): void {
   if (
     !Number.isSafeInteger(effect.minutes) ||
     effect.minutes < ZERO ||
+    effect.minutes > MAX_RESPONSE_MINUTES ||
     !Number.isSafeInteger(effect.progress ?? ZERO) ||
     !Number.isSafeInteger(effect.risks ?? ZERO) ||
     (effect.bookingEnd !== undefined &&

@@ -72,6 +72,7 @@ it('returns a disabled preview and throws on disabled internal valuation', () =>
 });
 it.each([
   { minutes: -1 },
+  { minutes: 11 },
   { minutes: 0.5 },
   { minutes: NaN },
   { minutes: 1, progress: Infinity },
