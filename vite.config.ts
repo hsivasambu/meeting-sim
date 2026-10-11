@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { resolve } from 'node:path';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
@@ -6,6 +7,12 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
     assetsDir: 'bundles',
+    rolldownOptions: {
+      input: {
+        main: resolve(import.meta.dirname, 'index.html'),
+        probe: resolve(import.meta.dirname, 'probe.html'),
+      },
+    },
   },
   test: {
     environment: 'node',
@@ -27,3 +34,4 @@ export default defineConfig({
     },
   },
 });
+
