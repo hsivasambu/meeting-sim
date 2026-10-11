@@ -54,7 +54,8 @@ For each device:
 
 Fill the evidence table in [ADR 0002](adr/0002-linkedin-capability-probe.md). Use **pass**,
 **fail**, **unavailable**, or **not run**, and explain unavailable/failed actions.
-Only after both device reports are recorded should the later share UI's action order be chosen.
+Harry accepted task 02 with Android explicitly deferred; ADR 0002 records the risk and
+capability-based share order. The Android release check remains required.
 No game scoring, analytics, storage or event content is involved in this diagnostic.
 
 ## GitHub protection resolved
@@ -64,7 +65,7 @@ Main requires pull requests and the strict `quality` check, including administra
 linear history is required, force pushes/deletions are disabled, and only squash merges
 are allowed. The earlier private-repository HTTP 403 restriction is resolved.
 
-## Supplied preview: authentication blocker
+## Supplied preview: access restored
 
 Preview: https://meeting-e9pihcccd-hsivasambus-projects.vercel.app/probe.html
 
@@ -75,6 +76,10 @@ returned HTTP 302 to Vercel SSO. In the Vercel project, open Deployment Protecti
 turn off Vercel Authentication and Save. This exposes existing project deployments;
 GitHub public visibility does not change this setting. Verify the preview opens in a
 private browser window and confirm its source commit before repeating the real-device probe.
+
+Latest October 11 follow-up: anonymous preview access returns HTTP 200. Harry reports
+all probe tests passed on iOS and accepted task 02 with Android deferred as a risk in ADR 0002.
+The initial authentication blocker above is historical and has been resolved.
 
 ## Local verification
 

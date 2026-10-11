@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Task 01 complete. Task 02 automated implementation verified locally and in hosted CI; 02c preview created but blocked by Vercel Authentication; real-device acceptance pending. Repository public and main protection verified. No gameplay or balance implementation has started.
+Status: D01–D26 remain resolved. Tasks 01 and 02 complete. Task 02 accepted on the reported iOS probe pass with Harry-approved Android evidence deferral (risk in ADR 0002). Repository public, main protected, preview accessible. Next task: 03. No gameplay or balance implementation has started.
 
 ## Purpose and source of truth
 
@@ -329,7 +329,7 @@ Evidence:
   Hosted [quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38174153522)
   passed on code commit `0989b78`. Downloaded and verified the published quality-reports artifact: 10 unit tests with zero failures/errors; 18 E2E passes, zero skipped/unexpected/flaky; coverage and Playwright HTML reports present. Artifact size: 361,651 bytes. An initial Vite-config formatting failure was corrected without changing any gate.
 
-Outstanding acceptance items:
+Initial outstanding acceptance items (superseded by follow-ups below):
 
 - **02c / V1:** Harry creates the Vercel project, supplies the preview URL/commit, and records
   real iOS/Android LinkedIn outcomes in ADR 0002. All real-device rows remain Not run.
@@ -365,3 +365,29 @@ Outstanding acceptance items:
 
 - Follow-up checks: document links, D01–D26 register and assistant-rule consistency passed;
   Prettier formatting and git diff whitespace checks passed. No code gates changed.
+
+## Task 02 closure — October 11, 2026
+
+Status: **Complete and accepted by Harry, with Android evidence explicitly deferred.**
+
+- Harry reports all real-device LinkedIn probe tests passed on iOS and requests closure.
+  Model, OS/LinkedIn versions, raw report and exact tested commit were not supplied;
+  [ADR 0002](adr/0002-linkedin-capability-probe.md) records user-reported results and limits.
+- Harry has no Android device and explicitly directed proceeding with that risk.
+  Android is Not tested, not passed. The evidence exception does not change an automated
+  gate or the technical spec's two-platform manual release checklist.
+- Anonymous preview verification returned HTTP 200, resolving the Vercel login blocker.
+  Repository visibility PUBLIC and main protection were verified in the prior follow-up.
+- Hosted [quality check](https://github.com/hsivasambu/meeting-sim/actions/runs/38175379739)
+  passed on bfd0918; Vercel reported successful deployment for that PR head.
+- Later sharing retains the spec's native-PNG-first capability-based order and all
+  download/copy/selectable-text and visible-image fallbacks. Verify real Android before release.
+- Remaining risk: unverified Android behavior and limited iOS metadata/build attribution.
+  No known implementation defect remains; supplement device evidence when available.
+- Closure checks: typecheck, zero-warning lint/format and 10 unit/property tests passed;
+  build/size passed (70,407 / 122,880 gzip JS bytes; media 0 / 409,600 bytes);
+  all 18 E2E checks passed without retries or skips. Documentation checks follow below.
+- **Next task: 03 (contracts/RNG).** Task 02 stops here; no task 03 work was started.
+
+- Document consistency, Prettier and whitespace checks passed for the closure update.
+  PR #1 is prepared for review with the iOS evidence and Android risk; it remains unmerged.
