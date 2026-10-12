@@ -1,0 +1,125 @@
+{
+  "seed": "golden-cancel",
+  "actions": [
+    {
+      "type": "draw"
+    },
+    {
+      "type": "release",
+      "who": "gary"
+    },
+    {
+      "type": "callIt"
+    }
+  ],
+  "finalState": {
+    "seed": "golden-cancel",
+    "turn": 0,
+    "minute": 0,
+    "bookingEnd": 60,
+    "progress": 0,
+    "risks": 0,
+    "personMinutes": 0,
+    "present": ["priya", "dev", "sam", "morgan", "jordan"],
+    "releasedAttendeeIds": ["gary"],
+    "peakHeadcount": 6,
+    "seenEventIds": ["alpha"],
+    "spokenAttendeeIds": ["sam"],
+    "parkedCount": 0,
+    "substantiveDrawCount": 1,
+    "previousDrawWasUncommonNegative": false,
+    "scheduled": [],
+    "current": {
+      "id": "alpha",
+      "kind": "substantive",
+      "rarity": "common",
+      "negative": false,
+      "speaker": "sam",
+      "line": "Fixture alpha with expert.",
+      "responses": [
+        {
+          "id": "clean",
+          "label": "Fixture clean",
+          "technique": "owner",
+          "effect": {
+            "minutes": 3,
+            "progress": 50
+          },
+          "line": "Fixture clean result."
+        },
+        {
+          "id": "risky",
+          "label": "Fixture risky",
+          "technique": "timebox",
+          "effect": {
+            "minutes": 1,
+            "progress": 50,
+            "risks": 2
+          },
+          "line": "Fixture risky result."
+        },
+        {
+          "id": "email",
+          "label": "Fixture email",
+          "technique": "email",
+          "effect": {
+            "minutes": 0
+          },
+          "line": "Fixture email result."
+        },
+        {
+          "id": "slow",
+          "label": "Fixture slow",
+          "technique": "hear",
+          "effect": {
+            "minutes": 10
+          },
+          "line": "Fixture slow result."
+        },
+        {
+          "id": "park",
+          "label": "Fixture park",
+          "technique": "park",
+          "effect": {
+            "minutes": 1,
+            "risks": 1,
+            "callback": {
+              "eventId": "alpha-return",
+              "afterTurns": 2
+            }
+          },
+          "line": "Fixture callback scheduled."
+        }
+      ]
+    },
+    "decisions": [],
+    "log": [
+      {
+        "type": "draw",
+        "turn": 0,
+        "minute": 0,
+        "eventId": "alpha",
+        "speaker": "sam"
+      },
+      {
+        "type": "release",
+        "turn": 0,
+        "minute": 0,
+        "who": "gary"
+      },
+      {
+        "type": "call-it",
+        "turn": 0,
+        "minute": 0
+      }
+    ],
+    "phase": "ended",
+    "ending": "cancelled"
+  },
+  "score": {
+    "outcome": 0,
+    "efficiency": 0,
+    "decisions": 0,
+    "total": 0
+  }
+}

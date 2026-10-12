@@ -1,5 +1,6 @@
 import { engineRules } from '../content/engineRules';
-// State, evaluation and scoring are implemented; draw lands in task 06.
+// State, evaluation, scoring and injected draw are implemented.
+// drawEvent/getDrawCandidates bind here when task 07 supplies the reviewed live pack.
 // This is the sole public surface and, when task 07 supplies it, the live-pack importer.
 export type {
   AttendeeId,

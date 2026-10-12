@@ -1,0 +1,702 @@
+{
+  "seed": "golden-timeout",
+  "actions": [
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "slow"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "slow"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    }
+  ],
+  "finalState": {
+    "seed": "golden-timeout",
+    "turn": 22,
+    "minute": 60,
+    "bookingEnd": 60,
+    "progress": 0,
+    "risks": 0,
+    "personMinutes": 360,
+    "present": ["priya", "dev", "sam", "morgan", "gary", "jordan"],
+    "releasedAttendeeIds": [],
+    "peakHeadcount": 6,
+    "seenEventIds": ["beta", "alpha"],
+    "spokenAttendeeIds": ["priya", "sam"],
+    "parkedCount": 0,
+    "substantiveDrawCount": 2,
+    "previousDrawWasUncommonNegative": false,
+    "scheduled": [],
+    "current": null,
+    "decisions": [
+      {
+        "turn": 0,
+        "eventId": "beta",
+        "responseId": "slow",
+        "quality": 0,
+        "qualityFraction": {
+          "numerator": "0",
+          "denominator": "284"
+        }
+      },
+      {
+        "turn": 1,
+        "eventId": "alpha",
+        "responseId": "slow",
+        "quality": 0,
+        "qualityFraction": {
+          "numerator": "0",
+          "denominator": "284"
+        }
+      },
+      {
+        "turn": 2,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 3,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 4,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 5,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 6,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 7,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 8,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 9,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 10,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 11,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 12,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 13,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 14,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 15,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 16,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 17,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 18,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 19,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 20,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 21,
+        "eventId": "filler",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      }
+    ],
+    "log": [
+      {
+        "type": "draw",
+        "turn": 0,
+        "minute": 0,
+        "eventId": "beta",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 0,
+        "minute": 10,
+        "eventId": "beta",
+        "responseId": "slow",
+        "technique": "hear",
+        "line": "Fixture slow result."
+      },
+      {
+        "type": "draw",
+        "turn": 1,
+        "minute": 10,
+        "eventId": "alpha",
+        "speaker": "sam"
+      },
+      {
+        "type": "resolve",
+        "turn": 1,
+        "minute": 20,
+        "eventId": "alpha",
+        "responseId": "slow",
+        "technique": "hear",
+        "line": "Fixture slow result."
+      },
+      {
+        "type": "draw",
+        "turn": 2,
+        "minute": 20,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 2,
+        "minute": 22,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 3,
+        "minute": 22,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 3,
+        "minute": 24,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 4,
+        "minute": 24,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 4,
+        "minute": 26,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 5,
+        "minute": 26,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 5,
+        "minute": 28,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 6,
+        "minute": 28,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 6,
+        "minute": 30,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 7,
+        "minute": 30,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 7,
+        "minute": 32,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 8,
+        "minute": 32,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 8,
+        "minute": 34,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 9,
+        "minute": 34,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 9,
+        "minute": 36,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 10,
+        "minute": 36,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 10,
+        "minute": 38,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 11,
+        "minute": 38,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 11,
+        "minute": 40,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 12,
+        "minute": 40,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 12,
+        "minute": 42,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 13,
+        "minute": 42,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 13,
+        "minute": 44,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 14,
+        "minute": 44,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 14,
+        "minute": 46,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 15,
+        "minute": 46,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 15,
+        "minute": 48,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 16,
+        "minute": 48,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 16,
+        "minute": 50,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 17,
+        "minute": 50,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 17,
+        "minute": 52,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 18,
+        "minute": 52,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 18,
+        "minute": 54,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 19,
+        "minute": 54,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 19,
+        "minute": 56,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 20,
+        "minute": 56,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 20,
+        "minute": 58,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      },
+      {
+        "type": "draw",
+        "turn": 21,
+        "minute": 58,
+        "eventId": "filler",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 21,
+        "minute": 60,
+        "eventId": "filler",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture silence acknowledged."
+      }
+    ],
+    "phase": "ended",
+    "ending": "time-expired"
+  },
+  "score": {
+    "outcome": 0,
+    "efficiency": 0,
+    "decisions": 0,
+    "total": 0
+  }
+}

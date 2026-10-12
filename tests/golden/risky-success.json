@@ -1,0 +1,102 @@
+{
+  "seed": "golden-risky",
+  "actions": [
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "risky"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "risky"
+    }
+  ],
+  "finalState": {
+    "seed": "golden-risky",
+    "turn": 2,
+    "minute": 2,
+    "bookingEnd": 60,
+    "progress": 100,
+    "risks": 4,
+    "personMinutes": 12,
+    "present": ["priya", "dev", "sam", "morgan", "gary", "jordan"],
+    "releasedAttendeeIds": [],
+    "peakHeadcount": 6,
+    "seenEventIds": ["beta", "alpha"],
+    "spokenAttendeeIds": ["priya", "sam"],
+    "parkedCount": 0,
+    "substantiveDrawCount": 2,
+    "previousDrawWasUncommonNegative": false,
+    "scheduled": [],
+    "current": null,
+    "decisions": [
+      {
+        "turn": 0,
+        "eventId": "beta",
+        "responseId": "risky",
+        "quality": 1,
+        "qualityFraction": {
+          "numerator": "284",
+          "denominator": "284"
+        }
+      },
+      {
+        "turn": 1,
+        "eventId": "alpha",
+        "responseId": "risky",
+        "quality": 1,
+        "qualityFraction": {
+          "numerator": "284",
+          "denominator": "284"
+        }
+      }
+    ],
+    "log": [
+      {
+        "type": "draw",
+        "turn": 0,
+        "minute": 0,
+        "eventId": "beta",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 0,
+        "minute": 1,
+        "eventId": "beta",
+        "responseId": "risky",
+        "technique": "timebox",
+        "line": "Fixture risky result."
+      },
+      {
+        "type": "draw",
+        "turn": 1,
+        "minute": 1,
+        "eventId": "alpha",
+        "speaker": "sam"
+      },
+      {
+        "type": "resolve",
+        "turn": 1,
+        "minute": 2,
+        "eventId": "alpha",
+        "responseId": "risky",
+        "technique": "timebox",
+        "line": "Fixture risky result."
+      }
+    ],
+    "phase": "ended",
+    "ending": "decision"
+  },
+  "score": {
+    "outcome": 200,
+    "efficiency": 300,
+    "decisions": 300,
+    "total": 800
+  }
+}

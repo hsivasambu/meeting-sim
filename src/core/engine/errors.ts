@@ -9,6 +9,7 @@ export type EngineErrorCode =
   | 'invalid-rules'
   | 'invalid-effect'
   | 'invalid-join'
+  | 'invalid-pool'
   | 'invalid-schedule';
 /** Programmer errors from Design Doc v2 → Event schema and roster → Engine API. */
 export class EngineError extends Error {
