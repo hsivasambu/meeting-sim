@@ -89,8 +89,8 @@ Each attendee has one topic tag. Events that touch a topic check whether that pe
 | Morgan | VP, Synergistic Storytelling | Marketing | Yes; marketing events lose their best response |
 | Gary | Senior Strategic Scope Architect | Scope (comic) | Yes; no downside, which players should discover |
 | Jordan | Cross-Functional FYI Liaison | FYI (comic) | Yes; no downside |
-| The VP | Executive Vice President of Dropping In | Escalation | Yes, subject to the two-person minimum |
-| Legal | Associate General Counsel, Risk Appetite | Escalation | Yes; legal events lose their best response |
+| The VP | Executive Vice President of Dropping In | Escalation | Yes, subject to the two-person minimum; staying enables keeping the room |
+| Legal | Associate General Counsel, Risk Appetite | Escalation | Yes; staying enables clearing press claims |
 
 All “Yes” release permissions are subject to the two-person minimum. The eight listed attendees are the entire roster. Only `legal` and `vp-joins` add attendees, one each; all responses to those arrival events include the join, applied on resolution. Each can join only once per run; released people never rejoin. Arrival dialogue may be attributed to the person at the door before they join. No duplicate IDs or anonymous seats are allowed. `legal` stays eligible without Morgan and uses Priya as its absent-speaker variant.
 
