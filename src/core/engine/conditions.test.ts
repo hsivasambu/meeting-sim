@@ -52,7 +52,15 @@ it('treats zero bounds as present, without deriving conditions from log or decis
   const narrated: MeetingState = {
     ...state,
     log: [{ type: 'release', who: 'sam', turn: 0, minute: 0 }],
-    decisions: [{ turn: 0, eventId: 'fake', responseId: 'fake', quality: 0 }],
+    decisions: [
+      {
+        turn: 0,
+        eventId: 'fake',
+        responseId: 'fake',
+        quality: 0,
+        qualityFraction: { numerator: '0', denominator: '1' },
+      },
+    ],
   };
   expect(matchesCondition(narrated, { present: ['sam'] })).toBe(true);
 });

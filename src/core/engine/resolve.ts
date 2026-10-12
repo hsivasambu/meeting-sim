@@ -4,6 +4,7 @@ import { ONE, ZERO, PROGRESS_MAX, CALLBACK_DELAY } from './constants';
 import { assertRunning, EngineError } from './errors';
 import { evaluateResponse } from './value';
 import type {
+  DecisionRecord,
   MeetingState,
   PresentedEvent,
   Response,
@@ -26,7 +27,7 @@ function quality(
   event: PresentedEvent,
   response: Response,
   rules: UtilityRules,
-): number | null {
+): Pick<DecisionRecord, 'quality' | 'qualityFraction'> {
   const utilities = event.responses
     .filter((option) => matchesCondition(state, option.requires))
     .map((option) => evaluateResponse(state, option, rules).utilityNumerator);
@@ -34,12 +35,17 @@ function quality(
   if (first === undefined) throw new EngineError('disabled-response');
   const worst = utilities.reduce((a, b) => (a < b ? a : b), first);
   const best = utilities.reduce((a, b) => (a > b ? a : b), first);
-  return best === worst
-    ? null
-    : fractionNumber(
-        evaluateResponse(state, response, rules).utilityNumerator - worst,
-        best - worst,
-      );
+  if (best === worst) return { quality: null, qualityFraction: null };
+  const numerator =
+    evaluateResponse(state, response, rules).utilityNumerator - worst;
+  const denominator = best - worst;
+  return {
+    quality: fractionNumber(numerator, denominator),
+    qualityFraction: {
+      numerator: numerator.toString(),
+      denominator: denominator.toString(),
+    },
+  };
 }
 function resolutionLog(
   state: MeetingState,
@@ -84,7 +90,7 @@ function finishResolution(
     turn: state.turn,
     eventId: event.id,
     responseId: response.id,
-    quality: quality(state, event, response, rules),
+    ...quality(state, event, response, rules),
   };
   return {
     ...next,

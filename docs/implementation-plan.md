@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–04 complete; task 04 state transitions/shared evaluator verified locally and in hosted CI. Task 02 Android evidence remains deferred (ADR 0002). Next task: 05. No task 05 scoring/title implementation has started.
+Status: D01–D26 remain resolved. Tasks 01–04 complete. Task 05 review fixes pass all active local Node 24 gates; delivery is pending its commit, PR and hosted evidence. Task 02 Android evidence remains deferred (ADR 0002). Next blueprint task after task 05 delivery: 06.
 
 ## Purpose and source of truth
 
@@ -32,7 +32,7 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 | 02   | Test and CI infrastructure: Vitest + fast-check, Playwright config, `.github/workflows/ci.yml`, shell E2E smoke. LinkedIn capability probe page on a Vercel preview (V1).                                                                                                        | 01b             | CI uses the frozen lockfile and publishes reports; probe results for LinkedIn on iOS and Android recorded in an ADR.                                                                                               |
 | 03   | Contracts: `src/core/engine/{types,constants,rng,index}.ts`, condition helpers, `fixtures/` packs, colocated tests.                                                                                                                                                              | 01b             | Types match the spec (D14); only `index.ts` imports content (D13); RNG vectors and per-turn stream tests; exact weighted-selection formula; constants centralized.                                                 |
 | 04   | State transitions and shared evaluator: `state.ts`, `resolve.ts`, `applyEffect`, typed errors, log and decision records; core property tests.                                                                                                                                    | 03              | Starting six, legal releases, owner protection, integer person-minutes, booking changes, end priority, clamping, invalid actions and immutability tested on fixture packs; counters authoritative (D15).           |
-| 05   | Utility, score and titles: internal `value.ts`, `score.ts` (with `formatCost`), `titleRules.ts`, score fixtures.                                                                                                                                                                 | 04              | Six exact worked examples; rate-independent scores; all boundaries and title predicates verified.                                                                                                                  |
+| 05   | Utility, score and titles: internal `value.ts`, `score.ts` (with `formatCost`), `titleRules.ts`, score fixtures.                                                                                                                                                                 | 04              | **Complete locally, October 11, 2026.** Six exact examples, rate independence, boundaries and all title predicates; 189 unit/property and 18 E2E passes; see task 05 result.                                       |
 | 06   | Event selection and callback scheduler: `draw.ts`; at least five fixture goldens (D21).                                                                                                                                                                                          | 03, 04          | Weighted eligibility, unseen-family rules, fairness, callbacks, idempotent pending draw and filler fallback tested; goldens cover cancellation, clean success, risky success, timeout, and callback plus absence.  |
 | 06b  | Content table `docs/content-table.md`: all 17 families × variants × responses, the 3 callback events, filler and epilogues. Design task; runs in parallel with 03–06.                                                                                                            | 00b             | Every response has technique, requires, minutes, progress, risks, callback, label and line; a hand check shows a sensible player can reach P = 100 in about 10 turns within 60 minutes; Harry's approval recorded. |
 | 07a  | Content validator and content index.                                                                                                                                                                                                                                             | 04–06           | `validateContent` rules implemented and tested on valid and invalid fixture packs.                                                                                                                                 |
@@ -55,13 +55,13 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 ## Plain-language task guide and easy checks
 
 This explains the same tasks above; it does not change their scope, dependencies or
-acceptance rules. **Now** means the check is available on the current task 04 branch;
-**Later** means wait until that task is implemented. Tasks 00–04 (including their splits)
-are implemented; task 04 is in [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4)
-and is not merged yet. Its checks require that branch rather than main.
+acceptance rules. **Now** means the check is available on the current task 05 branch;
+**Later** means wait until that task is implemented. Tasks 00–05 (including their splits)
+are implemented; task 05 is on feat/task-05-score-titles. Task 04 is in [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4)
+and is not merged yet. Checks including task 05 require feat/task-05-score-titles rather than main.
 
 The browser currently shows the title/objective and the separate sharing probe. The
-first playable meeting is task **12a**. Tasks 03–04 work under the hood, so their easiest
+first playable meeting is task **12a**. Tasks 03–05 work under the hood, so their easiest
 checks are automated tests. A simple check is a useful spot check, not a substitute for
 the technical spec's full gates or release checklist. Android LinkedIn testing is still
 unverified under the accepted task 02 deferral.
@@ -75,7 +75,7 @@ unverified under the accepted task 02 deferral.
 | 02   | Add automatic checks and a small page that tests sharing inside LinkedIn.                                 | **Now — browser:** Use the [probe procedure](task-02-setup.md): the image should appear, and share/copy/save actions should work or clearly report their fallback. iOS passed by Harry's report; Android is not verified.                                        |
 | 03   | Give the game a common vocabulary and repeatable “shuffle,” like using the same numbered deck twice.      | **Now — terminal:** Run Tests below. Look for rng.test.ts, weighted.test.ts and conditions.test.ts passing. They check repeatable shuffling, correct odds and who qualifies for an option.                                                                       |
 | 04   | Make each choice update the meeting correctly, without changing the old state behind your back.           | **Now — terminal:** Run Tests. Look for state.test.ts, evaluation.test.ts, resolve.test.ts and transitions.test.ts passing. They cover owner protection, costs, expert departures and winning at the deadline. There is no player interface for these rules yet. |
-| 05   | Turn the finished meeting into a score and earned badges.                                                 | **Later — terminal:** Run Tests and inspect the six scoring examples against the design's worked-example table. The score shown in the browser arrives with later UI tasks.                                                                                      |
+| 05   | Turn the finished meeting into a score and earned badges.                                                 | **Now — terminal:** Run Tests and inspect the six scoring examples against the design's worked-example table. The score shown in the browser arrives with later UI tasks.                                                                                        |
 | 06   | Pick the next meeting topic, remember used topics and bring parked issues back on time.                   | **Later — terminal:** Run Tests; draw/callback tests and the five saved example runs should pass. Browser topic flow arrives in 12a.                                                                                                                             |
 | 06b  | Write the script: every topic, choice, consequence and ending.                                            | **Later — read:** Open docs/content-table.md. Read one topic with its expert present and absent, then follow its choices and consequences. Approve the table before it becomes game data.                                                                        |
 | 07a  | Build a proofreader that rejects broken game data.                                                        | **Later — terminal:** Run Tests; content-validation checks should pass for valid packs and reject the deliberately broken fixtures. No new screen to test.                                                                                                       |
@@ -106,8 +106,8 @@ Check — catches type/style errors and runs all unit/property tests with covera
 & '.tools/fnm/fnm.exe' exec --using 24 cmd /c corepack pnpm check
 ```
 
-Tests — the simplest under-the-hood check for tasks 03 and 04. All tests should pass;
-at this update there are 129 tests. It prints each test file and writes a readable
+Tests — the simplest under-the-hood check for tasks 03–05. All tests should pass;
+at this update there are 189 tests. It prints each test file and writes a readable
 coverage report to coverage/index.html. A green test run is evidence for the tested
 rules; it does not mean the unfinished game features exist.
 
@@ -284,13 +284,13 @@ Record progress below by replacing `not started` with `in progress`, `blocked: D
 | Milestone            | Tasks         | Status                                                                                                 |
 | -------------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
 | A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002) |
-| B — Headless game    | 04–07, 06b    | 04 complete; 05–07 and 06b not started                                                                 |
+| B — Headless game    | 04–07, 06b    | 04 complete; 05 locally verified, delivery pending; 06–07 and 06b not started                          |
 | B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                            |
 | C — Balance evidence | 08b–10        | Not started                                                                                            |
 | D — Browser game     | 11b–15        | Not started                                                                                            |
 | E — Release          | 16–17         | Not started                                                                                            |
 
-The next blueprint task is 05: utility/score/title modules and exact scoring fixtures. Tasks 01–04 are complete; Android evidence remains explicitly deferred (ADR 0002). No task 05 implementation has started.
+The next blueprint task is 06: event selection and callback scheduler, including fixture goldens. Tasks 01–04 are complete; task 05 delivery is pending hosted verification. Android evidence remains explicitly deferred (ADR 0002). No task 06 implementation has started.
 
 ## Task 01 completion — October 11, 2026
 
@@ -733,3 +733,102 @@ Hosted review evidence:
   the same active gates. All review findings are resolved, with the accepted PR-size preference
   recorded. No task 04 blocker remains; Android LinkedIn testing remains an accepted release risk.
 - **Task 04 complete. Next task: 05. Stop here; no task 05 work started.**
+
+## Task 05 initial local result — October 11, 2026
+
+Status: **Local implementation under review; delivery pending commit, PR and Node 24 hosted checks** on `feat/task-05-score-titles`.
+Sources: Design Doc v2 Scoring (including all six worked examples) and Endings/Titles;
+Technical Spec Engine contracts, Money without floating-point drift, Scoring module
+and Testing and quality gates. D01–D26 and all formulas/tuning values remain unchanged.
+
+Dependencies and implementation:
+
+- Task 04 is present at starting head `d5144a5`, with its transition/evaluation modules,
+  persisted decision qualities, counters and recorded hosted evidence. The clean local
+  dependency baseline passed typecheck, lint/format and all 129 prior tests.
+  Task 04's unmerged PR is not a missing code dependency on this branch.
+- Added `score.ts`: Outcome/Efficiency/Decisions, integer component rounding followed
+  by summation, `displayCost` and the sole `formatCost` formatter. Scoring reads
+  integer person-minutes and persisted qualities, never display dollars or narrative logs.
+- Reused task 04's internal `value` and shared evaluator unchanged. Exposed its existing
+  decimal-fraction helper internally so decision scoring and unrounded title-quality
+  comparisons use exact decimal arithmetic. No numeric tolerance, BigInt state data,
+  new public helper, or retrospective revaluation of decisions was introduced.
+- Efficiency multiplies integer numerators before dividing; decision rounding uses
+  exact fractions. Regressions pin half-up rounding at P=15/pm=171 (32 efficiency)
+  and q=0.145 (44 Decisions), including repeated qualities and null records.
+- Added `titleRules.ts`: all twelve predicates from authoritative counters and the supplied
+  integer score; returns every earned ID once in priority 12,9,10,11,1,2,3,4,5,6,7,8.
+  When no collectible is earned, the API returns an empty array; future result UI owns the non-collectible
+  heading. Gary's delivered-line counter prevents an after-speaking release from earning
+  Gary-Free Zone. Names/copy, result UI and persistence remain their scheduled tasks.
+- Added `fixtures/scores.ts`, `score.test.ts` and `titleRules.test.ts` (60 new tests).
+  Public index adds only the locked score/title/cost APIs; all numbers are centralized.
+  No content table exists yet (task 06b); no event design or live title copy was invented.
+
+Final verification (Node 24.21.0 / pinned pnpm 10.34.6):
+
+- `pnpm check`: zero type errors, ESLint errors/warnings or format failures;
+  **189 tests in 17 files passed**. All six exact component/total examples and display
+  title priorities pass. Coverage includes null/zero qualities, P=99/100, R=0–5,
+  cost floor/reference/overrun, cancellation at minute zero, cheap early exits,
+  component rounding, every title threshold, required endings and counter/log separation.
+- Static-import display-rate mock changes only 1000/hour to 2400/hour: dollars change,
+  while all worked-example scores and title lists stay identical.
+- Seeded fast-check **51005 / 300 cases** covers integer scores in 0–1000, component
+  sums, deterministic frozen-input reads and success Outcome above every failed Outcome.
+  The pre-existing transition, exact-utility and metadata regressions also remain green.
+- Core coverage across all 22 existing files: **282/284 lines (99.30%)** and
+  **210/216 branches (97.22%)**, above the unchanged 90%/85% gates.
+  New `score.ts` and `titleRules.ts`: **100% lines and branches**.
+- `pnpm build` and `pnpm size` pass: **70,407/122,880 gzip JS bytes**;
+  deployed images/fonts **0/409,600 bytes**.
+- `pnpm e2e`: **18 passed**, Pixel 7 Chromium, iPhone 14 WebKit and desktop Chromium,
+  with browser error checks enabled, no skips or retries. These verify the existing
+  shell/probe; a playable meeting and score display remain scheduled for later tasks.
+- Architecture verification: 18 seeded violations rejected, 3 legal imports accepted,
+  all 24 direct packages allowlisted and all five strict TS flags retained.
+  Document links, D01–D26 register, assistant rules, formatting and whitespace pass.
+- Evidence: `test-results/unit.xml`, `coverage/coverage-summary.json`,
+  `coverage/index.html`, `test-results/e2e.json`, `playwright-report/index.html`.
+  These are local reports; no hosted task 05 CI result is claimed. No tests,
+  thresholds, CI gates, dependencies, lockfile or scoring formula were weakened.
+
+Outstanding issues and next task:
+
+- No task 05 blocker remains. Android LinkedIn behavior retains the accepted task 02
+  deferral; efficiency-floor calibration remains diagnostic until task 10/release.
+- **Next task: 06 — event selection, fairness guards, callback scheduler and five
+  frozen-fixture goldens**, depending on completed tasks 03 and 04. Content table
+  task 06b remains separate and not started. Stop here; no task 06 code was added.
+
+## Task 05 review fixes and delivery — October 12, 2026
+
+Source: Harry's pasted Claude review. The named task-05-review.md was not present in the
+repository or original project folder; fixes follow the complete findings in the message.
+Dependency code is present from task 04 at d5144a5. PR #4 remains open, so this task's
+PR targets feat/task-04-transitions and can merge to main after its dependency does.
+No task 04 merge or task 06 implementation is included.
+
+- Fixed precision loss at resolution: DecisionRecord adds required qualityFraction with
+  exact integer numerator/denominator stored as decimal strings (null for ties). Numeric
+  quality remains a display approximation. Scoring/title thresholds consume exact fractions;
+  there is no rounded fallback or retrospective recomputation. JSON serialization and replay
+  are preserved; no BigInt value enters state. The additive contract is in the technical spec.
+- score and earnedTitles reject running meetings and null endings with EngineError("not-ended").
+  A previously running-state score test now ends through Call it before computing results;
+  its original quality and stability assertions remain intact.
+- Added six public-API integration cases, including resolve-produced qualities 2/3, 1, 1,
+  11/15. Their exact average is 0.85, Decisions is 255, and the early ending earns Played It
+  Right. Tests include ties, disabled choices, below-boundary/zero qualities, JSON round-trip,
+  display-approximation independence and both result API lifecycle guards.
+- Node 24.21.0 / pnpm 10.34.6: pnpm check passes **195 tests in 18 files**, zero type/lint/format
+  errors. All six design examples, twelve title rules and display-rate independence remain green.
+  Core coverage: **289/291 lines (99.31%)**, **216/222 branches (97.30%)**; unchanged 90%/85% gates.
+- Build/size pass: **70,407/122,880 gzip JS bytes**, images/fonts **0/409,600**. All **18 E2E**
+  cases pass across the three required profiles with zero retries/skips/browser errors.
+- Architecture probes reject 18 seeded violations and accept three legal imports. The 24-package
+  allowlist, five strict flags, unchanged dependency/lockfile, docs and whitespace checks pass.
+- Commit/PR and hosted evidence are pending below; the earlier “complete” claim is superseded.
+  Formulas, tuning values, thresholds and existing tests were not weakened. Android LinkedIn
+  testing remains the accepted release risk. Next task is 06 after task 05 delivery; stop here.

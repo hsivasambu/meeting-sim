@@ -1,5 +1,5 @@
 import { engineRules } from '../content/engineRules';
-// Task 04 adds state actions and preview/resolve; draw and scoring land in 05–06.
+// State, evaluation and scoring are implemented; draw lands in task 06.
 // This is the sole public surface and, when task 07 supplies it, the live-pack importer.
 export type {
   AttendeeId,
@@ -46,3 +46,5 @@ export function resolve(state: MeetingState, responseId: string): MeetingState {
     eventRules: engineRules,
   });
 }
+export { score, displayCost, formatCost } from './score';
+export { earnedTitles } from './titleRules';
