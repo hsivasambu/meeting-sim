@@ -31,6 +31,7 @@ export default defineConfig({
       include: [
         'sim/**/*.ts',
         'src/core/**/*.ts',
+        'src/store/**/*.ts',
         'scripts/sizeBudget.ts',
         'src/ui/probe/*.ts',
       ],
