@@ -113,6 +113,7 @@ meeting-sim/                   # at C:\dev\meeting-sim, outside OneDrive (D23)
 │  │  │  └─ index.ts          # the only public export surface; the only engine importer of content
 │  │  └─ content/
 │  │     ├─ engineRules.ts   # approved relationship metadata, data only
+│  │     ├─ storeConfig.ts   # seed byte/hex protocol and versioned persistence key, data only
 │  │     ├─ attendees.ts
 │  │     ├─ events/           # one file per event, named by event id
 │  │     ├─ titles.ts         # title names and copy
@@ -223,6 +224,10 @@ type ResponsePreview =
 
 interface DrawCandidate { readonly event: PresentedEvent; readonly probability: number }
 
+type ReleasePreview =
+  | { readonly enabled: true }
+  | { readonly enabled: false; readonly reasonKey: 'release-owner' | 'release-absent' | 'release-minimum' };
+
 interface ScoreBreakdown {
   readonly outcome: number; readonly efficiency: number;
   readonly decisions: number; readonly total: number;
@@ -258,6 +263,7 @@ initialState(seed: string): MeetingState
 drawEvent(state: MeetingState): MeetingState          // sets `current`
 resolve(state: MeetingState, responseId: string): MeetingState
 release(state: MeetingState, who: AttendeeId): MeetingState
+previewRelease(state: MeetingState, who: AttendeeId): ReleasePreview
 callIt(state: MeetingState): MeetingState
 score(state: MeetingState): ScoreBreakdown            // { outcome, efficiency, decisions, total }
 earnedTitles(state: MeetingState, score: ScoreBreakdown): TitleId[]
@@ -268,6 +274,17 @@ getDrawCandidates(state: MeetingState): readonly DrawCandidate[] // no RNG consu
 ```
 
 `value` is internal to the engine (`value.ts`); callers read utility from an enabled `previewResponse` (D24). `formatCost` is the only cost formatter used by the HUD, results card, share card and share text.
+
+`previewRelease` is a pure read-only check approved in [ADR 0004](adr/0004-store-integration-proposal.md).
+It requires a running meeting and otherwise throws the existing `EngineError('ended')`.
+It and `release` share the existing ordered owner → absent → minimum predicates,
+using canonical constants. Refusals retain the existing equivalent-snapshot behavior.
+The HUD reads the preview before offering confirm or reason and refreshes it from
+current state; UI/store never derive release eligibility. Reason copy lives in
+`content/copy.ts` in a separate `releaseReasons` catalog: `release-owner` = “Priya
+must stay to own the launch decision.”; `release-absent` = “This attendee has already
+left the room.”; `release-minimum` = “One other attendee must stay with Priya.”
+The existing response-disabled reason catalog/audit remains separate.
 
 The public index also exports frozen, readonly `ENGINE_LIMITS`, backed by
 `constants.ts`: `progressMax`, `risksMax`, `minHeadcount`, `maxHeadcount`,
@@ -410,10 +427,11 @@ A DOM sprite stage draws the room and nothing else (D16). React draws every word
 
 **Meeting turn flow (D17)**
 
-The store holds `screen: 'title' | 'meeting' | 'results'`, `beat: 'speaking' | 'choosing' | 'outcome'` (Meeting screen only), `game: MeetingState | null`, `unlockedTitles: readonly TitleId[]` and `assetsReady: boolean`. The actions below are the complete list; `ui` dispatches only these.
+The store holds `screen: 'title' | 'meeting' | 'results'`, `beat: 'speaking' | 'choosing' | 'outcome'` (Meeting screen only), `game: MeetingState | null`, `unlockedTitles: readonly TitleId[]`, `assetsReady: boolean`, `assetStatus: 'loading' | 'ready' | 'failed'` and `breakdown: ScoreBreakdown | null`. Assets initially have loading status and are not ready. Results compute breakdown using engine `score`; restart clears breakdown and preserves asset status/readiness and unlocked titles. The actions below are the complete list; `ui` dispatches only these. Loading and release-preview additions are approved in [ADR 0004](adr/0004-store-integration-proposal.md).
 
 | Action | Allowed when | Does |
 | --- | --- | --- |
+| `setAssetStatus(status)` | Title screen | Sets loading/ready/failed status and assetsReady (true only for ready); does not create a seed, draw, change MeetingState or start a run |
 | `start` | Title screen, assets ready | Creates the seed, calls `initialState` then `drawEvent`; screen → meeting, beat → speaking |
 | `finishTyping` | `speaking` | beat → choosing (also fired when typing completes) |
 | `choose(responseId)` | `choosing`, response enabled | Calls `resolve`; beat → outcome. Ignored in any other beat, which guards double taps and key repeats |
@@ -421,6 +439,15 @@ The store holds `screen: 'title' | 'meeting' | 'results'`, `beat: 'speaking' | '
 | `release(who)` | `speaking` or `choosing` | Calls `release`; a refused release changes nothing and the HUD shows why |
 | `callIt` | `speaking` or `choosing` | Calls `callIt`, computes score and titles, persists unlocks; screen → results (no outcome beat) |
 | `restart` | Results screen or error boundary | screen → title, game → null; unlocked titles are kept |
+
+The UI preload integration reports loading before each attempt, ready only after
+all required image/font loads succeed, and failed if any required load fails.
+The failed Title state offers Retry, which starts a new preload attempt using the
+same action. Loading promises/timers remain outside the store; direct UI `setState`
+is not sanctioned. In text-only task 12a there are no required room assets or
+custom font, so the Title integration reports ready through the named action after
+mount. Task 14b replaces the empty preload with required images/font. Reporting
+readiness never starts a run automatically.
 
 - The outcome beat shows the `line` of the latest `resolve` log entry. One-response events use the same flow; their single button is the acknowledgement.
 - Releasing: tapping a portrait shows one confirm button, "Thanks, you can drop off.", plus Cancel. Portraits that cannot be released (Priya, the last other attendee) show the reason instead.
@@ -461,6 +488,10 @@ The store holds `screen: 'title' | 'meeting' | 'results'`, `beat: 'speaking' | '
 
 - One `localStorage` key, `tcbae:v1:titles`, holding an array of unlocked title ids.
 - Every read and write is wrapped in try/catch. A missing, blocked or corrupt value means "no titles yet", never an error screen.
+- Validate and deduplicate against the v1 title catalog; unknown IDs are discarded.
+  If the initial storage acquisition/read throws, suppress writes for that store
+  instance so unseen stored unlocks cannot be overwritten; keep new unlocks in
+  memory. A readable missing or corrupt value may be replaced.
 
 ## Project rules for the AI assistant
 
@@ -666,7 +697,7 @@ The room is DOM sprites + CSS. No game engine.
 ## Guardrails
 1. Game rules live only in src/core/engine. ui/, store/, stage/ and sim/ never compute
    eligibility, effects, clamping, utility, score or titles; they call previewResponse,
-   getDrawCandidates, score and earnedTitles.
+   previewRelease, getDrawCandidates, score and earnedTitles.
 2. The store is the only writer of MeetingState. Only the store actions `start` and
    `continue` call drawEvent. ui/ dispatches named actions; stage/ never dispatches.
 3. Only src/core/engine/index.ts imports live content. Engine internals take a ContentPack

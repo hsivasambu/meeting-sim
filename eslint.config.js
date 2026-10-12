@@ -13,6 +13,7 @@ const api = [
   'displayCost',
   'formatCost',
   'previewResponse',
+  'previewRelease',
   'getDrawCandidates',
   'ENGINE_LIMITS',
 ];
@@ -243,7 +244,7 @@ export default tseslint.config(
         ...forbidden,
         {
           selector:
-            'CallExpression[callee.property.name=/^(start|finishTyping|choose|continue|release|callIt|restart|setState)$/]',
+            'CallExpression[callee.property.name=/^(setAssetStatus|start|finishTyping|choose|continue|release|callIt|restart|setState)$/]',
           message: 'Stage must never dispatch actions.',
         },
       ],

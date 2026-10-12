@@ -15,6 +15,7 @@ export type {
   LogEntry,
   ResponsePreview,
   DrawCandidate,
+  ReleasePreview,
   ScoreBreakdown,
   TitleId,
   ContentPack,
@@ -41,7 +42,7 @@ export function getDrawCandidates(
 export function drawEvent(state: MeetingState): MeetingState {
   return drawEventWith(contentPack, state);
 }
-export { initialState, release, callIt } from './state';
+export { initialState, release, previewRelease, callIt } from './state';
 export type { EngineError, EngineErrorCode } from './errors';
 /** Implements Design Doc v2 → Events and responses → How a response is shown. */
 export function previewResponse(

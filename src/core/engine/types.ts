@@ -131,6 +131,13 @@ export interface DrawCandidate {
   readonly event: PresentedEvent;
   readonly probability: number;
 }
+export type ReleasePreview =
+  | { readonly enabled: true }
+  | {
+      readonly enabled: false;
+      readonly reasonKey:
+        'release-owner' | 'release-absent' | 'release-minimum';
+    };
 export interface ScoreBreakdown {
   readonly outcome: number;
   readonly efficiency: number;
