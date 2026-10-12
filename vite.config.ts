@@ -16,7 +16,11 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.{ts,tsx}', 'scripts/**/*.test.ts'],
+    include: [
+      'src/**/*.test.{ts,tsx}',
+      'scripts/**/*.test.ts',
+      'sim/**/*.test.ts',
+    ],
     allowOnly: false,
     passWithNoTests: false,
     reporters: ['default', 'junit'],
@@ -25,6 +29,7 @@ export default defineConfig({
       provider: 'v8',
       thresholds: { 'src/core/**': { lines: 90, branches: 85 } },
       include: [
+        'sim/**/*.ts',
         'src/core/**/*.ts',
         'scripts/sizeBudget.ts',
         'src/ui/probe/*.ts',

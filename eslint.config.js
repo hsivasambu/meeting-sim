@@ -14,6 +14,7 @@ const api = [
   'formatCost',
   'previewResponse',
   'getDrawCandidates',
+  'ENGINE_LIMITS',
 ];
 const boundary = {
   meta: { type: 'problem', schema: [], messages: { boundary: '{{reason}}' } },

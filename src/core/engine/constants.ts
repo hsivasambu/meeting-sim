@@ -111,3 +111,16 @@ export const TITLE_COST_DILIGENCE_PM = 270;
 export const TITLE_HEADCOUNT_SKELETON = 3;
 export const TITLE_PARKED_MIN = 4;
 export const TITLE_QUALITY_FAIR = 0.85;
+
+// Readonly observation contract; every rule value has its existing canonical source.
+export const ENGINE_LIMITS = Object.freeze({
+  progressMax: PROGRESS_MAX,
+  risksMax: RISKS_MAX,
+  minHeadcount: MIN_HEADCOUNT,
+  maxHeadcount: MAX_HEADCOUNT,
+  decisionOwner: DECISION_OWNER,
+  initialBookingEnd: INITIAL_BOOKING_END,
+  reducedBookingEnd: REDUCED_BOOKING_END,
+  scoreMax: OUTCOME_MAX + EFFICIENCY_MAX + DECISIONS_MAX,
+  fillerMinutes: FILLER_MINUTES,
+} as const);
