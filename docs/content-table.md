@@ -565,3 +565,12 @@ Random may choose either deadline. Do not assume every Lookahead choice is fixed
 the design's next-step term becomes zero when a choice ends the run, so imminent
 expiry can change its comparison. Confirm that policy with the actual task 09
 implementation rather than changing the scoring formula or these response IDs.
+
+## Task 12a — V4 feedback handoff
+
+The text-only loop and automated meeting-loop checks are implemented. Harry
+agreed on October 12, 2026 to play and arrange two uncoached testers. Actual goal
+comprehension, issue classification and confusing-line observations are pending
+in [the V4 record](task-12a-playtest.md). No human findings or event-content
+revisions are claimed yet. Record reported findings here before task 10 tuning;
+retain the existing approval process for any resulting event-design changes.

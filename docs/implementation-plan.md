@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, which remains open for review. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Next implementation task: 12a.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Current task: 12a — text-only loop implemented with passing local automated checks; V4 human playtest evidence pending. Next blueprint task after 12a acceptance: 08b.
 
 ## Purpose and source of truth
 
@@ -55,7 +55,7 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 ## Plain-language task guide and easy checks
 
 This explains the same tasks above; it does not change their scope, dependencies or
-acceptance rules. **Now** means the check is available in the current task 11a checkout;
+acceptance rules. **Now** means the check is available in the current task 12a checkout;
 **Later** means wait until that task is implemented. Tasks 00–08a and 11a (including their splits)
 are implemented. Tasks 04–06b are merged into main via PRs #4, #5, #7 and #8;
 task 07a is delivered in [PR #9](https://github.com/hsivasambu/meeting-sim/pull/9)
@@ -83,7 +83,7 @@ unverified under the accepted task 02 deferral.
 | 07b… | Put the approved script into the game, a small group of topics at a time.                                 | **Now — compare:** Compare any event file with its approved content-table row. Run Tests: the live catalog, every authored row and public draw bindings are checked. Task 07b was delivered without a split.                                                     |
 | 08a  | Let two simple robot players try the real game to find big problems early.                                | **Now — report:** Run `pnpm sim:ci` for the Greedy/Random simulation summary. Both should reach endings without crashes; win rates are evidence at this point, not a promise that balance is finished.                                                           |
 | 11a  | Add the traffic controller that accepts clicks and moves the meeting from dialogue to choices to results. | **Now — terminal:** Run Tests and look for the store/action checks passing, especially double-click handling and restarting. The screen that uses it arrives in 12a.                                                                                             |
-| 12a  | Make the first playable version, using plain text before adding art.                                      | **Later — browser:** Start a meeting, choose an option, release Gary, and Call it. You should reach results. Try a full meeting and keyboard controls too.                                                                                                       |
+| 12a  | Make the first playable version, using plain text before adding art.                                      | **Now — browser:** Start a meeting, choose an option, release Gary, and Call it. You should reach results. Try a full meeting and keyboard controls too.                                                                                                         |
 | 08b  | Make robot runs repeatable and save their results in a spreadsheet-friendly file.                         | **Later — report:** Repeat a small simulation with the same settings/seed range; compare the outputs. The saved CSV should have the same columns and results.                                                                                                    |
 | 09   | Add five more robot strategies so the game is tested by different kinds of players.                       | **Later — report:** Run the all-policy simulation and confirm all seven named policies appear. Repeating a policy with the same inputs should repeat its results.                                                                                                |
 | 10   | Tune the game so sensible choices help, careless choices hurt, and luck still matters.                    | **Later — report:** Read the 2,000-seed, seven-policy acceptance report; its required bands should pass. Play several runs as a feel check; one lucky win does not prove balance.                                                                                |
@@ -290,12 +290,12 @@ Record progress below by replacing `not started` with `in progress`, `blocked: D
 | -------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002)                                                                                                                                                                                                                                                                 |
 | B — Headless game    | 04–07, 06b    | 04–06 complete: PRs #4–#5 merged, [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7) with hosted Node 24 evidence; 06b complete with Harry's approval; Claude review addressed in PR #8 with hosted Node 24 evidence; 07a complete with review fixes and hosted Node 24 evidence in PR #9; 07b complete with review fixes and hosted Node 24 evidence in PR #10 |
-| B2 — Vertical slice  | 08a, 11a, 12a | 08a complete with review fixes, clean committed V3 evidence and hosted Node 24 checks in PR #12; 11a complete with approved review fixes and local/hosted Node 24 checks in explicitly stacked PR #13; 12a not started                                                                                                                                                 |
+| B2 — Vertical slice  | 08a, 11a, 12a | 08a complete with review fixes, clean committed V3 evidence and hosted Node 24 checks in PR #12; 11a complete with approved review fixes and local/hosted Node 24 checks in explicitly stacked PR #13; 12a implemented with passing local automated checks; V4 human evidence pending                                                                                  |
 | C — Balance evidence | 08b–10        | Not started                                                                                                                                                                                                                                                                                                                                                            |
 | D — Browser game     | 11b–15        | Not started                                                                                                                                                                                                                                                                                                                                                            |
 | E — Release          | 16–17         | Not started                                                                                                                                                                                                                                                                                                                                                            |
 
-Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, which remains open for review. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Next implementation task: 12a. Android evidence remains deferred (ADR 0002).
+Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Current task: 12a — text-only loop implemented with passing local automated checks; V4 human playtest evidence pending. Next blueprint task after 12a acceptance: 08b. Android evidence remains deferred (ADR 0002).
 
 ## Task 01 completion — October 11, 2026
 
@@ -1594,3 +1594,83 @@ this task. The evidence-only follow-up receives the same hosted checks before
 concluding this turn. **Next blueprint task: 12a — text-only meeting loop and V4
 playtest.** Stop at the requested 11a boundary; 12a is not started. Android evidence
 remains deferred under ADR 0002.
+
+### Task 12a — text-only meeting loop (October 12, 2026)
+
+Status: **implementation and local automated gates pass; V4 human playtest pending**.
+Work is on `feat/task-12a-text-loop`. Task 12a is not marked complete until its
+three-person acceptance evidence and any resulting follow-ups are recorded.
+
+Sources: technical spec → React overlay, Meeting turn flow (D17), responsive
+layout, accessibility and Testing and quality gates; design → Core loop, response
+previews and attendance boundaries; plan → Milestone B2 (V4). ADR 0004 authorizes
+the empty asset readiness integration. There is no task split.
+
+Dependency **11a is complete and present** at ancestor `4529850`, including the
+approved loading action and release preview contracts (`6522085`). Its review
+fixes and local/hosted evidence are recorded above. GitHub confirms dependency
+PRs #13 (11a) and #12 (08a) are now merged, with #12 delivering the stack to main.
+The public engine and complete store/action tests pass in this checkout.
+
+Implemented Title, Meeting and minimal Results screens, selected through narrow
+Zustand hooks without a router. Title explains the Friday objective and reports
+empty-asset readiness after mount without starting automatically. The text-only
+slice keeps explicit Show choices and Continue acknowledgement, including
+one-response events and the final outcome. Full delivered dialogue and the latest
+resolve outcome are announced in a polite live region. Outcomes remain visible
+after the engine clears `current`. Results display the store's score, ending and
+final counters; replay clears the run through `restart`.
+
+Text roster buttons expose attendee roles and engine-authored release refusals;
+confirmation, Cancel and Escape preserve keyboard focus. Responses use only
+`previewResponse` for availability, actual progress/risk/minute/cost deltas and
+content-authored reasons. Releasing an expert refreshes options while retaining
+the delivered line. Only named store actions mutate the game. Held Enter and
+number keys are suppressed, including browser-native repeat clicks. Player-facing
+labels live in `core/content/copy.ts`; gameplay content/effects and scoring are
+unchanged. Art, animation, title collection, epilogues/share card and the full HUD
+remain in their scheduled later tasks.
+
+Added four meeting-loop specs on all three required browser projects: **12 new
+E2E cases**, alongside the 18 existing checks. They cover complete deterministic
+live runs and expected score, keyboard and real emulated touch input, explicit
+outcomes, repeated Enter, out-of-beat keys, 320 px fit and 44 px targets, release
+confirmation/cancellation, owner/minimum refusal, stale expert choices and
+disabled reasons, Call it before/after a response, and fresh replay. Every test
+uses the existing console-error/exception fixture. Initial E2E failures exposed
+cleared-current rendering and native held-key behavior; both were fixed without
+weakening assertions or thresholds. A test navigation mistake was corrected to
+focus the dialogue control before pressing Enter; native roster activation remains
+intact. Browser E2E also exercises the production React selector-hook path left
+to this task by the 11a review.
+
+Actual local **Node 24.21.0 / pnpm 10.34.6** evidence:
+
+- `pnpm check`: types and zero-warning lint/format pass; **347 tests in 36 files**
+  pass, including live content/catalog validation, properties and six goldens.
+- Core coverage: **628/630 lines (99.68%)**, **602/610 branches (98.69%)**;
+  the existing 90%/85% thresholds are unchanged.
+- `pnpm sim:ci`: **2,000 Greedy + 2,000 Random** runs satisfy every invariant
+  and replay identically. Diagnostic balance is unchanged: Greedy 100% wins,
+  median score 920, median 11 turns; Random 69.6%, median score 552.5.
+  These win bands remain unmet and diagnostic until the scheduled balance task.
+- `pnpm build` and `pnpm size`: pass; **82,876/122,880 gzip JS bytes**, deployed
+  images/fonts **0/409,600 bytes**.
+- `pnpm e2e`: **30/30 passed**, zero skipped/retries, on Pixel 7 Chromium,
+  iPhone 14 WebKit and desktop Chromium, including 320 px touch/keyboard runs.
+- Reports: `test-results/unit.xml`, `coverage/coverage-summary.json`,
+  `test-results/e2e.json` and `playwright-report/` (generated, not committed).
+
+Harry agreed to perform V4 and requested build access instructions. The built
+preview runs at <http://127.0.0.1:4174/> on this computer; restart instructions and
+three pending tester rows are in [the V4 record](task-12a-playtest.md). The
+[content table](content-table.md#task-12a--v4-feedback-handoff) records the pending
+feedback handoff. No human comprehension result or content revision is invented.
+
+Outstanding acceptance: Harry's several runs plus two uncoached testers must
+report goal comprehension within 15 seconds and distinguishing tangents from
+substantive issues. Record their findings and address any required content/UI
+follow-up before closing 12a. **Next action: finish V4; next blueprint task after
+12a acceptance: 08b — full simulation runner, metrics and CSV.** No later task
+work has started. Android LinkedIn evidence remains separately deferred under
+ADR 0002.

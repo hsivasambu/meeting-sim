@@ -15,6 +15,47 @@ export const shellCopy = {
     "Reach a go/no-go decision on Friday's launch before the hour is up.",
 } as const;
 
+export const meetingCopy = {
+  start: 'Start',
+  loading: 'Booking the room…',
+  retry: 'Retry',
+  meeting: 'The Friday Launch Meeting',
+  instructions:
+    'Time moves only when you answer. Reach 100 progress before the booking ends. Release attendees to lower costs; keeping experts preserves their options.',
+  keyboard: 'Enter: show choices or continue. 1–3: choose a response.',
+  showChoices: 'Show choices',
+  continue: 'Continue',
+  callIt: 'Call it',
+  roster: 'In the room',
+  confirmRelease: 'Thanks, you can drop off.',
+  cancel: 'Cancel',
+  progress: 'Progress',
+  minutes: 'Minutes used',
+  booking: 'Booking ends at minute',
+  cost: 'Cost',
+  risks: 'Open risks',
+  headcount: 'Attendees',
+  peakHeadcount: 'Peak attendees',
+  room: 'Room',
+  results: 'Results',
+  score: 'Score',
+  replay: 'Play again',
+  previewMinutes: 'min',
+  previewProgress: 'progress',
+  previewRisks: 'risks',
+  endings: {
+    decision: 'Decision reached',
+    'called-early': 'Called early',
+    'time-expired': 'Time expired',
+    cancelled: 'Cancelled',
+  },
+} as const satisfies Record<string, string | Readonly<Record<string, string>>>;
+
+export const meetingUiConfig = {
+  choiceKeys: ['1', '2', '3'],
+  choiceNumbers: [1, 2, 3],
+} as const;
+
 export const disabledReasons = {
   'dev-absent': 'Dev has left. Engineering expertise is no longer in the room.',
   'sam-absent': 'Sam has left. Support expertise is no longer in the room.',
