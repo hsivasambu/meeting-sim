@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–03 complete. Task 03 contracts/RNG and the core coverage gate are verified locally and in hosted CI. Task 02 Android evidence remains explicitly deferred (ADR 0002). Next task: 04. No task 04 gameplay implementation has started.
+Status: D01–D26 remain resolved. Tasks 01–04 complete; task 04 state transitions/shared evaluator verified locally and in hosted CI. Task 02 Android evidence remains deferred (ADR 0002). Next task: 05. No task 05 scoring/title implementation has started.
 
 ## Purpose and source of truth
 
@@ -19,7 +19,7 @@ The technical spec remains the source of normative rules. Numerical balance is u
 
 ## Delivery sequence
 
-Each numbered task is a blueprint task and a candidate PR. Before code, state its source section, touched files, and any rule it strains. If the proposed diff exceeds ~400 changed lines, present a split before implementation, using suffixes such as 03a/03b. This table describes scope boundaries, not permission to exceed the limit. Each split retains relevant tests and its own acceptance evidence.
+Each numbered task is a blueprint task and a candidate PR. Before code, state its source section, touched files, and any rule it strains. Harry explicitly accepted keeping PR #4 and larger future PRs on October 11, 2026. A large diff may use one PR with understandable commits; size alone does not require multiple PRs or approval. Optional task splits retain relevant tests and acceptance evidence.
 
 Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents into `docs/` as their only copies (D22). Keep this plan synchronized with ADRs.
 
@@ -51,6 +51,82 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 | 15   | Results, collection and share: results components, title grid, `ui/share/{renderCard,shareText}.ts`.                                                                                                                                                                             | 02, 05, 10, 14b | Correct epilogue, title and moment; unlocks persisted; 1200×627 PNG shown as an `<img>`; share paths ordered by V1 results; fallbacks verified.                                                                    |
 | 16   | Integration and mobile quality: E2E suite, polish, error recovery, accessibility, performance, five-person playtest.                                                                                                                                                             | 10, 12b–15      | Every gate except the release-only full simulation active and green; playtest pass bar met (Milestone E, step 5).                                                                                                  |
 | 17   | Static deployment and launch: `vercel.json`, metadata and OG image, preview and production settings, `docs/release-checklist.md`, blog draft.                                                                                                                                    | 16              | Full 10,000 × 7 simulation, real-device checks, Lighthouse and LinkedIn preview verified; release tag; launch-ready blog with measured results.                                                                    |
+
+## Plain-language task guide and easy checks
+
+This explains the same tasks above; it does not change their scope, dependencies or
+acceptance rules. **Now** means the check is available on the current task 04 branch;
+**Later** means wait until that task is implemented. Tasks 00–04 (including their splits)
+are implemented; task 04 is in [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4)
+and is not merged yet. Its checks require that branch rather than main.
+
+The browser currently shows the title/objective and the separate sharing probe. The
+first playable meeting is task **12a**. Tasks 03–04 work under the hood, so their easiest
+checks are automated tests. A simple check is a useful spot check, not a substitute for
+the technical spec's full gates or release checklist. Android LinkedIn testing is still
+unverified under the accepted task 02 deferral.
+
+| Task | ELI5: what this gives you                                                                                 | An easy check you can do                                                                                                                                                                                                                                         |
+| ---- | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 00   | Agree on the game's rules so everyone is building the same game.                                          | **Now — read:** Open ADR 0001 and find decisions D01–D12; they should match the design/spec. No button to test.                                                                                                                                                  |
+| 00b  | Agree on which part of the program is responsible for each job.                                           | **Now — read:** Find D13–D26 in ADR 0001. For example, the room draws things while the store handles player actions. No visual game feature yet.                                                                                                                 |
+| 01a  | Put the project, instructions and checklist in one tidy home.                                             | **Now — inspect:** In C:\dev\meeting-sim, check that docs contains the three main documents and root AGENTS.md says “Follow CLAUDE.md.”                                                                                                                          |
+| 01b  | Set up the tools that build the app and catch coding mistakes.                                            | **Now — terminal:** Run Check and Build/Size below. All should pass; the browser shell shows the Friday launch objective.                                                                                                                                        |
+| 02   | Add automatic checks and a small page that tests sharing inside LinkedIn.                                 | **Now — browser:** Use the [probe procedure](task-02-setup.md): the image should appear, and share/copy/save actions should work or clearly report their fallback. iOS passed by Harry's report; Android is not verified.                                        |
+| 03   | Give the game a common vocabulary and repeatable “shuffle,” like using the same numbered deck twice.      | **Now — terminal:** Run Tests below. Look for rng.test.ts, weighted.test.ts and conditions.test.ts passing. They check repeatable shuffling, correct odds and who qualifies for an option.                                                                       |
+| 04   | Make each choice update the meeting correctly, without changing the old state behind your back.           | **Now — terminal:** Run Tests. Look for state.test.ts, evaluation.test.ts, resolve.test.ts and transitions.test.ts passing. They cover owner protection, costs, expert departures and winning at the deadline. There is no player interface for these rules yet. |
+| 05   | Turn the finished meeting into a score and earned badges.                                                 | **Later — terminal:** Run Tests and inspect the six scoring examples against the design's worked-example table. The score shown in the browser arrives with later UI tasks.                                                                                      |
+| 06   | Pick the next meeting topic, remember used topics and bring parked issues back on time.                   | **Later — terminal:** Run Tests; draw/callback tests and the five saved example runs should pass. Browser topic flow arrives in 12a.                                                                                                                             |
+| 06b  | Write the script: every topic, choice, consequence and ending.                                            | **Later — read:** Open docs/content-table.md. Read one topic with its expert present and absent, then follow its choices and consequences. Approve the table before it becomes game data.                                                                        |
+| 07a  | Build a proofreader that rejects broken game data.                                                        | **Later — terminal:** Run Tests; content-validation checks should pass for valid packs and reject the deliberately broken fixtures. No new screen to test.                                                                                                       |
+| 07b… | Put the approved script into the game, a small group of topics at a time.                                 | **Later — compare:** Pick one implemented family and compare every variant/choice to its approved content-table row. Run Tests to check the data. Repeat for each 07b content split.                                                                             |
+| 08a  | Let two simple robot players try the real game to find big problems early.                                | **Later — report:** Ask for the Greedy/Random simulation summary. Both should reach endings without crashes; win rates are evidence at this point, not a promise that balance is finished.                                                                       |
+| 11a  | Add the traffic controller that accepts clicks and moves the meeting from dialogue to choices to results. | **Later — terminal:** Run Tests and look for the store/action checks passing, especially double-click handling and restarting. The screen that uses it arrives in 12a.                                                                                           |
+| 12a  | Make the first playable version, using plain text before adding art.                                      | **Later — browser:** Start a meeting, choose an option, release Gary, and Call it. You should reach results. Try a full meeting and keyboard controls too.                                                                                                       |
+| 08b  | Make robot runs repeatable and save their results in a spreadsheet-friendly file.                         | **Later — report:** Repeat a small simulation with the same settings/seed range; compare the outputs. The saved CSV should have the same columns and results.                                                                                                    |
+| 09   | Add five more robot strategies so the game is tested by different kinds of players.                       | **Later — report:** Run the all-policy simulation and confirm all seven named policies appear. Repeating a policy with the same inputs should repeat its results.                                                                                                |
+| 10   | Tune the game so sensible choices help, careless choices hurt, and luck still matters.                    | **Later — report:** Read the 2,000-seed, seven-policy acceptance report; its required bands should pass. Play several runs as a feel check; one lucky win does not prove balance.                                                                                |
+| 11b  | Finish the controller so endings, restarts and saved badges work reliably.                                | **Later — browser, when screens are connected:** Earn a badge, restart, then reload. The run should reset and the badge should remain. Automated tests also cover blocked/corrupt storage.                                                                       |
+| 12b  | Make the full controls clear and usable on phones, keyboards and reduced-motion settings.                 | **Later — browser:** At 320 px width, check for no sideways scrolling; use Tab/1–3/Enter. Options show their effects and disabled reasons. Reduced motion makes dialogue appear immediately.                                                                     |
+| 13   | Create the room, people and lettering, with permission to use every asset.                                | **Later — inspect:** Review the art files and public/LICENSES.md; every asset needs a source/licence entry. Run Build/Size for the media budget. In-game art is connected in 14b.                                                                                |
+| 14a  | Try a simple pretend room to check that it stays sharp and smooth on a phone.                             | **Later — browser on a real phone:** Check the placeholder room at its supported sizes. People should stay crisp and react to joins/releases/progress/risk changes. Record the phone and result.                                                                 |
+| 14b  | Replace the pretend room with the final artwork and load it reliably.                                     | **Later — browser:** Start a run on a phone, watch reactions, and enable reduced motion. The room should stay sharp, idle animation should stop, and no images should be missing.                                                                                |
+| 15   | Finish the results card, badge collection and ways to share the result.                                   | **Later — browser:** Finish a run; check score/title/ending, share or save the PNG, and copy the text. The image stays visible for long-press save. Reload to check saved badges.                                                                                |
+| 16   | Check the whole game together so it works for real people on real devices.                                | **Later — playtest:** Have someone play without coaching: can they explain the goal and identify a tangent? Also check keyboard, mobile layout and the recorded accessibility/performance results. The full five-person pass bar still applies.                  |
+| 17   | Put the checked game at its public address and prepare it for launch.                                     | **Later — browser:** Open the final address while logged out, finish a run, and use LinkedIn Post Inspector to check the link preview. Verify the release checklist has the full simulation, real-device and performance evidence.                               |
+
+### Copy-and-run checks available now
+
+Open PowerShell in C:\dev\meeting-sim. These commands use this machine's installed
+Node 24 and pinned pnpm. If using another machine, follow README's fnm setup first.
+
+Check — catches type/style errors and runs all unit/property tests with coverage:
+
+```powershell
+& '.tools/fnm/fnm.exe' exec --using 24 cmd /c corepack pnpm check
+```
+
+Tests — the simplest under-the-hood check for tasks 03 and 04. All tests should pass;
+at this update there are 129 tests. It prints each test file and writes a readable
+coverage report to coverage/index.html. A green test run is evidence for the tested
+rules; it does not mean the unfinished game features exist.
+
+```powershell
+& '.tools/fnm/fnm.exe' exec --using 24 cmd /c corepack pnpm test
+```
+
+Build/Size, then browser smoke checks — verifies the deployed build and existing
+shell/probe in all three browser profiles (18 checks at this update):
+
+```powershell
+& '.tools/fnm/fnm.exe' exec --using 24 cmd /c corepack pnpm build
+& '.tools/fnm/fnm.exe' exec --using 24 cmd /c corepack pnpm size
+& '.tools/fnm/fnm.exe' exec --using 24 cmd /c corepack pnpm e2e
+```
+
+The technical spec remains the only definition of required thresholds and when each
+gate activates. Future task checks in this guide are examples, not results already obtained. After each task,
+update the Now/Later labels, branch note and expected check counts along with the main status.
 
 Critical path: 00b → 01a/01b → contracts and transitions (03–06) → live content (07) → vertical slice (08a, 11a, 12a) → policies and balance (08b–10) → full browser game (11b–15) → integrated quality → release. The content table (06b) and art (13) run in parallel from the start. Neither polished art nor distribution work should hide a failing balance gate.
 
@@ -208,13 +284,13 @@ Record progress below by replacing `not started` with `in progress`, `blocked: D
 | Milestone            | Tasks         | Status                                                                                                 |
 | -------------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
 | A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002) |
-| B — Headless game    | 04–07, 06b    | Not started                                                                                            |
+| B — Headless game    | 04–07, 06b    | 04 complete; 05–07 and 06b not started                                                                 |
 | B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                            |
 | C — Balance evidence | 08b–10        | Not started                                                                                            |
 | D — Browser game     | 11b–15        | Not started                                                                                            |
 | E — Release          | 16–17         | Not started                                                                                            |
 
-The next blueprint task is 04: state transitions and the shared evaluator. Tasks 01–03 are complete; the iOS probe passed and Android evidence was explicitly deferred by Harry (ADR 0002). No task 04 implementation has started.
+The next blueprint task is 05: utility/score/title modules and exact scoring fixtures. Tasks 01–04 are complete; Android evidence remains explicitly deferred (ADR 0002). No task 05 implementation has started.
 
 ## Task 01 completion — October 11, 2026
 
@@ -499,3 +575,161 @@ Hosted task 03 evidence:
   all three E2E profiles and report publishing. The final evidence-only commit reruns
   the same gates before the authorized merge. PR #3 is the delivery/merge record for task 03;
   PR #2 is superseded. Next task remains 04. Deferred Android validation is still a release risk.
+
+## Task 04 result — October 11, 2026
+
+Status: **Implemented and locally verified.** Sources: technical spec Engine contracts,
+Turn order and endings, Content/evaluation contract and activated gate schedule; design
+Game state model, Core loop/Anytime actions, Draw rules and Scoring/Decisions.
+No D01–D26 decision was reopened and no task 05 or 06 functionality was implemented.
+
+Dependencies and scope:
+
+- Task 03 is merged on main as e6773a1 (PR #3), including all five review fixes.
+  Frozen-lockfile installation passed under Node 24.21.0 / pnpm 10.34.6; packages,
+  lockfile, five strict TS flags and the 90% lines / 85% branches gate remain unchanged.
+- Public index now exposes initialState, release, callIt, resolve and previewResponse
+  with locked signatures. EngineError and its code union are type exports; internal
+  helpers and tunable utility rules stay out of the runtime public surface.
+- Additive releasedAttendeeIds tracks releases authoritatively, preventing re-entry
+  without reading narrative logs. Existing state fields were retained.
+- Engine state actions and materialized-response evaluation need no live content lookup;
+  they import no content. ContentPack-based pool lookup/materialization stays in task 06,
+  and the live pack remains task 07. No stub pack or fabricated live event was added.
+
+Review splits, each authored code commit below 400 changed lines:
+
+- **04a / f273eb0 (266 lines):** starting state, owner/minimum-safe release, counter-based
+  Call it endings, typed programmer errors, authoritative release tracking and frozen fixtures/tests.
+- **04b / 7eb7a14 (296 lines):** single applyEffect clamp implementation, pre-join integer
+  billing, attendance/booking effects, effective utility and read-only previews. Internal
+  rules tests inject synthetic utility weights rather than asserting live tuning.
+- **04c.1 / 7474f7c (167 lines):** atomic resolution, enabled-response decision quality,
+  fixed prior qualities, full-effect deadline crossing, decision-before-expiry priority,
+  callback n+2 scheduling/repeat/collision guards and public wrappers.
+- **04c.2 / 74bf417 (358 lines):** resolution edge cases and seeded valid-action properties.
+  Test files remain below 300 lines; engine helpers carry design-section TSDoc.
+
+Verification evidence:
+
+- Typecheck, zero-warning ESLint/Prettier and **108 unit/property tests passed**.
+  Core coverage: **188/189 lines (99.47%)**, **141/141 branches (100%)** across all existing
+  core files. Only the prior unreachable weighted-ticket guard is uncovered.
+- fast-check seed 41004: 150 generated seed/action sequences, up to 35 steps, each replayed.
+  Frozen-input nonmutation, preview/result agreement, P/R bounds, unique legal headcounts,
+  nondecreasing clocks and integer cost pass. This is transition evidence; full draw runs,
+  50-turn termination, goldens and simulation remain scheduled later.
+- Fixed fixtures cover refusals/new snapshots, pending-speaker release, disabled experts,
+  zero-minute email, independent park count, short booking already expired, full billing
+  past deadlines, simultaneous success/expiry, designated joins, no re-entry, persisted
+  quality, callback repeats/collisions/illegal contexts, ended actions and malformed effects.
+- Preview does not log, increment turns or schedule callbacks. Resolution records narrative
+  resolve/join entries at the post-effect minute; quality uses pre-resolution state. Log
+  contents never determine action legality, counters or endings.
+- Build/size passed: **70,407 / 122,880 gzip JS bytes**, deployed images/fonts **0 / 409,600**.
+- **18 E2E checks passed** across Pixel 7 Chromium, iPhone 14 WebKit and desktop Chromium,
+  no browser errors, retries or skips. Existing shell/probe behavior remains intact.
+- Original 18 seeded lint violations rejected; 3 legal imports accepted; 24-package allowlist
+  and all five TS flags verified. Document consistency and whitespace checks passed.
+- Reports: coverage/coverage-summary.json and index.html, test-results/unit.xml and
+  e2e.json, playwright-report/index.html. No threshold, test or dependency was weakened.
+
+Outstanding issues and next task:
+
+- No task 04 blocker remains after the review hardening below. Disabled responses now return
+  authored content reason keys; their display text belongs in future content/UI.
+- Task 02 Android LinkedIn behavior remains unverified with Harry's accepted deferral;
+  verify before release. No Android success is inferred.
+- **Next task: 05 — utility, score and titles, with exact worked-example fixtures.**
+  Internal utility evaluation already exists because task 04 decision records require it;
+  task 05 adds score/title APIs. Draw distribution, fairness and scheduler consumption remain
+  task 06. Stop here; no later task code was added.
+
+- Final task 04 review added maximum-ten-minute effect validation, callback minimum-one-minute
+  enforcement and explicit room-booked deadline-path checks, with regressions. Reran all
+  active local gates: 108 unit/property and 18 E2E passes, core 188/189 lines and 141/141 branches.
+  [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4) contains task 04; it is unmerged.
+
+Hosted task 04 evidence:
+
+- [Quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38179958251) passed
+  on code commit 28684c8, including every active gate and report publishing. Downloaded
+  artifact confirms 108 unit passes with zero failures/errors, 18 E2E passes with zero
+  skipped/flaky/unexpected, core 188/189 lines and 141/141 branches, both HTML reports present.
+- [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4) is ready for review and remains
+  unmerged. Document consistency/format/whitespace checks passed for this evidence update;
+  the final documentation-only head reruns the same active checks.
+- Task 04 complete; next task 05. No known task 04 defect remains and no task 05 work started.
+
+## Plan readability update — October 11, 2026
+
+- Added an ELI5 explanation and an easy check for all 26 delivery-sequence entries,
+  preserving their task IDs, order, scope, dependencies and acceptance rules.
+- Now/Later labels distinguish implemented checks from future features; task 04's
+  unmerged branch requirement and the first playable meeting in 12a are explicit.
+- Added copy-and-run Node 24 commands with expected current test counts. Android's
+  accepted deferral is retained. No application code, dependency or gate was changed.
+- Documentation checks: task-guide completeness, unchanged technical delivery table,
+  linked local files, assistant rules and D01–D26 register; Prettier and whitespace.
+  Next implementation task remains 05; no later task was implemented.
+
+## Task 04 review hardening — October 11, 2026
+
+Sources: [full review](task-04-review.md), Design Decisions/equal utilities, preview/evaluation
+contracts and authored reasons. Task 03 findings 1–5 remain fixed; its pending module-layout
+note is now incorporated into the technical spec. Next task remains 05; no scoring/title or
+other later feature was added.
+
+- **Tie bug fixed:** decimal coefficients are represented as exact integer fractions.
+  Compare/normalize common-denominator utility numerators; convert only public outputs
+  to numbers. No scoring formula, threshold or broad tolerance changed. Public regressions
+  cover the actual reported six- and two-person cases. Injected decimal profiles test all
+  legal headcounts, both choices and genuine near-ties. Future tuning must keep an equivalent
+  mathematical-tie regression when the current public profile changes.
+- **Preview agreement fixed:** the evaluator shares responseValidation across preview,
+  utility and resolution. Invalid durations/techniques, booking/arrival/callback contexts
+  and duplicate/colliding callback schedules no longer preview as enabled.
+- **Content ownership fixed:** approved relationship IDs are plain data in content/engineRules.
+  Only the public index imports that data; internal profiles inject EventRules. ContentPack
+  stores eventRules. Renamed fixture IDs exercise arrivals/bookings/callbacks without changing
+  engine code. The join allowlist is derived from supplied arrival metadata.
+- **Authored reasons fixed:** Response.disabledReasonKey is required when requires exists;
+  disabled previews return the content key. Sam/Dev keys remain distinct; missing/empty keys
+  produce a programmer/content error. No UI rules are duplicated.
+- **Spec synchronized:** releasedAttendeeIds, EventRules/ContentPack metadata, response reasons,
+  precision behavior and modules from both tasks 03–04 are documented. Added state/error,
+  preview, effect, weighted/condition and new shared-validation/numeric module layout entries.
+- **PR size preference resolved:** Harry explicitly instructed keeping #4 and accepting larger
+  future PRs. CLAUDE, the spec and plan now record that size alone does not require splitting
+  or approval. Historical commit splits remain evidence, not an unapproved general exception.
+- **Property gaps addressed:** new multi-choice properties vary releases (including owner),
+  arrivals, booking changes, callbacks and binary/decimal profiles; all preview deltas,
+  bounded quality, attendance/range/cost invariants and replay are checked. The original
+  broader clamp/property test is retained. A unit regression pins pending-event retention
+  after Call it; ended actions remain forbidden and task 06 has the empty-candidate requirement.
+- Local Node 24 check currently passes **129 unit/property tests**. Existing 90% core lines /
+  85% branches thresholds are unchanged. Final local evidence is below; hosted checks follow.
+- The external review is preserved as historical findings, with resolution notes appended.
+  Task 02 Android evidence remains explicitly deferred and must be obtained before release.
+
+Final local review evidence:
+
+- Node 24 typecheck, zero-warning lint/format and 129 unit/property tests passed. Core coverage
+  is **229/231 lines (99.13%)** and **188/194 branches (96.91%)**. Build/size
+  passed at 70,407 / 122,880 gzip JS bytes and deployed media 0 / 409,600. All 18 E2E cases
+  passed without retries/skips/console errors on the three required profiles.
+- The original 18 seeded architecture violations remain rejected, three approved imports
+  pass, and the 24-package allowlist / five TS flags / unchanged lockfile were verified.
+- Larger future PRs are accepted by Harry; PR #4 remains the task 04 delivery. All review
+  findings have code/doc resolutions, no known task 04 blocker remains, and task 05 is next.
+
+Hosted review evidence:
+
+- [Quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38192799070) passed
+  on review-fix code commit ecede54. Downloaded reports confirm **129 unit tests, zero failures/errors**,
+  **18 browser passes, zero skipped/flaky/unexpected**, core **229/231 lines, 188/194 branches**
+  and both coverage/browser HTML reports. Build/size and Vercel checks passed.
+- PR #4 is updated and ready for review, still unmerged. The final evidence-only commit reruns
+  the same active gates. All review findings are resolved, with the accepted PR-size preference
+  recorded. No task 04 blocker remains; Android LinkedIn testing remains an accepted release risk.
+- **Task 04 complete. Next task: 05. Stop here; no task 05 work started.**

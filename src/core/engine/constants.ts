@@ -56,3 +56,15 @@ export const PRNG_SHIFT_SECOND = 7;
 export const PRNG_SHIFT_FINAL = 14;
 export const PRNG_OR_FIRST = 1;
 export const PRNG_OR_SECOND = 61;
+
+export const UTILITY_RULES = {
+  costWeight: W_COST,
+  riskWeight: W_RISK,
+  costUnit: UTILITY_COST_PM,
+} as const;
+export const MAX_RESPONSE_MINUTES = 10;
+
+export const DECIMAL_BASE = 10n;
+export const BIGINT_ZERO = 0n;
+export const BIGINT_ONE = 1n;
+export const UTILITY_RATIO_DIGITS = 17;
