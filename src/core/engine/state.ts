@@ -6,7 +6,7 @@ import {
   MIN_HEADCOUNT,
 } from './constants';
 import { assertRunning } from './errors';
-import type { AttendeeId, MeetingState } from './types';
+import type { AttendeeId, MeetingState, ReleasePreview } from './types';
 /** Implements Design Doc v2 → Game state model: the fixed starting meeting. */
 export function initialState(seed: string): MeetingState {
   return {
@@ -33,15 +33,23 @@ export function initialState(seed: string): MeetingState {
     ending: null,
   };
 }
+/** ADR 0004 → read-only release restrictions shared with the state transition. */
+export function previewRelease(
+  state: MeetingState,
+  who: AttendeeId,
+): ReleasePreview {
+  assertRunning(state);
+  if (who === DECISION_OWNER)
+    return { enabled: false, reasonKey: 'release-owner' };
+  if (!state.present.includes(who))
+    return { enabled: false, reasonKey: 'release-absent' };
+  if (state.present.length <= MIN_HEADCOUNT)
+    return { enabled: false, reasonKey: 'release-minimum' };
+  return { enabled: true };
+}
 /** Implements Design Doc v2 → Core loop → Anytime actions: owner/minimum-safe release. */
 export function release(state: MeetingState, who: AttendeeId): MeetingState {
-  assertRunning(state);
-  if (
-    who === DECISION_OWNER ||
-    !state.present.includes(who) ||
-    state.present.length <= MIN_HEADCOUNT
-  )
-    return { ...state };
+  if (!previewRelease(state, who).enabled) return { ...state };
   return {
     ...state,
     present: state.present.filter((id) => id !== who),

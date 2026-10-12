@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, which remains open for review. Task 11a implemented locally; spec approval/final implementation pending; draft PR #13 has passing hosted Node 24 evidence (see execution record below). Next action: resolve 11a review before 12a.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, which remains open for review. Task 11a implemented locally; ADR 0004 approved and implemented locally; final hosted Node 24 evidence pending in PR #13 (see execution record below). Next action: resolve 11a review before 12a.
 
 ## Purpose and source of truth
 
@@ -290,12 +290,12 @@ Record progress below by replacing `not started` with `in progress`, `blocked: D
 | -------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002)                                                                                                                                                                                                                                                                 |
 | B — Headless game    | 04–07, 06b    | 04–06 complete: PRs #4–#5 merged, [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7) with hosted Node 24 evidence; 06b complete with Harry's approval; Claude review addressed in PR #8 with hosted Node 24 evidence; 07a complete with review fixes and hosted Node 24 evidence in PR #9; 07b complete with review fixes and hosted Node 24 evidence in PR #10 |
-| B2 — Vertical slice  | 08a, 11a, 12a | 08a complete with review fixes, clean committed V3 evidence and hosted Node 24 checks in PR #12; 11a implemented locally; spec approval/final implementation pending; draft PR #13 hosted Node 24 checks pass; 12a not started                                                                                                                                         |
+| B2 — Vertical slice  | 08a, 11a, 12a | 08a complete with review fixes, clean committed V3 evidence and hosted Node 24 checks in PR #12; 11a implemented locally; ADR 0004 approved/implemented; final hosted CI pending in PR #13; 12a not started                                                                                                                                                            |
 | C — Balance evidence | 08b–10        | Not started                                                                                                                                                                                                                                                                                                                                                            |
 | D — Browser game     | 11b–15        | Not started                                                                                                                                                                                                                                                                                                                                                            |
 | E — Release          | 16–17         | Not started                                                                                                                                                                                                                                                                                                                                                            |
 
-Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, which remains open for review. Task 11a implemented locally; spec approval/final implementation pending; draft PR #13 has passing hosted Node 24 evidence (see execution record below). Next action: resolve 11a review before 12a. Android evidence remains deferred (ADR 0002).
+Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, which remains open for review. Task 11a implemented locally; ADR 0004 approved and implemented locally; final hosted Node 24 evidence pending in PR #13 (see execution record below). Next action: resolve 11a review before 12a. Android evidence remains deferred (ADR 0002).
 
 ## Task 01 completion — October 11, 2026
 
@@ -1478,7 +1478,7 @@ review/delivery evidence before proceeding. **Next blueprint task after 11a
 closure: 12a — text-only meeting loop and V4 playtest.** Android LinkedIn evidence
 remains deferred under ADR 0002.
 
-### Task 11a review resolution — in progress
+### Task 11a review proposal stage — before approval
 
 The [review](task-11a-review.md) found no D17 action behavior bug, but correctly
 identified two integration contracts missing from the specification. The earlier
@@ -1539,3 +1539,35 @@ Downloaded reports verify **339 unit passes**, **18 E2E passes** with zero
 unexpected/flaky/skipped/error cases, and passing simulation invariants from a
 clean hosted checkout. Vercel preview passes. This is evidence for the current
 draft, not approval of the unimplemented proposal or permission to begin 12a.
+
+### Task 11a approved review implementation — final CI pending
+
+Harry explicitly approved ADR 0004: “Approve ADR 0004 as proposed.” The ADR now
+records that authority and the technical spec was updated before the code.
+Implemented the approved eighth action, `setAssetStatus`, guarded to Title only.
+Initial status is loading/not ready; ready/failed/loading reports synchronize the
+existing readiness guard. Tests use the named action rather than constructor
+readiness overrides or direct readiness writes, including the production singleton,
+failed loading, retry, no automatic start/entropy, screen guards and restart.
+Loading promises/timers and the actual Title preload integration remain in UI
+tasks; the spec defines the empty required-asset set for text-only 12a.
+
+Added pure public `previewRelease` and `ReleasePreview`, sharing the original
+owner → absent → minimum checks with `release`. Ended-state errors and refused
+release snapshots are unchanged. Authored `releaseReasons` copy is separate from
+response-disabled reasons. Fixture tests cover every owner-containing roster
+subset, reason precedence, allowed/refused agreement and frozen inputs; public
+API/content validation checks every reason key. Lint allows the approved export
+and UI read while still rejecting UI mutations/internal engine imports and stage
+loading dispatch. The spec now lists breakdown and storeConfig and clarifies
+failure-safe v1 persistence. No event-table or scoring change was made.
+
+Local approved-implementation `pnpm check` passes on Node 24.21.0 / pnpm 10.34.6:
+**347 tests in 36 files**, content validation/goldens, types, zero-warning lint and
+2,000-seed-per-policy simulation invariants/replay. Simulation metrics and the
+content/constants hash remain unchanged. Core coverage is **626/628 lines
+(99.68%)**, **602/610 branches (98.69%)**; store is **53/54 lines (98.14%)** and
+**46/46 branches (100%)**. Thresholds are unchanged. Lint boundary probes and
+document consistency pass. Build/size pass at **70,405/122,880 JS gzip bytes** and
+**0/409,600 image/font bytes**; E2E passes **18/18**. Final hosted checks will be
+recorded after verification; 11a is not yet marked complete.

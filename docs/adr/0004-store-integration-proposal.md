@@ -1,6 +1,6 @@
 # ADR 0004: Store loading and release preview (proposed)
 
-Status: **Proposed; awaiting Harry's approval. Not a normative spec change.**
+Status: **Accepted by Harry on October 12, 2026.**
 Task: 11a review resolution. Recorded October 12, 2026.
 Review: [task 11a review](../task-11a-review.md), findings 1, 2 and 5.
 
@@ -8,7 +8,11 @@ The complete D17 action list has no way to report asset loading. The HUD must
 show release refusal reasons while eligibility remains exclusively in the engine.
 These are API gaps, not changes to release rules, event content or scoring.
 
-## Proposed technical-spec changes
+Harry approved this exact proposal in the review-resolution chat: “Approve ADR
+0004 as proposed.” It authorizes the technical-spec additions and implementation
+below within task 11a; it does not authorize merging PR #12 or the 11a PR.
+
+## Approved technical-spec changes
 
 1. In **Meeting turn flow (D17)**, add `assetStatus: 'loading' | 'ready' | 'failed'`
    and `breakdown: ScoreBreakdown | null` to the store shape. Retain `assetsReady`
@@ -76,6 +80,5 @@ states, including immutability. Test content reason lookup without changing the
 response-disabled audit. Run every active Node 24 check and hosted CI before
 marking 11a complete. Keep all thresholds and event/scoring rules unchanged.
 
-The proposed spec and API changes have deliberately not been applied. Approval
-of this ADR authorizes those exact technical-spec additions and implementation
-within the 11a review fix. It does not authorize merging PR #12 or the 11a PR.
+The technical spec is the normative home for the approved contracts. Implement
+and verify them there before closing task 11a.

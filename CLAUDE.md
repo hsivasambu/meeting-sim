@@ -22,7 +22,7 @@ The room is DOM sprites + CSS. No game engine.
 
 1. Game rules live only in src/core/engine. ui/, store/, stage/ and sim/ never compute
    eligibility, effects, clamping, utility, score or titles; they call previewResponse,
-   getDrawCandidates, score and earnedTitles.
+   previewRelease, getDrawCandidates, score and earnedTitles.
 2. The store is the only writer of MeetingState. Only the store actions `start` and
    `continue` call drawEvent. ui/ dispatches named actions; stage/ never dispatches.
 3. Only src/core/engine/index.ts imports live content. Engine internals take a ContentPack

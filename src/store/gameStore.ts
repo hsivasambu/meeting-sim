@@ -20,13 +20,17 @@ import { storeConfig } from '../core/content/storeConfig';
 import { readTitleSnapshot, writeTitles } from './persistence';
 import type { StorageProvider } from './persistence';
 
+export type AssetStatus = 'loading' | 'ready' | 'failed';
+
 export interface GameStoreState {
   readonly screen: 'title' | 'meeting' | 'results';
   readonly beat: 'speaking' | 'choosing' | 'outcome';
   readonly game: MeetingState | null;
   readonly unlockedTitles: readonly TitleId[];
   readonly assetsReady: boolean;
+  readonly assetStatus: AssetStatus;
   readonly breakdown: ScoreBreakdown | null;
+  setAssetStatus(status: AssetStatus): void;
   start(): void;
   finishTyping(): void;
   choose(responseId: string): void;
@@ -47,7 +51,6 @@ function createSeed(): string {
 /** D17: only start/continue draw; presentation timing remains outside the store. */
 export function createGameStore(
   options: {
-    readonly assetsReady?: boolean;
     readonly storage?: StorageProvider;
   } = {},
 ) {
@@ -72,8 +75,13 @@ export function createGameStore(
       beat: 'speaking',
       game: null,
       unlockedTitles: persisted.titles,
-      assetsReady: options.assetsReady ?? false,
+      assetsReady: false,
+      assetStatus: 'loading',
       breakdown: null,
+      setAssetStatus(status) {
+        if (get().screen !== 'title') return;
+        set({ assetStatus: status, assetsReady: status === 'ready' });
+      },
       start() {
         if (get().screen !== 'title' || !get().assetsReady) return;
         const game = drawEvent(initialState(createSeed()));

@@ -9,7 +9,8 @@ describe('store replay and persistence recovery', () => {
       .spyOn(crypto, 'getRandomValues')
       .mockReturnValueOnce(new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7]))
       .mockReturnValueOnce(new Uint8Array([8, 9, 10, 11, 12, 13, 14, 15]));
-    const store = createGameStore({ assetsReady: true });
+    const store = createGameStore();
+    store.getState().setAssetStatus('ready');
     store.getState().start();
     expect(store.getState().game?.seed).toBe('0001020304050607');
     store.getState().start();
@@ -26,7 +27,6 @@ describe('store replay and persistence recovery', () => {
       stored = value;
     });
     const store = createGameStore({
-      assetsReady: true,
       storage: () => ({
         getItem: () => {
           throw new Error('transient read failure');
@@ -34,6 +34,7 @@ describe('store replay and persistence recovery', () => {
         setItem,
       }),
     });
+    store.getState().setAssetStatus('ready');
     store.getState().start();
     store.getState().callIt();
     expect(store.getState().screen).toBe('results');
@@ -55,7 +56,8 @@ describe('store replay and persistence recovery', () => {
         stored = value;
       },
     });
-    const store = createGameStore({ assetsReady: true, storage });
+    const store = createGameStore({ storage });
+    store.getState().setAssetStatus('ready');
     store.getState().start();
     store.getState().callIt();
     expect(createGameStore({ storage }).getState().unlockedTitles).toEqual(

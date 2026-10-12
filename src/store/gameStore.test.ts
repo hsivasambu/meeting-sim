@@ -46,9 +46,9 @@ const presentation = {
 function readyStore() {
   const setItem = vi.fn();
   const store = createGameStore({
-    assetsReady: true,
     storage: () => ({ getItem: () => '["inbox-zero"]', setItem }),
   });
+  store.getState().setAssetStatus('ready');
   return { store, setItem };
 }
 function currentGame(store: ReturnType<typeof createGameStore>): MeetingState {
@@ -67,7 +67,7 @@ describe('D17 store action table', () => {
     store.getState().start();
     expect(store.getState().game).toBeNull();
     expect(entropy).not.toHaveBeenCalled();
-    store.setState({ assetsReady: true });
+    store.getState().setAssetStatus('ready');
     store.getState().start();
     expect(entropy).toHaveBeenCalledTimes(1);
     expect(entropy.mock.calls[0]?.[0]).toBeInstanceOf(Uint8Array);
@@ -248,11 +248,11 @@ describe('D17 store action table', () => {
   });
   it('blocked storage permits play/results, retaining session unlocks and error recovery', () => {
     const store = createGameStore({
-      assetsReady: true,
       storage: () => {
         throw new Error('blocked');
       },
     });
+    store.getState().setAssetStatus('ready');
     expect(store.getState().unlockedTitles).toEqual([]);
     store.getState().start();
     store.getState().callIt();

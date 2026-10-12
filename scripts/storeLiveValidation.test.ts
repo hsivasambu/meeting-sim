@@ -19,7 +19,6 @@ describe('live content reaches results through the store with real draws', () =>
       );
       function play() {
         const store = createGameStore({
-          assetsReady: true,
           storage: () => ({ getItem: () => null, setItem: () => undefined }),
         });
         const bound =
@@ -28,6 +27,7 @@ describe('live content reaches results through the store with real draws', () =>
           Math.ceil(
             ENGINE_LIMITS.initialBookingEnd / ENGINE_LIMITS.fillerMinutes,
           );
+        store.getState().setAssetStatus('ready');
         store.getState().start();
         for (
           let turn = 0;

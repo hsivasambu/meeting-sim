@@ -1,4 +1,13 @@
-import type { MeetingState } from '../engine/types';
+import type { MeetingState, ReleasePreview } from '../engine/types';
+
+export const releaseReasons = {
+  'release-owner': 'Priya must stay to own the launch decision.',
+  'release-absent': 'This attendee has already left the room.',
+  'release-minimum': 'One other attendee must stay with Priya.',
+} as const satisfies Record<
+  Extract<ReleasePreview, { enabled: false }>['reasonKey'],
+  string
+>;
 
 export const shellCopy = {
   title: "This Could've Been an Email",
