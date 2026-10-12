@@ -210,7 +210,8 @@ interface DecisionRecord {               // scoring data only
   readonly turn: number;
   readonly eventId: string;
   readonly responseId: string;
-  readonly quality: number | null;       // null = unscored
+  readonly quality: number | null;       // display approximation; null = unscored
+  readonly qualityFraction: { readonly numerator: string; readonly denominator: string } | null; // authoritative exact q
 }
 
 type ResponsePreview =
@@ -245,6 +246,8 @@ interface ContentPack {                  // fields may be added when an engine r
   readonly filler: MeetingEvent;
 }
 ```
+
+**Result precision and lifecycle.** Resolution stores exact utility-difference numerator/denominator integers as decimal strings in `qualityFraction` (null for ties). Numeric `quality` is for display; scoring and unrounded title comparisons consume the fraction, never the approximation. BigInt is calculation-only and state remains JSON-serialisable. `score` and `earnedTitles` reject running meetings or a null ending with `EngineError("not-ended")`.
 
 **Counters and log (D15).** The counters `releasedAttendeeIds`, `parkedCount`, `peakHeadcount`, `spokenAttendeeIds`, `seenEventIds`, `substantiveDrawCount` and `previousDrawWasUncommonNegative` are authoritative for every rule and title. `log` is narrative only: the results moment, the outcome line and sim traces. No rule reads the log. `decisions` is scoring data only.
 

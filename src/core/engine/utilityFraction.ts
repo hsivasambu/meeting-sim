@@ -8,7 +8,8 @@ import {
 } from './constants';
 import { EngineError } from './errors';
 import type { UtilityRules } from './types';
-function decimal(value: number) {
+/** Implements Design Doc v2 → Scoring: exact arithmetic on decimal numeric inputs. */
+export function decimalFraction(value: number) {
   if (!Number.isFinite(value)) throw new EngineError('invalid-rules');
   const [coefficient, exponent] = value.toString().split('e');
   if (coefficient === undefined) throw new EngineError('invalid-rules');
@@ -51,9 +52,9 @@ export function utilityFraction(
     rules.costUnit <= ZERO
   )
     throw new EngineError('invalid-rules');
-  const cost = decimal(rules.costWeight),
-    risk = decimal(rules.riskWeight),
-    unit = decimal(rules.costUnit);
+  const cost = decimalFraction(rules.costWeight),
+    risk = decimalFraction(rules.riskWeight),
+    unit = decimalFraction(rules.costUnit);
   const denominator = cost.denominator * unit.numerator * risk.denominator;
   const numerator =
     BigInt(progress) * denominator -

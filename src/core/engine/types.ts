@@ -72,6 +72,10 @@ export interface DecisionRecord {
   readonly eventId: string;
   readonly responseId: string;
   readonly quality: number | null;
+  readonly qualityFraction: {
+    readonly numerator: string;
+    readonly denominator: string;
+  } | null;
 }
 export type LogEntry =
   | {
