@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Current task: 12a — text-only loop implemented with passing local automated checks; V4 human playtest evidence pending. Next blueprint task after 12a acceptance: 08b.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Current task: 12a — text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. Next blueprint task after 12a acceptance: 08b.
 
 ## Purpose and source of truth
 
@@ -290,12 +290,12 @@ Record progress below by replacing `not started` with `in progress`, `blocked: D
 | -------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002)                                                                                                                                                                                                                                                                 |
 | B — Headless game    | 04–07, 06b    | 04–06 complete: PRs #4–#5 merged, [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7) with hosted Node 24 evidence; 06b complete with Harry's approval; Claude review addressed in PR #8 with hosted Node 24 evidence; 07a complete with review fixes and hosted Node 24 evidence in PR #9; 07b complete with review fixes and hosted Node 24 evidence in PR #10 |
-| B2 — Vertical slice  | 08a, 11a, 12a | 08a complete with review fixes, clean committed V3 evidence and hosted Node 24 checks in PR #12; 11a complete with approved review fixes and local/hosted Node 24 checks in explicitly stacked PR #13; 12a implemented with passing local automated checks; V4 human evidence pending                                                                                  |
+| B2 — Vertical slice  | 08a, 11a, 12a | 08a complete with review fixes, clean committed V3 evidence and hosted Node 24 checks in PR #12; 11a complete with approved review fixes and local/hosted Node 24 checks in explicitly stacked PR #13; 12a implemented with passing local/hosted automated checks; V4 human evidence pending                                                                           |
 | C — Balance evidence | 08b–10        | Not started                                                                                                                                                                                                                                                                                                                                                            |
 | D — Browser game     | 11b–15        | Not started                                                                                                                                                                                                                                                                                                                                                            |
 | E — Release          | 16–17         | Not started                                                                                                                                                                                                                                                                                                                                                            |
 
-Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Current task: 12a — text-only loop implemented with passing local automated checks; V4 human playtest evidence pending. Next blueprint task after 12a acceptance: 08b. Android evidence remains deferred (ADR 0002).
+Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Current task: 12a — text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. Next blueprint task after 12a acceptance: 08b. Android evidence remains deferred (ADR 0002).
 
 ## Task 01 completion — October 11, 2026
 
@@ -1597,7 +1597,7 @@ remains deferred under ADR 0002.
 
 ### Task 12a — text-only meeting loop (October 12, 2026)
 
-Status: **implementation and local automated gates pass; V4 human playtest pending**.
+Status: **implementation and local/hosted automated gates pass; V4 human playtest pending**.
 Work is on `feat/task-12a-text-loop`. Task 12a is not marked complete until its
 three-person acceptance evidence and any resulting follow-ups are recorded.
 
@@ -1674,3 +1674,21 @@ follow-up before closing 12a. **Next action: finish V4; next blueprint task afte
 12a acceptance: 08b — full simulation runner, metrics and CSV.** No later task
 work has started. Android LinkedIn evidence remains separately deferred under
 ADR 0002.
+
+Delivery: [draft PR #15](https://github.com/hsivasambu/meeting-sim/pull/15) targets
+`main` and contains only 12a. Its code commit `26496e5` passed every activated
+[hosted Node 24 quality gate](https://github.com/hsivasambu/meeting-sim/actions/runs/38323388545).
+Downloaded `quality-reports` verify **347 unit tests**, **30 E2E passes**, zero
+skipped/flaky/unexpected cases or errors, core **628/630 lines and 602/610
+branches**, and a clean-tree simulation exactly matching the committed V3
+metrics/hash (revision excluded). Local document consistency and whitespace
+checks also pass. The dependency stack was squash-merged, so only the 12a commit
+was rebased onto the identical `origin/main` tree; verified file contents did not
+change.
+
+[The hosted V4 preview](https://meeting-sim-git-feat-task-12a-text-loop-hsivasambus-projects.vercel.app/)
+deployed successfully and anonymous access returns HTTP 200 at the same URL.
+It is available on testers' own devices; [the playtest record](task-12a-playtest.md)
+also retains local preview/restart instructions. This deployment/access evidence
+is separate from the still-pending human V4 results. This evidence-only update
+reruns the same hosted gates; there is no gameplay change.

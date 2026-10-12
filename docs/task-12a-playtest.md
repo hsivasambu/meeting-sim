@@ -1,10 +1,16 @@
 # Task 12a — text-only V4 playtest
 
-Status: implementation and local automated gates pass; human V4 evidence pending.
+Status: implementation and local/hosted automated gates pass; human V4 evidence pending.
 Harry agreed on October 12, 2026 to play and recruit two other people.
 That agreement is not a recorded playtest result.
 
-The current built preview is running at <http://127.0.0.1:4174/> on this computer.
+Open [the hosted text-only preview](https://meeting-sim-git-feat-task-12a-text-loop-hsivasambus-projects.vercel.app/)
+on any tester's device. It is the task 12a branch deployment from
+[draft PR #15](https://github.com/hsivasambu/meeting-sim/pull/15); anonymous HTTP
+access was verified with status 200 on October 12, 2026. Deployment success and
+anonymous page access do not establish a human playtest result.
+
+The current local built preview is running at <http://127.0.0.1:4174/> on this computer.
 The same computer can be used by all three testers. This address is local; it
 does not open the build on another person's device.
 
