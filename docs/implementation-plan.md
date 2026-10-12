@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–04 complete. Task 05 review fixes pass all active local Node 24 gates; delivery is pending its commit, PR and hosted evidence. Task 02 Android evidence remains deferred (ADR 0002). Next blueprint task after task 05 delivery: 06.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. PR #5 delivers task 05 and is stacked on unmerged PR #4; both remain open. Task 02 Android evidence remains deferred (ADR 0002). Next task: 06.
 
 ## Purpose and source of truth
 
@@ -32,7 +32,7 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 | 02   | Test and CI infrastructure: Vitest + fast-check, Playwright config, `.github/workflows/ci.yml`, shell E2E smoke. LinkedIn capability probe page on a Vercel preview (V1).                                                                                                        | 01b             | CI uses the frozen lockfile and publishes reports; probe results for LinkedIn on iOS and Android recorded in an ADR.                                                                                               |
 | 03   | Contracts: `src/core/engine/{types,constants,rng,index}.ts`, condition helpers, `fixtures/` packs, colocated tests.                                                                                                                                                              | 01b             | Types match the spec (D14); only `index.ts` imports content (D13); RNG vectors and per-turn stream tests; exact weighted-selection formula; constants centralized.                                                 |
 | 04   | State transitions and shared evaluator: `state.ts`, `resolve.ts`, `applyEffect`, typed errors, log and decision records; core property tests.                                                                                                                                    | 03              | Starting six, legal releases, owner protection, integer person-minutes, booking changes, end priority, clamping, invalid actions and immutability tested on fixture packs; counters authoritative (D15).           |
-| 05   | Utility, score and titles: internal `value.ts`, `score.ts` (with `formatCost`), `titleRules.ts`, score fixtures.                                                                                                                                                                 | 04              | **Complete locally, October 11, 2026.** Six exact examples, rate independence, boundaries and all title predicates; 189 unit/property and 18 E2E passes; see task 05 result.                                       |
+| 05   | Utility, score and titles: internal `value.ts`, `score.ts` (with `formatCost`), `titleRules.ts`, score fixtures.                                                                                                                                                                 | 04              | **Complete, October 12, 2026.** PR #5; 195 unit/property and 18 E2E passes, hosted Node 24 evidence; see task 05 review fixes and delivery.                                                                        |
 | 06   | Event selection and callback scheduler: `draw.ts`; at least five fixture goldens (D21).                                                                                                                                                                                          | 03, 04          | Weighted eligibility, unseen-family rules, fairness, callbacks, idempotent pending draw and filler fallback tested; goldens cover cancellation, clean success, risky success, timeout, and callback plus absence.  |
 | 06b  | Content table `docs/content-table.md`: all 17 families × variants × responses, the 3 callback events, filler and epilogues. Design task; runs in parallel with 03–06.                                                                                                            | 00b             | Every response has technique, requires, minutes, progress, risks, callback, label and line; a hand check shows a sensible player can reach P = 100 in about 10 turns within 60 minutes; Harry's approval recorded. |
 | 07a  | Content validator and content index.                                                                                                                                                                                                                                             | 04–06           | `validateContent` rules implemented and tested on valid and invalid fixture packs.                                                                                                                                 |
@@ -107,7 +107,7 @@ Check — catches type/style errors and runs all unit/property tests with covera
 ```
 
 Tests — the simplest under-the-hood check for tasks 03–05. All tests should pass;
-at this update there are 189 tests. It prints each test file and writes a readable
+at this update there are 195 tests. It prints each test file and writes a readable
 coverage report to coverage/index.html. A green test run is evidence for the tested
 rules; it does not mean the unfinished game features exist.
 
@@ -284,13 +284,13 @@ Record progress below by replacing `not started` with `in progress`, `blocked: D
 | Milestone            | Tasks         | Status                                                                                                 |
 | -------------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
 | A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002) |
-| B — Headless game    | 04–07, 06b    | 04 complete; 05 locally verified, delivery pending; 06–07 and 06b not started                          |
+| B — Headless game    | 04–07, 06b    | 04–05 complete (PRs #4–#5 open); 06–07 and 06b not started                                             |
 | B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                            |
 | C — Balance evidence | 08b–10        | Not started                                                                                            |
 | D — Browser game     | 11b–15        | Not started                                                                                            |
 | E — Release          | 16–17         | Not started                                                                                            |
 
-The next blueprint task is 06: event selection and callback scheduler, including fixture goldens. Tasks 01–04 are complete; task 05 delivery is pending hosted verification. Android evidence remains explicitly deferred (ADR 0002). No task 06 implementation has started.
+The next blueprint task is 06: event selection and callback scheduler, including fixture goldens. Tasks 01–05 are implemented and verified; PR #5 is stacked on unmerged PR #4. Android evidence remains explicitly deferred (ADR 0002). No task 06 implementation has started.
 
 ## Task 01 completion — October 11, 2026
 
@@ -736,7 +736,7 @@ Hosted review evidence:
 
 ## Task 05 initial local result — October 11, 2026
 
-Status: **Local implementation under review; delivery pending commit, PR and Node 24 hosted checks** on `feat/task-05-score-titles`.
+Historical status: **Initial local implementation; superseded by the review fixes and hosted delivery below** on `feat/task-05-score-titles`.
 Sources: Design Doc v2 Scoring (including all six worked examples) and Endings/Titles;
 Technical Spec Engine contracts, Money without floating-point drift, Scoring module
 and Testing and quality gates. D01–D26 and all formulas/tuning values remain unchanged.
@@ -829,6 +829,19 @@ No task 04 merge or task 06 implementation is included.
   cases pass across the three required profiles with zero retries/skips/browser errors.
 - Architecture probes reject 18 seeded violations and accept three legal imports. The 24-package
   allowlist, five strict flags, unchanged dependency/lockfile, docs and whitespace checks pass.
-- Commit/PR and hosted evidence are pending below; the earlier “complete” claim is superseded.
+- Commit/PR and hosted evidence are recorded below; the earlier local-only “complete” claim is superseded.
   Formulas, tuning values, thresholds and existing tests were not weakened. Android LinkedIn
   testing remains the accepted release risk. Next task is 06 after task 05 delivery; stop here.
+
+Hosted delivery evidence:
+
+- Implementation and fixes committed as **7ff113e**, pushed to feat/task-05-score-titles.
+  [PR #5](https://github.com/hsivasambu/meeting-sim/pull/5) is open and attached to this task,
+  based on PR #4's branch. Retarget to main after dependency #4 merges; neither PR was merged here.
+- [Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38256899285)
+  passed every active gate. Downloaded reports verify **195 unit tests, zero failures/errors**,
+  **18 E2E passes, zero skipped/flaky/unexpected**, core **289/291 lines, 216/222 branches**,
+  and both coverage/browser HTML reports. No Node 22 result is substituted for hosted Node 24.
+- **Task 05 complete and ready for review.** This evidence-only commit reruns the same checks.
+  No known task 05 defect remains. Android LinkedIn testing is still deferred until release.
+  **Next task: 06.** No task 06 or 06b implementation started; stop here.
