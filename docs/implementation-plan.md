@@ -32,7 +32,7 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 | 02   | Test and CI infrastructure: Vitest + fast-check, Playwright config, `.github/workflows/ci.yml`, shell E2E smoke. LinkedIn capability probe page on a Vercel preview (V1).                                                                                                        | 01b             | CI uses the frozen lockfile and publishes reports; probe results for LinkedIn on iOS and Android recorded in an ADR.                                                                                               |
 | 03   | Contracts: `src/core/engine/{types,constants,rng,index}.ts`, condition helpers, `fixtures/` packs, colocated tests.                                                                                                                                                              | 01b             | Types match the spec (D14); only `index.ts` imports content (D13); RNG vectors and per-turn stream tests; exact weighted-selection formula; constants centralized.                                                 |
 | 04   | State transitions and shared evaluator: `state.ts`, `resolve.ts`, `applyEffect`, typed errors, log and decision records; core property tests.                                                                                                                                    | 03              | Starting six, legal releases, owner protection, integer person-minutes, booking changes, end priority, clamping, invalid actions and immutability tested on fixture packs; counters authoritative (D15).           |
-| 05   | Utility, score and titles: internal `value.ts`, `score.ts` (with `formatCost`), `titleRules.ts`, score fixtures.                                                                                                                                                                 | 04              | **Complete, October 12, 2026.** PR #5; 195 unit/property and 18 E2E passes, hosted Node 24 evidence; see task 05 review fixes and delivery.                                                                        |
+| 05   | Utility, score and titles: internal `value.ts`, `score.ts` (with `formatCost`), `titleRules.ts`, score fixtures.                                                                                                                                                                 | 04              | **Complete, October 12, 2026.** PR #5; 196 unit/property and 18 E2E passes, hosted Node 24 evidence; see task 05 review fixes and delivery.                                                                        |
 | 06   | Event selection and callback scheduler: `draw.ts`; at least five fixture goldens (D21).                                                                                                                                                                                          | 03, 04          | Weighted eligibility, unseen-family rules, fairness, callbacks, idempotent pending draw and filler fallback tested; goldens cover cancellation, clean success, risky success, timeout, and callback plus absence.  |
 | 06b  | Content table `docs/content-table.md`: all 17 families × variants × responses, the 3 callback events, filler and epilogues. Design task; runs in parallel with 03–06.                                                                                                            | 00b             | Every response has technique, requires, minutes, progress, risks, callback, label and line; a hand check shows a sensible player can reach P = 100 in about 10 turns within 60 minutes; Harry's approval recorded. |
 | 07a  | Content validator and content index.                                                                                                                                                                                                                                             | 04–06           | `validateContent` rules implemented and tested on valid and invalid fixture packs.                                                                                                                                 |
@@ -107,7 +107,7 @@ Check — catches type/style errors and runs all unit/property tests with covera
 ```
 
 Tests — the simplest under-the-hood check for tasks 03–05. All tests should pass;
-at this update there are 195 tests. It prints each test file and writes a readable
+at this update there are 196 tests. It prints each test file and writes a readable
 coverage report to coverage/index.html. A green test run is evidence for the tested
 rules; it does not mean the unfinished game features exist.
 
@@ -804,8 +804,8 @@ Outstanding issues and next task:
 
 ## Task 05 review fixes and delivery — October 12, 2026
 
-Source: Harry's pasted Claude review. The named task-05-review.md was not present in the
-repository or original project folder; fixes follow the complete findings in the message.
+Source: [full Claude review](task-05-review.md), provided during verification, plus the pasted
+findings. The full review is preserved with resolution notes.
 Dependency code is present from task 04 at d5144a5. PR #4 remains open, so this task's
 PR targets feat/task-04-transitions and can merge to main after its dependency does.
 No task 04 merge or task 06 implementation is included.
@@ -818,10 +818,11 @@ No task 04 merge or task 06 implementation is included.
 - score and earnedTitles reject running meetings and null endings with EngineError("not-ended").
   A previously running-state score test now ends through Call it before computing results;
   its original quality and stability assertions remain intact.
-- Added six public-API integration cases, including resolve-produced qualities 2/3, 1, 1,
+- Added seven public-API integration cases, including resolve-produced qualities 2/3, 1, 1,
   11/15. Their exact average is 0.85, Decisions is 255, and the early ending earns Played It
   Right. Tests include ties, disabled choices, below-boundary/zero qualities, JSON round-trip,
-  display-approximation independence and both result API lifecycle guards.
+  display-approximation independence and both result API lifecycle guards. A reachable q=1/3
+  then q=7/100 case pins exact Decisions half-up rounding: 60.5 rounds to 61.
 - Node 24.21.0 / pnpm 10.34.6: pnpm check passes **195 tests in 18 files**, zero type/lint/format
   errors. All six design examples, twelve title rules and display-rate independence remain green.
   Core coverage: **289/291 lines (99.31%)**, **216/222 branches (97.30%)**; unchanged 90%/85% gates.
@@ -845,3 +846,16 @@ Hosted delivery evidence:
 - **Task 05 complete and ready for review.** This evidence-only commit reruns the same checks.
   No known task 05 defect remains. Android LinkedIn testing is still deferred until release.
   **Next task: 06.** No task 06 or 06b implementation started; stop here.
+
+Full review follow-up:
+
+- Read docs/task-05-review.md after Harry supplied it. Its additional inferred D-rounding
+  case now has a reachable public-API regression (P=1, then clamped deltas -1/+6/+99).
+  Full constructed reachability for every title remains for task 06 goldens / 07a content;
+  task 05 covers every predicate and resolution-to-results precision/lifecycle cases.
+- The 195-test hosted report above is historical evidence for 7ff113e. Updated head adds
+  one regression, for 196 tests; final verification follows. Thresholds remain unchanged.
+
+- Final full-review local check on Node 24: **196/196 tests**, typecheck/lint/format pass;
+  core coverage remains 289/291 lines and 216/222 branches. Production code did not change
+  after the previous build/size/18-browser passes; hosted gates rerun on the added test/review.

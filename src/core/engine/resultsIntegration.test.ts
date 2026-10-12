@@ -8,6 +8,7 @@ function decision(
   state: MeetingState,
   chosen: number,
   best: number,
+  worst = 0,
 ): MeetingState {
   return resolve(
     deepFreeze(
@@ -16,7 +17,7 @@ function decision(
           {
             ...fixtureResponse,
             id: 'worst',
-            effect: { minutes: 1, progress: 0 },
+            effect: { minutes: 1, progress: worst },
           },
           {
             ...fixtureResponse,
@@ -137,3 +138,13 @@ it.each(['initial', 'resolved', 'missing-ending'] as const)(
     }
   },
 );
+
+it('rounds an exact half from resolve-produced thirds and hundredths up', () => {
+  let state = decision(initialState('exact-decision-half'), 1, 3);
+  // P=1: clamped deltas -1, +6, +99 give q=7/100 for the chosen response.
+  state = decision(state, 6, 100, -1);
+  const ended = callIt(state);
+  expect(ended.decisions.map((d) => d.quality)).toEqual([1 / 3, 7 / 100]);
+  // 300 * (1/3 + 7/100) / 2 = 60.5, exactly.
+  expect(score(ended).decisions).toBe(61);
+});
