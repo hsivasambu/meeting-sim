@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Next implementation task: 07a.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Next implementation task: 07b.
 
 ## Purpose and source of truth
 
@@ -55,13 +55,14 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 ## Plain-language task guide and easy checks
 
 This explains the same tasks above; it does not change their scope, dependencies or
-acceptance rules. **Now** means the check is available on the current task 06 branch;
-**Later** means wait until that task is implemented. Tasks 00–06 (including their splits)
-are implemented; task 06 is on feat/task-06-draw. Tasks 04 and 05 are merged into main via [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4)
-and [PR #5](https://github.com/hsivasambu/meeting-sim/pull/5). Checks including task 06 require feat/task-06-draw rather than main.
+acceptance rules. **Now** means the check is available on the reviewed task 07a branch;
+**Later** means wait until that task is implemented. Tasks 00–07a (including their splits)
+are implemented. Tasks 04–06b are merged into main via PRs #4, #5, #7 and #8;
+task 07a is delivered in [PR #9](https://github.com/hsivasambu/meeting-sim/pull/9)
+with hosted Node 24 evidence. Its content checks are available on main after merge.
 
 The browser currently shows the title/objective and the separate sharing probe. The
-first playable meeting is task **12a**. Tasks 03–06 work under the hood, so their easiest
+first playable meeting is task **12a**. Tasks 03–07a work under the hood, so their easiest
 checks are automated tests. A simple check is a useful spot check, not a substitute for
 the technical spec's full gates or release checklist. Android LinkedIn testing is still
 unverified under the accepted task 02 deferral.
@@ -78,7 +79,7 @@ unverified under the accepted task 02 deferral.
 | 05   | Turn the finished meeting into a score and earned badges.                                                 | **Now — terminal:** Run Tests and inspect the six scoring examples against the design's worked-example table. The score shown in the browser arrives with later UI tasks.                                                                                        |
 | 06   | Pick the next meeting topic, remember used topics and bring parked issues back on time.                   | **Now — terminal:** Run Tests; draw/callback tests and the six saved example runs should pass. Browser topic flow arrives in 12a.                                                                                                                                |
 | 06b  | Write the script: every topic, choice, consequence and ending.                                            | **Now — read:** Open docs/content-table.md. Read one topic with its expert present and absent, then follow its choices and consequences. Harry approved the table on October 12, 2026; Claude review addressed; PR #8 has passing hosted Node 24 evidence.       |
-| 07a  | Build a proofreader that rejects broken game data.                                                        | **Later — terminal:** Run Tests; content-validation checks should pass for valid packs and reject the deliberately broken fixtures. No new screen to test.                                                                                                       |
+| 07a  | Build a proofreader that rejects broken game data.                                                        | **Now — terminal:** Run Tests; content-validation checks pass for valid packs and reject the deliberately broken fixtures. No new screen to test.                                                                                                                |
 | 07b… | Put the approved script into the game, a small group of topics at a time.                                 | **Later — compare:** Pick one implemented family and compare every variant/choice to its approved content-table row. Run Tests to check the data. Repeat for each 07b content split.                                                                             |
 | 08a  | Let two simple robot players try the real game to find big problems early.                                | **Later — report:** Ask for the Greedy/Random simulation summary. Both should reach endings without crashes; win rates are evidence at this point, not a promise that balance is finished.                                                                       |
 | 11a  | Add the traffic controller that accepts clicks and moves the meeting from dialogue to choices to results. | **Later — terminal:** Run Tests and look for the store/action checks passing, especially double-click handling and restarting. The screen that uses it arrives in 12a.                                                                                           |
@@ -166,6 +167,7 @@ Content checklist:
 - Add callback events and expert-absent variants with explicit family/no-repeat semantics. Releasing an expert must visibly remove useful options without deleting all evidence of the underlying issue.
 - Every response includes its technique, label, fixed effect, resulting line and any disabled reason. Transcribe every response from the reviewed content table (task 06b, D18); code PRs do not author new event design.
 - Task 07b acceptance includes committed live-content scenario tests using `getDrawCandidates`: the table's ten-turn route with arrivals released/retained, all 13 constructed variant scenarios, the four updated room-booked boundaries, and Legal/VP enabled and disabled choices before joining and after release (including release during pending dialogue). These content tests carry transcription/reachability evidence; engine rule tests and goldens continue to use frozen fixture packs.
+- Task 07b's live validation test must supply `eventFiles`, `attendees` and `disabledReasons`; assert that authored reason keys match the keys used by responses to catch stale copy. Include epilogues/titles when their data is transcribed, and substituted moment catalogs with task 15. An omitted catalog is not live-content gate evidence.
 - Task 07b transcribes the table's approved fixed no-moment copy and “Decision Made” heading into `core/content/copy.ts`. Task 15 authors and reviews the remaining dynamic release/park/arrival templates there, with ≤90-code-point substituted lines and the design's moment priority; no generated UI copy.
 - Validate unique IDs, event filenames, all references, 1–3 responses, minutes 0–10, progress −10…+25, risks −1…+1, and attendance safety. Validate zero minutes only for email; callbacks always take at least one minute. Enforce dialogue/epilogues/moments ≤90, labels ≤24, collectible titles ≤28 and role titles ≤48 Unicode code points.
 - Add reachability/condition checks beyond syntax: callbacks have targets, variants are selectable, no duplicate attendee joins, and no event can strand the player with no legal response.
@@ -284,16 +286,16 @@ Start each task by reading the files listed in `CLAUDE.md`. D01–D26 are settle
 
 Record progress below by replacing `not started` with `in progress`, `blocked: Dxx`, or `complete: PR/evidence`. “Complete” requires the task's acceptance evidence and the applicable quality gates; documentation planning alone does not validate the game.
 
-| Milestone            | Tasks         | Status                                                                                                                                                                                                                                      |
-| -------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002)                                                                                                                                      |
-| B — Headless game    | 04–07, 06b    | 04–06 complete: PRs #4–#5 merged, [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7) with hosted Node 24 evidence; 06b complete with Harry's approval; Claude review addressed in PR #8 with hosted Node 24 evidence; 07 not started |
-| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                                                                                                                                                                 |
-| C — Balance evidence | 08b–10        | Not started                                                                                                                                                                                                                                 |
-| D — Browser game     | 11b–15        | Not started                                                                                                                                                                                                                                 |
-| E — Release          | 16–17         | Not started                                                                                                                                                                                                                                 |
+| Milestone            | Tasks         | Status                                                                                                                                                                                                                                                                                                            |
+| -------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002)                                                                                                                                                                                                            |
+| B — Headless game    | 04–07, 06b    | 04–06 complete: PRs #4–#5 merged, [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7) with hosted Node 24 evidence; 06b complete with Harry's approval; Claude review addressed in PR #8 with hosted Node 24 evidence; 07a complete with review fixes and hosted Node 24 evidence in PR #9; 07b not started |
+| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                                                                                                                                                                                                                                       |
+| C — Balance evidence | 08b–10        | Not started                                                                                                                                                                                                                                                                                                       |
+| D — Browser game     | 11b–15        | Not started                                                                                                                                                                                                                                                                                                       |
+| E — Release          | 16–17         | Not started                                                                                                                                                                                                                                                                                                       |
 
-Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Next implementation task: 07a. Android evidence remains deferred (ADR 0002).
+Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Next implementation task: 07b. Android evidence remains deferred (ADR 0002).
 
 ## Task 01 completion — October 11, 2026
 
@@ -1102,3 +1104,130 @@ The final evidence-only documentation commit receives its own required hosted ru
 **Task 06b content and Claude review fixes are complete and delivered via PR #8.**
 The PR remains open for review; no merge is performed by this task.
 Next blueprint task remains **07a**; no task 07 implementation started.
+
+## Task 07a dependency audit and specification blocker — October 12, 2026 (historical; resolved below)
+
+Task **07a remains incomplete**. Dependencies 04–06 are complete: the current
+history contains task 04 (`686f5a8`), task 05 (`d3906e8`) and task 06
+(`c63516e`), with their implementation and tests present. The evidence above
+records their passing local/hosted gates. Task 06b approval is also recorded.
+
+Before implementation, the required content-validation gate exposed a conflict:
+the technical spec requires every fixture pack to pass validation, including
+1–3 responses, progress −10…+25 and risks −1…+1. The frozen `goldenPack` and
+`mixedGoldenPack` in `src/core/engine/fixtures/goldens.ts` instead contain
+4–5 responses, progress +50/+100 and risks +2. D21 freezes these fixtures;
+the technical spec says goldens change only when engine behaviour changes.
+Task 07a changes validation, not those engine behaviours.
+
+Following CLAUDE.md's instruction to stop when documents conflict, implementation
+is paused pending Harry's decision. Proposed resolution for review: distinguish
+synthetic engine-rule packs from playable content packs, retaining structural
+validation for all packs and authored layout/tuning limits for playable packs.
+This proposal is **not approved or implemented**. No tests, thresholds, fixtures,
+CI configuration or accepted ADRs have been changed.
+
+Checks for this audit: document consistency and plan formatting only. Task 07a
+implementation gates have not run or passed. The default shell reports Node 22;
+the installed Node 24 runtime needs to be selected for implementation verification.
+Next task remains **07a**, after the validation scope is explicitly resolved;
+task 07b has not started.
+
+## Task 07a initial local evidence — October 12, 2026 (superseded by review fixes below)
+
+Task **07a is complete locally** on `feat/task-07a-content-validation`. Dependencies
+04–06 were verified in the current history and source tree as recorded above;
+their existing regression tests and frozen goldens pass unchanged.
+
+Harry approved the documented distinction between synthetic engine-rule packs
+and playable content packs in this chat on October 12. The technical spec's
+Content validation section records the scope: structural safety for both,
+authored layout/tuning/expert/MVP relationship constraints for playable packs.
+The earlier blocker is resolved. No accepted ADR, existing fixture/golden, test,
+threshold, CI workflow, lockfile, scoring formula or gameplay tuning was weakened
+or changed.
+
+- Added pure `validateContent(pack, options)` returning path-addressed issues,
+  with small helper/type modules and centralized validation constants. Checks
+  include namespace uniqueness, references and file stems, condition/effect
+  safety, zero-minute emails, callback parentage/delay/chains, reachable schedulers,
+  designated arrivals and booking paths, fallback options, expert requirements,
+  first-two substantive availability, filler and Unicode copy limits.
+- Enumerated all legal rosters, running integer minutes and risks to check speaker
+  presence and constructed first-match variant reachability. Tests also assert
+  actual draw-API absence and overlapping-variant witnesses. Shared fixture,
+  golden and complete generated-run packs pass structural validation; intentionally
+  broken cases are rejected. New validation tests preserve frozen inputs.
+- Added `core/content/index.ts` for existing relationship metadata and routed
+  the sole engine content importer through it. Live events, attendee/title copy,
+  complete catalogs and public draw binding remain task 07b; no fabricated live
+  pack or dialogue has been added. Catalog support checks future attendee roles,
+  collectible titles, disabled reasons and moment/epilogue copy when supplied.
+- **Node 24.21.0 / pnpm 10.34.6:** `pnpm check` passes **272 tests in 22 files**,
+  including the new content-validation gate. Types, lint and format pass with zero
+  errors/warnings. Core coverage is **550/552 lines (99.64%)** and
+  **563/570 branches (98.77%)**, above the unchanged 90%/85% floors.
+- `pnpm build` and `pnpm size` pass: **70,410/122,880 gzip JS bytes**;
+  images/fonts **0/409,600 bytes**. `pnpm e2e` passes **18 tests** across
+  Pixel 7 Chromium, iPhone 14 WebKit and desktop Chromium, with no console errors.
+  Document links/decision-register consistency and diff whitespace checks pass.
+- Checks use the installed Node 24 environment with access to the existing
+  dependency tree. Restricted-shell dependency-type errors were resolved by that
+  environment, without dependency or configuration changes. No hosted task 07a
+  CI or PR delivery is claimed. Simulation is not activated until task 08a.
+
+No known task 07a defect remains. Android LinkedIn evidence is still deferred
+under ADR 0002. Next task: **07b — transcribe the approved live content table,
+provide the complete live pack/catalog, validate it and bind/test public draw
+wrappers**. Task 07b has not started; stop at task 07a.
+
+## Task 07a Claude review fixes and delivery — October 12, 2026
+
+Harry authorized addressing [the supplied review](task-07a-review.md) and merging
+task 07a. [Resolution notes](task-07a-review-resolution.md) address all eight
+findings. The initial 272-test evidence above is historical.
+
+The expert validator now follows the review's base/expert/absence-set distinction
+and accepts every approved content-table row without changing content. Removing
+the requirements from the four failing-tests/support-training expert responses
+still fails validation. All four reported counterexample patterns have regression
+coverage. The spec and gate scope are consistent; the plan's original acceptance
+text is restored, with explicit live-catalog and stale-reason-key checks for 07b.
+Expected MVP relationships are centralized, condition keys are checked, and the
+attendee registry has a compile-time exhaustiveness test. Boundary representatives
+are proved equivalent to exhaustive enumeration; no state cases or tests were
+dropped to obtain the roughly 0.4-second validation test time under coverage.
+
+**Local Node 24.21.0 / pnpm 10.34.6:** `pnpm check` passes **277 tests in 25 files**;
+types, lint and formatting pass. Core coverage is **588/590 lines (99.66%)** and
+**599/607 branches (98.68%)**, above unchanged 90%/85% floors. Build/size pass at
+**70,410/122,880 gzip JS bytes**, **0/409,600 image/font bytes**. All **18 E2E**
+checks pass across Pixel 7 Chromium, iPhone 14 WebKit and desktop Chromium.
+Document consistency and diff whitespace checks pass. No dependency, lockfile,
+CI, scoring, tuning, approved content or frozen golden change.
+
+Delivery uses merged task 06b main (`9ed47b4`), whose tree matches the former
+pre-squash base (`b88a56f`). Hosted Node 24 evidence and the final merge are pending;
+task 07a delivery is not yet complete. Next task after delivery: **07b**, with
+the complete live pack/catalog and public draw bindings; 07b has not started.
+
+## Task 07a hosted delivery — October 12, 2026
+
+Task **07a implementation and review fixes are complete**, delivered via
+[PR #9](https://github.com/hsivasambu/meeting-sim/pull/9), based on merged 06b main.
+All eight supplied review concerns are addressed in the resolution notes above.
+
+[Hosted Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38302537612)
+passed on `f2b7aa1`. Downloaded reports confirm **277 tests**, zero unit failures
+or errors; **18 E2E passes**, zero skipped/flaky/unexpected; core **588/590 lines
+(99.66%)** and **599/607 branches (98.68%)**. Logs confirm Node **24.21.0**, passing
+build/size (**70,410/122,880 gzip JS bytes**, **0/409,600 asset bytes**), and every
+activated gate. Vercel's PR preview also reports success. The earlier hosted
+delivery blocker is resolved; this evidence-only documentation commit receives
+its own required quality run before Harry's authorized squash merge.
+
+No task 07a defect remains; no test, threshold, content, tuning, frozen golden or
+CI rule was weakened. Task 02's Android release evidence remains deferred under
+ADR 0002. Next blueprint task: **07b**, with its explicit complete live catalog,
+approved-table transcription and public draw-wrapper acceptance. Stop here;
+no task 07b implementation has started.

@@ -322,6 +322,49 @@ EventRules are plain content-owned relationship metadata. Only engine/index impo
 
 `validateContent()` runs as a Vitest test on every CI run and fails the build if any rule breaks:
 
+**Validation scope (approved by Harry, October 12, 2026).** Synthetic engine-rule
+packs and playable content packs are distinct. All packs receive structural
+checks: unique IDs, valid references/conditions, finite integer effects,
+attendance/booking/callback safety, legal fallback responses, speaker safety,
+first-two availability and selectable variants. Synthetic packs deliberately use
+renamed relationships, additional choices and extreme effects to isolate rules;
+they are explicitly validated with `profile: 'synthetic'`. Playable packs use the
+default profile and additionally receive the authored response-count, copy-length,
+effect-range, expert-work and exact MVP relationship checks below. Frozen D21
+fixtures remain unchanged. This distinction does not change engine rules or
+coverage thresholds.
+
+The validator is pure and receives a `ContentPack`; it returns path-addressed
+issues rather than performing I/O. Its optional catalog supplies event file stems,
+attendee/job-title and collectible-title entries, disabled-reason copy, and
+moment/epilogue lines for validation when those artifacts exist. CI content tests
+supply those catalogs as task 07b/15 implement them. File identity is checked from
+the supplied stems, not filesystem access inside core. Variant reachability uses
+first-match authored order, so constructed witnesses also test overlapping
+variant precedence. A fallback has no requirements (or only requires the
+unreleasable decision owner). For expert requirements, inspect only the base
+presentation of a Dev/Sam/Morgan family with a speaker-absence variant: a
+positive-progress hear/owner response that does not appear unchanged in that
+absence set must require at least one attendee other than Priya. That attendee
+may be someone other than the speaker (for example Legal on press-date).
+Unchanged shared tangent responses and Priya's absence responses are not expert
+work. Arrivals and collective gifts are exempt. This corrects task 07a's broad
+speaker heuristic to preserve the approved content table, as authorized by Harry's
+request to address the supplied review and merge the task.
+
+CI explicitly validates fixturePack, goldenPack, mixedGoldenPack, both complete
+drawRuns packs and validationPack under their stated profiles; deliberately
+broken variants in contentValidation tests assert rejection. Partial inline
+packs in engine-rule tests are scoped inputs, not complete validated packs. Base copy
+may be covered entirely by variants; every authored variant must be selectable,
+and every event must have at least one reachable presentation.
+
+Task 07a adds the content index for existing relationship metadata; it does not
+fabricate a live event pack. Task 07b exports the complete live `ContentPack`,
+supplies its catalog and binds the public draw wrappers. Title priority/rounding
+already have task 05 tests; epilogue/moment selection and their constructed
+reachability checks land with their task 07b/15 data and consumers.
+
 - Event IDs are unique within the event namespace and match file names; attendee/title IDs are unique within their own namespaces; response IDs are unique within each presentation. Reusing `legal` as an attendee and event ID, or `park` in different events, is valid. Every callback and attendee reference exists.
 - Each event has 1–3 responses; effects stay in range (minutes 0–10, progress −10 to +25, risks −1 to +1).
 - Player-facing text fits the mobile layout: event/response/moment/epilogue lines ≤ 90 Unicode code points, response labels ≤ 24, collectible titles ≤ 28. Job titles have a separate ≤48 limit and wrap to up to three lines on phones. Required labels/disabled reasons are authored in content, never generated ad hoc in UI.
@@ -478,7 +521,7 @@ DOM/events/focus, canvas 2D for share export, CSS animation, `crypto.getRandomVa
 | Lint and format | `pnpm lint` | 01b | Zero errors and zero warnings |
 | Bundle budget | `pnpm build && pnpm size` | 01b | All JS, including lazy chunks, ≤ 120 KB gzip; deployed images + font ≤ 400 KB |
 | Unit, property, golden | `pnpm test` | 02 (runner); coverage rule from 03 | All pass; `core/` coverage ≥ 90% lines and ≥ 85% branches across every existing core file |
-| Content validation | part of `pnpm test` | 07a | `validateContent` passes for every pack, fixture and live |
+| Content validation | part of `pnpm test` | 07a | Complete synthetic fixture packs pass structural validation; playable packs pass authored validation; live pack/catalog added in 07b |
 | Simulation invariants | `pnpm sim:ci` | 08a | No crash, illegal state or nondeterminism, ever |
 | Simulation balance | `pnpm sim:ci` | Diagnostic from 09; mandatory once task 10 completes | 2,000 fixed seeds × 7 policies meet every design acceptance criterion; the efficiency-floor deviation is reported as a diagnostic (D25) |
 | End-to-end | `pnpm e2e` | Shell smoke 02; meeting loop 12a; full-run paths 12b; share and collection 15 | All specs pass on Pixel 7 (Chromium), iPhone 14 (WebKit) and desktop Chromium, with no console errors |
