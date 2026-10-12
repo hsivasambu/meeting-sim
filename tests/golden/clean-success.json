@@ -1,0 +1,122 @@
+{
+  "seed": "golden-clean",
+  "actions": [
+    {
+      "type": "release",
+      "who": "gary"
+    },
+    {
+      "type": "release",
+      "who": "jordan"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "clean"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "clean"
+    }
+  ],
+  "finalState": {
+    "seed": "golden-clean",
+    "turn": 2,
+    "minute": 6,
+    "bookingEnd": 60,
+    "progress": 100,
+    "risks": 0,
+    "personMinutes": 24,
+    "present": ["priya", "dev", "sam", "morgan"],
+    "releasedAttendeeIds": ["gary", "jordan"],
+    "peakHeadcount": 6,
+    "seenEventIds": ["beta", "alpha"],
+    "spokenAttendeeIds": ["priya", "sam"],
+    "parkedCount": 0,
+    "substantiveDrawCount": 2,
+    "previousDrawWasUncommonNegative": false,
+    "scheduled": [],
+    "current": null,
+    "decisions": [
+      {
+        "turn": 0,
+        "eventId": "beta",
+        "responseId": "clean",
+        "quality": 1,
+        "qualityFraction": {
+          "numerator": "256",
+          "denominator": "256"
+        }
+      },
+      {
+        "turn": 1,
+        "eventId": "alpha",
+        "responseId": "clean",
+        "quality": 1,
+        "qualityFraction": {
+          "numerator": "256",
+          "denominator": "256"
+        }
+      }
+    ],
+    "log": [
+      {
+        "type": "release",
+        "turn": 0,
+        "minute": 0,
+        "who": "gary"
+      },
+      {
+        "type": "release",
+        "turn": 0,
+        "minute": 0,
+        "who": "jordan"
+      },
+      {
+        "type": "draw",
+        "turn": 0,
+        "minute": 0,
+        "eventId": "beta",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 0,
+        "minute": 3,
+        "eventId": "beta",
+        "responseId": "clean",
+        "technique": "owner",
+        "line": "Fixture clean result."
+      },
+      {
+        "type": "draw",
+        "turn": 1,
+        "minute": 3,
+        "eventId": "alpha",
+        "speaker": "sam"
+      },
+      {
+        "type": "resolve",
+        "turn": 1,
+        "minute": 6,
+        "eventId": "alpha",
+        "responseId": "clean",
+        "technique": "owner",
+        "line": "Fixture clean result."
+      }
+    ],
+    "phase": "ended",
+    "ending": "decision"
+  },
+  "score": {
+    "outcome": 400,
+    "efficiency": 300,
+    "decisions": 300,
+    "total": 1000
+  }
+}

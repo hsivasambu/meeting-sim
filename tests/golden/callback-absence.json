@@ -1,0 +1,142 @@
+{
+  "seed": "golden-callback-0",
+  "actions": [
+    {
+      "type": "release",
+      "who": "sam"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "park"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "email"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "finish"
+    }
+  ],
+  "finalState": {
+    "seed": "golden-callback-0",
+    "turn": 3,
+    "minute": 5,
+    "bookingEnd": 60,
+    "progress": 100,
+    "risks": 1,
+    "personMinutes": 25,
+    "present": ["priya", "dev", "morgan", "gary", "jordan"],
+    "releasedAttendeeIds": ["sam"],
+    "peakHeadcount": 6,
+    "seenEventIds": ["alpha", "beta", "alpha-return"],
+    "spokenAttendeeIds": ["priya"],
+    "parkedCount": 1,
+    "substantiveDrawCount": 2,
+    "previousDrawWasUncommonNegative": false,
+    "scheduled": [],
+    "current": null,
+    "decisions": [
+      {
+        "turn": 0,
+        "eventId": "alpha",
+        "responseId": "park",
+        "quality": 0.28888888888888886,
+        "qualityFraction": {
+          "numerator": "78",
+          "denominator": "270"
+        }
+      },
+      {
+        "turn": 1,
+        "eventId": "beta",
+        "responseId": "email",
+        "quality": 0.37037037037037035,
+        "qualityFraction": {
+          "numerator": "100",
+          "denominator": "270"
+        }
+      },
+      {
+        "turn": 2,
+        "eventId": "alpha-return",
+        "responseId": "finish",
+        "quality": null,
+        "qualityFraction": null
+      }
+    ],
+    "log": [
+      {
+        "type": "release",
+        "turn": 0,
+        "minute": 0,
+        "who": "sam"
+      },
+      {
+        "type": "draw",
+        "turn": 0,
+        "minute": 0,
+        "eventId": "alpha",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 0,
+        "minute": 1,
+        "eventId": "alpha",
+        "responseId": "park",
+        "technique": "park",
+        "line": "Fixture callback scheduled."
+      },
+      {
+        "type": "draw",
+        "turn": 1,
+        "minute": 1,
+        "eventId": "beta",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 1,
+        "minute": 1,
+        "eventId": "beta",
+        "responseId": "email",
+        "technique": "email",
+        "line": "Fixture email result."
+      },
+      {
+        "type": "draw",
+        "turn": 2,
+        "minute": 1,
+        "eventId": "alpha-return",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 2,
+        "minute": 5,
+        "eventId": "alpha-return",
+        "responseId": "finish",
+        "technique": "ack",
+        "line": "Fixture absent callback resolved."
+      }
+    ],
+    "phase": "ended",
+    "ending": "decision"
+  },
+  "score": {
+    "outcome": 340,
+    "efficiency": 300,
+    "decisions": 99,
+    "total": 739
+  }
+}

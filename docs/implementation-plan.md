@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. PR #5 delivers task 05 and is stacked on unmerged PR #4; both remain open. Task 02 Android evidence remains deferred (ADR 0002). Next task: 06.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 implemented and verified with all active local Node 24 gates; see its evidence below. Dependency PRs #4 and #5 are merged into main. Task 02 Android evidence remains deferred (ADR 0002). Next task: 06b.
 
 ## Purpose and source of truth
 
@@ -33,7 +33,7 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 | 03   | Contracts: `src/core/engine/{types,constants,rng,index}.ts`, condition helpers, `fixtures/` packs, colocated tests.                                                                                                                                                              | 01b             | Types match the spec (D14); only `index.ts` imports content (D13); RNG vectors and per-turn stream tests; exact weighted-selection formula; constants centralized.                                                 |
 | 04   | State transitions and shared evaluator: `state.ts`, `resolve.ts`, `applyEffect`, typed errors, log and decision records; core property tests.                                                                                                                                    | 03              | Starting six, legal releases, owner protection, integer person-minutes, booking changes, end priority, clamping, invalid actions and immutability tested on fixture packs; counters authoritative (D15).           |
 | 05   | Utility, score and titles: internal `value.ts`, `score.ts` (with `formatCost`), `titleRules.ts`, score fixtures.                                                                                                                                                                 | 04              | **Complete, October 12, 2026.** PR #5; 196 unit/property and 18 E2E passes, hosted Node 24 evidence; see task 05 review fixes and delivery.                                                                        |
-| 06   | Event selection and callback scheduler: `draw.ts`; at least five fixture goldens (D21).                                                                                                                                                                                          | 03, 04          | Weighted eligibility, unseen-family rules, fairness, callbacks, idempotent pending draw and filler fallback tested; goldens cover cancellation, clean success, risky success, timeout, and callback plus absence.  |
+| 06   | Event selection and callback scheduler: `draw.ts`; at least five fixture goldens (D21).                                                                                                                                                                                          | 03, 04          | **Complete, October 12, 2026.** 221 unit/property/golden and 18 E2E passes; five recorded fixture goldens; see [task 06 evidence](task-06-draw.md).                                                                |
 | 06b  | Content table `docs/content-table.md`: all 17 families × variants × responses, the 3 callback events, filler and epilogues. Design task; runs in parallel with 03–06.                                                                                                            | 00b             | Every response has technique, requires, minutes, progress, risks, callback, label and line; a hand check shows a sensible player can reach P = 100 in about 10 turns within 60 minutes; Harry's approval recorded. |
 | 07a  | Content validator and content index.                                                                                                                                                                                                                                             | 04–06           | `validateContent` rules implemented and tested on valid and invalid fixture packs.                                                                                                                                 |
 | 07b… | Live content: `src/core/content/attendees.ts`, `events/*.ts`, `titles.ts`, `copy.ts`, transcribed from the content table in event-group PRs.                                                                                                                                     | 06b, 07a        | Every content-table row implemented; `validateContent` passes on the live pack.                                                                                                                                    |
@@ -55,13 +55,13 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 ## Plain-language task guide and easy checks
 
 This explains the same tasks above; it does not change their scope, dependencies or
-acceptance rules. **Now** means the check is available on the current task 05 branch;
-**Later** means wait until that task is implemented. Tasks 00–05 (including their splits)
-are implemented; task 05 is on feat/task-05-score-titles. Task 04 is in [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4)
-and is not merged yet. Checks including task 05 require feat/task-05-score-titles rather than main.
+acceptance rules. **Now** means the check is available on the current task 06 branch;
+**Later** means wait until that task is implemented. Tasks 00–06 (including their splits)
+are implemented; task 06 is on feat/task-06-draw. Tasks 04 and 05 are merged into main via [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4)
+and [PR #5](https://github.com/hsivasambu/meeting-sim/pull/5). Checks including task 06 require feat/task-06-draw rather than main.
 
 The browser currently shows the title/objective and the separate sharing probe. The
-first playable meeting is task **12a**. Tasks 03–05 work under the hood, so their easiest
+first playable meeting is task **12a**. Tasks 03–06 work under the hood, so their easiest
 checks are automated tests. A simple check is a useful spot check, not a substitute for
 the technical spec's full gates or release checklist. Android LinkedIn testing is still
 unverified under the accepted task 02 deferral.
@@ -870,3 +870,35 @@ Final full-review hosted evidence:
 - This final documentation-only evidence update passes formatting, links/decision-register and
   whitespace checks. PR #5 remains open, stacked on PR #4. **Task 05 complete; next task 06**.
   No further implementation is included.
+
+## Task 06 completion — October 12, 2026
+
+Task **06 complete** on `feat/task-06-draw`, based on main after the task 04/05 merges.
+Tasks **03 and 04** are present and verified: contracts/RNG/weights/conditions and
+transitions/evaluation/scheduling are implemented; their existing tests pass unchanged.
+Task 05 score APIs are also available for the recorded run outputs. Dependency PRs #4
+and #5 are confirmed merged; their tree matches this task's tested baseline.
+
+- Added injected event draw and read-only candidate distribution, sharing weighted
+  preparation, eligibility, fairness, callbacks and ordered presentation variants.
+- Draw-time counters, fixed pending dialogue, filler fallback and typed pool/schedule
+  failures are covered. Resolution's existing n+2 scheduling is preserved.
+- Five committed fixture JSON goldens record full action lists, final state and score
+  for cancellation, clean success, risky success, timeout, and callback plus absence.
+- Generated complete runs verify determinism, legal releases, billing, bounds and
+  ≤50 turns. The all-email path delivers all three fixture callbacks and exhausts all
+  17 base families before filler timeout at turn 49. Early endings suppress callbacks.
+- **Node 24.21.0 / pnpm 10.34.6:** `pnpm check` passes **221 tests / 21 files**, with
+  zero type/lint/format errors. Core **337/339 lines (99.41%)**, **274/280 branches
+  (97.86%)**; draw **41/41 lines, 58/58 branches**. Thresholds remain 90%/85%.
+- `pnpm build && pnpm size` passes: **70,407/122,880 gzip JS bytes** and **0/409,600
+  image/font bytes**. `pnpm e2e` passes **18 tests** on the three required profiles.
+- See [task 06 handoff](task-06-draw.md) for implementation scope, fixture outcomes,
+  command evidence and staged live API binding. Content validation and simulation are
+  not yet active; no claim about live-content balance or playability is made.
+- No known task 06 issue remains. Live-pack public draw wrappers bind in task 07 after
+  approved content exists, as in the existing task 03 handoff. Android LinkedIn evidence
+  is still the accepted ADR 0002 release risk. Dependency PRs #4 and #5 are merged.
+
+**Next task: 06b — author and obtain Harry's approval for `docs/content-table.md`.**
+Task 07a's engine dependencies are now complete. No task 06b/07 work started; stop here.

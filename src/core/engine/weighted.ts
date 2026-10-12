@@ -11,11 +11,10 @@ function validateRarityWeights(
 }
 
 /** Implements Design Doc v2 → Events and responses → Draw rules: unique-ID integer-weight selection. */
-export function selectWeightedEvent(
+export function weightedEvents(
   events: readonly MeetingEvent[],
-  rng: () => number,
   rarityWeights: Readonly<Record<Rarity, number>>,
-): MeetingEvent {
+) {
   validateRarityWeights(rarityWeights);
   const ids = new Set<string>();
   const candidates = events
@@ -34,6 +33,16 @@ export function selectWeightedEvent(
   );
   if (total === ZERO || !Number.isSafeInteger(total))
     throw new RangeError('Invalid total weight');
+  return { candidates, total };
+}
+
+/** Implements the exact one-ticket weighted selection shared with draw distributions. */
+export function selectWeightedEvent(
+  events: readonly MeetingEvent[],
+  rng: () => number,
+  rarityWeights: Readonly<Record<Rarity, number>>,
+): MeetingEvent {
+  const { candidates, total } = weightedEvents(events, rarityWeights);
   const random = rng();
   if (!Number.isFinite(random) || random < ZERO || random >= ONE)
     throw new RangeError('RNG outside [0, 1)');
