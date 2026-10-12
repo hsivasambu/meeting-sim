@@ -99,9 +99,7 @@ Node 22 was the shell default. The original Node 24 checks explicitly invoked
 with pnpm 10.34.6 from the Corepack cache and prepended that Node installation to
 PATH for child processes. Hosted checks use `.nvmrc` and the pinned package manager.
 
-Hosted task 08a verification is pending; no real-device gameplay evidence is
-claimed. Android LinkedIn evidence remains deferred under ADR 0002. Next action:
-finish 08a committed/hosted delivery; next blueprint task then is **11a**, the store
+[Hosted Node 24 verification](https://github.com/hsivasambu/meeting-sim/actions/runs/38316967231) passed for [PR #12](https://github.com/hsivasambu/meeting-sim/pull/12). Downloaded artifacts confirm 306 unit passes, 18 E2E passes, unchanged core coverage and all recorded simulation metrics/hash. No real-device gameplay evidence is claimed. Android LinkedIn evidence remains deferred under ADR 0002. Next blueprint task is **11a**, the store
 and beat machine. V4 remains before tuning and will assess comprehension and
 interaction with the current easy content; no balance adjustment is included.
 Minimal `policies.ts`/`summary.ts` migrate to `policies/`/`report.ts` in 08b/09.
