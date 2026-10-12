@@ -1,7 +1,5 @@
-import { engineRules } from '../content/index';
-// State, evaluation, scoring and injected draw are implemented.
-// drawEvent/getDrawCandidates bind here when task 07 supplies the reviewed live pack.
-// This is the sole public surface and, when task 07 supplies it, the live-pack importer.
+import { contentPack, engineRules } from '../content/index';
+import { drawEventWith, getDrawCandidatesWith } from './draw';
 export type {
   AttendeeId,
   Rarity,
@@ -27,7 +25,22 @@ export type {
 import { UTILITY_RULES } from './constants';
 import { previewWithRules } from './preview';
 import { resolveWithRules } from './resolve';
-import type { MeetingState, Response, ResponsePreview } from './types';
+import type {
+  DrawCandidate,
+  MeetingState,
+  Response,
+  ResponsePreview,
+} from './types';
+/** Implements Design Doc v2 → Events and responses: the live draw distribution. */
+export function getDrawCandidates(
+  state: MeetingState,
+): readonly DrawCandidate[] {
+  return getDrawCandidatesWith(contentPack, state);
+}
+/** Implements Design Doc v2 → Game state model: draw the approved live presentation. */
+export function drawEvent(state: MeetingState): MeetingState {
+  return drawEventWith(contentPack, state);
+}
 export { initialState, release, callIt } from './state';
 export type { EngineError, EngineErrorCode } from './errors';
 /** Implements Design Doc v2 → Events and responses → How a response is shown. */
