@@ -29,7 +29,8 @@ decision. No separate verbatim approval of that older sentence is claimed.
    three scheduling cases; fixture rule tests remain unchanged.
 7. **Windows line endings:** prepared in a separate `chore/windows-line-endings`
    branch/worktree with `* text=auto eol=lf`, as requested. Its fresh Windows
-   checkout and hosted checks are recorded in that PR and its own plan entry.
+   checkout and hosted checks are recorded in [PR #11](https://github.com/hsivasambu/meeting-sim/pull/11)
+   and its separate `docs/windows-line-endings.md` evidence document.
 
 No gameplay, approved row, validator, scoring formula, dependency, lockfile,
 CI workflow, frozen fixture/golden or threshold change is included in 07b.
