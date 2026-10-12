@@ -136,3 +136,121 @@ export const goldenUtilityRules = {
   costUnit: 4,
   eventRules: goldenPack.eventRules,
 } as const satisfies UtilityRules;
+
+/** Mixed rarity/condition/fairness fixture for the task 06 review regression. */
+export const mixedGoldenPack = {
+  ...goldenPack,
+  events: [
+    ...goldenPack.events,
+    {
+      id: 'negative-a',
+      kind: 'tangent',
+      rarity: 'uncommon',
+      negative: true,
+      speaker: 'sam',
+      line: 'Fixture negative A.',
+      responses: [
+        {
+          id: 'expert',
+          label: 'Fixture expert',
+          technique: 'owner',
+          requires: { present: ['sam'] },
+          disabledReasonKey: 'fixture-needs-sam',
+          effect: { minutes: 1, progress: 10 },
+          line: 'Fixture expert result.',
+        },
+        {
+          id: 'ack',
+          label: 'Fixture acknowledgement',
+          technique: 'ack',
+          effect: { minutes: 1, progress: 2 },
+          line: 'Fixture fallback result.',
+        },
+      ],
+      variants: [
+        {
+          when: { absent: ['sam'] },
+          speaker: 'priya',
+          line: 'Fixture negative A without Sam.',
+          responses: [
+            {
+              id: 'ack',
+              label: 'Fixture acknowledgement',
+              technique: 'ack',
+              effect: { minutes: 1, progress: 2 },
+              line: 'Fixture absent result.',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'negative-b',
+      kind: 'noise',
+      rarity: 'uncommon',
+      negative: true,
+      speaker: 'sam',
+      line: 'Fixture negative B.',
+      responses: [
+        {
+          id: 'ack',
+          label: 'Fixture acknowledgement',
+          technique: 'ack',
+          effect: { minutes: 1, progress: 2 },
+          line: 'Fixture B result.',
+        },
+      ],
+      variants: [
+        {
+          when: { absent: ['sam'] },
+          speaker: 'priya',
+          line: 'Fixture negative B without Sam.',
+          responses: [
+            {
+              id: 'ack',
+              label: 'Fixture acknowledgement',
+              technique: 'ack',
+              effect: { minutes: 1, progress: 2 },
+              line: 'Fixture B absent result.',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'gated-rare',
+      kind: 'gift',
+      rarity: 'rare',
+      weight: 4,
+      when: { minMinute: 4, absent: ['sam'] },
+      speaker: 'priya',
+      line: 'Fixture gated rare.',
+      responses: [
+        {
+          id: 'ack',
+          label: 'Fixture rare acknowledgement',
+          technique: 'ack',
+          effect: { minutes: 1, progress: 1 },
+          line: 'Fixture rare result.',
+        },
+      ],
+    },
+    {
+      id: 'ordinary',
+      kind: 'noise',
+      rarity: 'common',
+      weight: 2,
+      speaker: 'room',
+      line: 'Fixture ordinary.',
+      responses: [
+        {
+          id: 'ack',
+          label: 'Fixture acknowledgement',
+          technique: 'ack',
+          effect: { minutes: 1 },
+          line: 'Fixture ordinary result.',
+        },
+      ],
+    },
+  ],
+} as const satisfies ContentPack;

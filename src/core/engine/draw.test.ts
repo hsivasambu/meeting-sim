@@ -52,6 +52,7 @@ describe('draw eligibility and presentation', () => {
       drawEventWith(pack([]), later, weights);
       const due = {
         ...later,
+        seenEventIds: ['support-training'],
         scheduled: [{ eventId: 'support-follow-up', dueTurn: 2 }],
       };
       getDrawCandidatesWith(fixturePack, due, weights);
@@ -234,7 +235,7 @@ describe('draw eligibility and presentation', () => {
     for (let n = 0; n < 3; n++) {
       const drawn = drawEventWith(content, deepFreeze(state), weights);
       expect(drawn.current?.id).toBe('filler');
-      expect(drawn.seenEventIds).toEqual(['filler']);
+      expect(drawn.seenEventIds).toEqual([]);
       expect(drawn.spokenAttendeeIds).toEqual(['priya']);
       expect(drawn.previousDrawWasUncommonNegative).toBe(false);
       expect(
@@ -299,6 +300,14 @@ describe('callback scheduler', () => {
     const second = event('second-return', { kind: 'callback' });
     const content: ContentPack = {
       ...fixturePack,
+      eventRules: {
+        ...fixturePack.eventRules,
+        callbackTargets: {
+          ...fixturePack.eventRules.callbackTargets,
+          'second-parent': 'second-return',
+        },
+      },
+      events: [...fixturePack.events, event('second-parent')],
       callbacks: [
         {
           ...fixturePack.callbacks[0],
@@ -317,6 +326,7 @@ describe('callback scheduler', () => {
     };
     const state = {
       ...release(later, 'sam'),
+      seenEventIds: ['support-training', 'second-parent'],
       previousDrawWasUncommonNegative: true,
       scheduled: [
         { eventId: 'support-follow-up', dueTurn: 2 },
@@ -341,10 +351,17 @@ describe('callback scheduler', () => {
     [{ eventId: 'unknown', dueTurn: 4 }],
     [{ eventId: 'support-follow-up', dueTurn: 1 }],
     [{ eventId: 'support-follow-up', dueTurn: 2.5 }],
+    [{ eventId: 'support-follow-up', dueTurn: 5 }],
+    [{ eventId: 'support-follow-up', dueTurn: 40 }],
+    [{ eventId: 'support-follow-up', dueTurn: 1000000 }],
   ])(
     'rejects invalid schedules without delaying or discarding them: %j',
     (...scheduled) => {
-      const state = deepFreeze({ ...later, scheduled });
+      const state = deepFreeze({
+        ...later,
+        seenEventIds: ['support-training'],
+        scheduled,
+      });
       expect(() => drawEventWith(fixturePack, state, weights)).toThrow(
         new EngineError('invalid-schedule'),
       );
@@ -356,6 +373,7 @@ describe('callback scheduler', () => {
   it('rejects already-seen targets and malformed callback definitions', () => {
     const state = {
       ...later,
+      seenEventIds: ['support-training'],
       scheduled: [{ eventId: 'support-follow-up', dueTurn: 2 }],
     };
     expect(() =>
@@ -376,6 +394,55 @@ describe('callback scheduler', () => {
       expect(() =>
         getDrawCandidatesWith({ ...fixturePack, callbacks }, state, weights),
       ).toThrow(new EngineError('invalid-schedule'));
+    }
+  });
+  it('rejects orphan, ambiguous and nonexistent callback parents using counters, not logs', () => {
+    const state = deepFreeze({
+      ...later,
+      scheduled: [{ eventId: 'support-follow-up', dueTurn: 3 }],
+    });
+    const orphan = {
+      ...state,
+      log: [
+        {
+          type: 'draw' as const,
+          turn: 0,
+          minute: 0,
+          eventId: 'support-training',
+          speaker: 'sam' as const,
+        },
+      ],
+    };
+    expect(() => drawEventWith(fixturePack, orphan, weights)).toThrow(
+      new EngineError('invalid-schedule'),
+    );
+    expect(() => getDrawCandidatesWith(fixturePack, orphan, weights)).toThrow(
+      new EngineError('invalid-schedule'),
+    );
+    const seen = { ...state, seenEventIds: ['support-training'] };
+    for (const content of [
+      { ...fixturePack, events: [] },
+      {
+        ...fixturePack,
+        eventRules: { ...fixturePack.eventRules, callbackTargets: {} },
+      },
+      {
+        ...fixturePack,
+        eventRules: {
+          ...fixturePack.eventRules,
+          callbackTargets: {
+            'support-training': 'support-follow-up',
+            'fixture-beta': 'support-follow-up',
+          },
+        },
+      },
+    ]) {
+      expect(() => drawEventWith(content, seen, weights)).toThrow(
+        new EngineError('invalid-schedule'),
+      );
+      expect(() => getDrawCandidatesWith(content, seen, weights)).toThrow(
+        new EngineError('invalid-schedule'),
+      );
     }
   });
 });

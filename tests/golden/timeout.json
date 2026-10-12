@@ -167,7 +167,7 @@
     "present": ["priya", "dev", "sam", "morgan", "gary", "jordan"],
     "releasedAttendeeIds": [],
     "peakHeadcount": 6,
-    "seenEventIds": ["beta", "alpha", "filler"],
+    "seenEventIds": ["beta", "alpha"],
     "spokenAttendeeIds": ["priya", "sam"],
     "parkedCount": 0,
     "substantiveDrawCount": 2,

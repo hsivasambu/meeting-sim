@@ -1,0 +1,211 @@
+{
+  "pack": "mixed",
+  "seed": "golden-mixed-77",
+  "actions": [
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "clean"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "email"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "release",
+      "who": "sam"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "draw"
+    },
+    {
+      "type": "resolve",
+      "responseId": "ack"
+    },
+    {
+      "type": "callIt"
+    }
+  ],
+  "finalState": {
+    "seed": "golden-mixed-77",
+    "turn": 5,
+    "minute": 6,
+    "bookingEnd": 60,
+    "progress": 55,
+    "risks": 0,
+    "personMinutes": 33,
+    "present": ["priya", "dev", "morgan", "gary", "jordan"],
+    "releasedAttendeeIds": ["sam"],
+    "peakHeadcount": 6,
+    "seenEventIds": ["alpha", "beta", "negative-a", "gated-rare", "negative-b"],
+    "spokenAttendeeIds": ["sam", "priya"],
+    "parkedCount": 0,
+    "substantiveDrawCount": 2,
+    "previousDrawWasUncommonNegative": true,
+    "scheduled": [],
+    "current": null,
+    "decisions": [
+      {
+        "turn": 0,
+        "eventId": "alpha",
+        "responseId": "clean",
+        "quality": 1,
+        "qualityFraction": {
+          "numerator": "284",
+          "denominator": "284"
+        }
+      },
+      {
+        "turn": 1,
+        "eventId": "beta",
+        "responseId": "email",
+        "quality": 0.4225352112676056,
+        "qualityFraction": {
+          "numerator": "120",
+          "denominator": "284"
+        }
+      },
+      {
+        "turn": 2,
+        "eventId": "negative-a",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 3,
+        "eventId": "gated-rare",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 4,
+        "eventId": "negative-b",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      }
+    ],
+    "log": [
+      {
+        "type": "draw",
+        "turn": 0,
+        "minute": 0,
+        "eventId": "alpha",
+        "speaker": "sam"
+      },
+      {
+        "type": "resolve",
+        "turn": 0,
+        "minute": 3,
+        "eventId": "alpha",
+        "responseId": "clean",
+        "technique": "owner",
+        "line": "Fixture clean result."
+      },
+      {
+        "type": "draw",
+        "turn": 1,
+        "minute": 3,
+        "eventId": "beta",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 1,
+        "minute": 3,
+        "eventId": "beta",
+        "responseId": "email",
+        "technique": "email",
+        "line": "Fixture email result."
+      },
+      {
+        "type": "draw",
+        "turn": 2,
+        "minute": 3,
+        "eventId": "negative-a",
+        "speaker": "sam"
+      },
+      {
+        "type": "release",
+        "turn": 2,
+        "minute": 3,
+        "who": "sam"
+      },
+      {
+        "type": "resolve",
+        "turn": 2,
+        "minute": 4,
+        "eventId": "negative-a",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture fallback result."
+      },
+      {
+        "type": "draw",
+        "turn": 3,
+        "minute": 4,
+        "eventId": "gated-rare",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 3,
+        "minute": 5,
+        "eventId": "gated-rare",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture rare result."
+      },
+      {
+        "type": "draw",
+        "turn": 4,
+        "minute": 5,
+        "eventId": "negative-b",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 4,
+        "minute": 6,
+        "eventId": "negative-b",
+        "responseId": "ack",
+        "technique": "ack",
+        "line": "Fixture B absent result."
+      },
+      {
+        "type": "call-it",
+        "turn": 5,
+        "minute": 6
+      }
+    ],
+    "phase": "ended",
+    "ending": "called-early"
+  },
+  "score": {
+    "outcome": 99,
+    "efficiency": 165,
+    "decisions": 213,
+    "total": 477
+  }
+}

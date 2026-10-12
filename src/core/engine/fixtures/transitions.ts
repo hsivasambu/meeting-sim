@@ -15,11 +15,18 @@ export const fixtureUtilityRules = {
     bookingEventIds: ['room-booked'],
   },
 } as const satisfies UtilityRules;
+const deeplyFrozenInputs = new WeakSet<object>();
 /** Supports Design Doc v2 → Game state model immutability checks with frozen fixtures. */
 export function deepFreeze<T>(input: T): T {
-  if (input !== null && typeof input === 'object') {
+  if (
+    input !== null &&
+    typeof input === 'object' &&
+    !deeplyFrozenInputs.has(input)
+  ) {
     Object.freeze(input);
     for (const child of Object.values(input)) deepFreeze(child);
+    // Cache only after visiting descendants: a caller's shallow freeze is not enough.
+    deeplyFrozenInputs.add(input);
   }
   return input;
 }

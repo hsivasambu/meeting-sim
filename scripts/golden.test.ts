@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { drawEventWith } from '../src/core/engine/draw';
 import {
   goldenPack,
+  mixedGoldenPack,
   goldenWeights,
   goldenUtilityRules,
 } from '../src/core/engine/fixtures/goldens';
@@ -10,25 +11,32 @@ import { deepFreeze } from '../src/core/engine/fixtures/transitions';
 import { callIt, initialState, release } from '../src/core/engine/state';
 import { resolveWithRules } from '../src/core/engine/resolve';
 import { score } from '../src/core/engine/score';
-import type { MeetingState } from '../src/core/engine/types';
+import type { ContentPack, MeetingState } from '../src/core/engine/types';
 
 function record(value: unknown): Record<string, unknown> {
   if (value === null || typeof value !== 'object' || Array.isArray(value))
     throw new Error('Invalid golden record');
   return Object.fromEntries(Object.entries(value));
 }
-function replay(state: MeetingState, input: unknown): MeetingState {
+function replay(
+  content: ContentPack,
+  state: MeetingState,
+  input: unknown,
+): MeetingState {
   const action = record(input);
   deepFreeze(state);
   switch (action.type) {
     case 'draw':
-      return drawEventWith(deepFreeze(goldenPack), state, goldenWeights);
+      return drawEventWith(deepFreeze(content), state, goldenWeights);
     case 'callIt':
       return callIt(state);
     case 'resolve':
       if (typeof action.responseId !== 'string')
         throw new Error('Invalid golden response');
-      return resolveWithRules(state, action.responseId, goldenUtilityRules);
+      return resolveWithRules(state, action.responseId, {
+        ...goldenUtilityRules,
+        eventRules: content.eventRules,
+      });
     case 'release':
       // These recorded runs release optional attendees and Sam. Reject unknown action data.
       if (
@@ -54,8 +62,11 @@ describe('D21 frozen fixture goldens: seed + complete actions → final state an
       );
       if (typeof data.seed !== 'string' || !Array.isArray(data.actions))
         throw new Error('Invalid golden input');
+      if (data.pack !== undefined && data.pack !== 'mixed')
+        throw new Error('Unknown golden pack');
+      const content = data.pack === 'mixed' ? mixedGoldenPack : goldenPack;
       let state = initialState(data.seed);
-      for (const action of data.actions) state = replay(state, action);
+      for (const action of data.actions) state = replay(content, state, action);
       expect(state.phase).toBe('ended');
       expect(JSON.parse(JSON.stringify(state))).toEqual(data.finalState);
       expect(score(deepFreeze(state))).toEqual(data.score);

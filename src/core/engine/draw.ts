@@ -51,11 +51,23 @@ function dueCallback(
       turns.has(entry.dueTurn) ||
       state.seenEventIds.includes(entry.eventId) ||
       !Number.isSafeInteger(entry.dueTurn) ||
-      entry.dueTurn < state.turn
+      entry.dueTurn < state.turn ||
+      entry.dueTurn > state.turn + ONE
     )
       throw new EngineError('invalid-schedule');
     ids.add(entry.eventId);
     turns.add(entry.dueTurn);
+    const parents = Object.entries(content.eventRules.callbackTargets).filter(
+      ([, targetId]) => targetId === entry.eventId,
+    );
+    const parent = parents[ZERO]?.[ZERO];
+    if (
+      parents.length !== ONE ||
+      parent === undefined ||
+      !state.seenEventIds.includes(parent) ||
+      !content.events.some((event) => event.id === parent)
+    )
+      throw new EngineError('invalid-schedule');
     const targets = content.callbacks.filter(
       (event) => event.id === entry.eventId,
     );
@@ -136,9 +148,10 @@ export function drawEventWith(
   return {
     ...state,
     current: event,
-    seenEventIds: state.seenEventIds.includes(event.id)
-      ? [...state.seenEventIds]
-      : [...state.seenEventIds, event.id],
+    seenEventIds:
+      selected === content.filler || state.seenEventIds.includes(event.id)
+        ? [...state.seenEventIds]
+        : [...state.seenEventIds, event.id],
     spokenAttendeeIds:
       event.speaker === 'room' ||
       state.spokenAttendeeIds.includes(event.speaker)

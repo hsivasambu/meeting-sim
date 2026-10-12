@@ -20,12 +20,12 @@ and consecutive uncommon negative events. A due callback takes priority; callbac
 cannot enter the random pool. Broken opening availability throws `invalid-pool`,
 while later exhaustion selects repeatable filler. Speakers, families, substantive
 count and the previous-negative flag are recorded on draw. Room is never recorded as
-an attendee. Pending draw returns an equivalent new snapshot, including after release.
+an attendee. Filler is excluded from seenEventIds, which records base families/callbacks only. Pending draw returns an equivalent new snapshot, including after release.
 Ended draws throw `ended`; ended candidate lookup returns an empty array even if Call it
 retained a current event for narrative inspection.
 
 Resolution's existing n+2 scheduler remains the only scheduling writer. Draw validates
-duplicate targets, colliding turns, past/invalid turns, previously delivered targets,
+duplicate targets, colliding turns, past/invalid or more-than-one-turn-ahead due turns, orphan/ambiguous parents, previously delivered targets,
 missing/duplicate definitions and invalid callback kind/rarity/conditions. Violations
 throw `invalid-schedule`. Delivery removes only the reached due entry. First matching
 absence variants apply to callback dialogue as to base dialogue. No rule reads the log.
@@ -37,10 +37,10 @@ export a fixture pack as gameplay. Task 06b must author and obtain approval for 
 
 ## Recorded runs and verification
 
-Five JSON runs in `tests/golden/` contain seed, complete ordered actions, expected full
+Six JSON runs in `tests/golden/` contain seed, complete ordered actions, expected full
 final state and score. The runner uses a deep-frozen synthetic pack, frozen inputs and
 exact JSON comparison. Outcomes: cancellation 0; clean success 1000; risky success 800;
-timeout 0; callback plus absent Sam 739. These are fixture outcomes, not balance claims.
+timeout 0; callback plus absent Sam 739; mixed fairness/pending release/Call it 477. These are fixture outcomes, not balance claims.
 Goldens are committed records; ordinary test execution never regenerates them.
 
 Full-run properties use 100 generated cases per property and fixed fast-check seeds.
@@ -52,7 +52,7 @@ minute 61 / turn 49. Early decision, deadline and Call it suppress future callba
 Focused tests also cover ASCII probabilities, authored first-match precedence, fixed
 pending dialogue, authoritative counters, eligibility boundaries and malformed queues.
 
-Local evidence (October 12, 2026; Node 24.21.0, pnpm 10.34.6):
+Initial local evidence before review fixes (October 12, 2026; Node 24.21.0, pnpm 10.34.6):
 
 - `pnpm check`: zero type/lint/format errors; **221 tests / 21 files** pass.
 - Core coverage: **337/339 lines (99.41%)**, **274/280 branches (97.86%)**.
@@ -67,5 +67,27 @@ Local evidence (October 12, 2026; Node 24.21.0, pnpm 10.34.6):
 
 Simulation/content validation gates activate at 08a/07a and were not reported as run.
 Android LinkedIn evidence remains deferred under ADR 0002. No known task 06 defect remains.
-Next task: **06b**, the reviewed content table; task **07a** can then validate packs using
+After remote delivery and hosted Node 24 evidence, next task: **06b**, the reviewed content table; task **07a** can then validate packs using
 these completed engine capabilities. Stop at task 06.
+
+## Review fixes and current evidence — October 12, 2026
+
+The initial 221-test evidence above is historical. The supplied review is preserved in
+[task-06-review.md](task-06-review.md), with resolution notes. Task 06 is locally implemented;
+remote PR and hosted Node 24 evidence remain pending push authorization.
+
+Callbacks now require a unique existing base parent marked seen, and dueTurn must be the
+current turn or the following turn. These are consequences of the existing n+2 scheduler,
+not new gameplay rules. Filler is excluded from the authoritative seen-family/callback list.
+Only the timeout golden's seen IDs change. A sixth mixed fixture golden pins weighted
+selection, fairness, a gated family, pending release, next-event absence and an early call.
+Generated full runs add conditions, absence variants, pending releases and early calls.
+
+Node 24.21.0 / pnpm 10.34.6: `pnpm check` passes **226 tests in 21 files**; core coverage
+**346/348 lines (99.43%)**, **284/290 branches (97.93%)**; draw **47/47 lines, 67/67 branches**.
+Build/size and all **18 E2E** checks pass with the original budgets. Test helper caching
+removes repeated deep-freeze traversal; the 100-case properties and five-second timeout,
+all required assertions, coverage floors and CI configuration are unchanged.
+
+Task 07a/07b acceptance text now includes speaker validation and public API binding/tests.
+Task 06 remote delivery must finish before marking the delivery complete; next task is 06b.

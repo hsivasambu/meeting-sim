@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 implemented and verified with all active local Node 24 gates; see its evidence below. Dependency PRs #4 and #5 are merged into main. Task 02 Android evidence remains deferred (ADR 0002). Next task: 06b.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 implemented with review fixes and local Node 24 evidence; remote PR/hosted Node 24 evidence remain pending. Dependency PRs #4 and #5 are merged into main. Task 02 Android evidence remains deferred (ADR 0002). Next task: finish task 06 delivery, then 06b.
 
 ## Purpose and source of truth
 
@@ -32,11 +32,11 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 | 02   | Test and CI infrastructure: Vitest + fast-check, Playwright config, `.github/workflows/ci.yml`, shell E2E smoke. LinkedIn capability probe page on a Vercel preview (V1).                                                                                                        | 01b             | CI uses the frozen lockfile and publishes reports; probe results for LinkedIn on iOS and Android recorded in an ADR.                                                                                               |
 | 03   | Contracts: `src/core/engine/{types,constants,rng,index}.ts`, condition helpers, `fixtures/` packs, colocated tests.                                                                                                                                                              | 01b             | Types match the spec (D14); only `index.ts` imports content (D13); RNG vectors and per-turn stream tests; exact weighted-selection formula; constants centralized.                                                 |
 | 04   | State transitions and shared evaluator: `state.ts`, `resolve.ts`, `applyEffect`, typed errors, log and decision records; core property tests.                                                                                                                                    | 03              | Starting six, legal releases, owner protection, integer person-minutes, booking changes, end priority, clamping, invalid actions and immutability tested on fixture packs; counters authoritative (D15).           |
-| 05   | Utility, score and titles: internal `value.ts`, `score.ts` (with `formatCost`), `titleRules.ts`, score fixtures.                                                                                                                                                                 | 04              | **Complete, October 12, 2026.** PR #5; 196 unit/property and 18 E2E passes, hosted Node 24 evidence; see task 05 review fixes and delivery.                                                                        |
-| 06   | Event selection and callback scheduler: `draw.ts`; at least five fixture goldens (D21).                                                                                                                                                                                          | 03, 04          | **Complete, October 12, 2026.** 221 unit/property/golden and 18 E2E passes; five recorded fixture goldens; see [task 06 evidence](task-06-draw.md).                                                                |
+| 05   | Utility, score and titles: internal `value.ts`, `score.ts` (with `formatCost`), `titleRules.ts`, score fixtures.                                                                                                                                                                 | 04              | Six exact worked examples; rate-independent scores; all boundaries and title predicates verified.                                                                                                                  |
+| 06   | Event selection and callback scheduler: `draw.ts`; at least five fixture goldens (D21).                                                                                                                                                                                          | 03, 04          | Weighted eligibility, unseen-family rules, fairness, callbacks, idempotent pending draw and filler fallback tested; goldens cover cancellation, clean success, risky success, timeout, and callback plus absence.  |
 | 06b  | Content table `docs/content-table.md`: all 17 families × variants × responses, the 3 callback events, filler and epilogues. Design task; runs in parallel with 03–06.                                                                                                            | 00b             | Every response has technique, requires, minutes, progress, risks, callback, label and line; a hand check shows a sensible player can reach P = 100 in about 10 turns within 60 minutes; Harry's approval recorded. |
-| 07a  | Content validator and content index.                                                                                                                                                                                                                                             | 04–06           | `validateContent` rules implemented and tested on valid and invalid fixture packs.                                                                                                                                 |
-| 07b… | Live content: `src/core/content/attendees.ts`, `events/*.ts`, `titles.ts`, `copy.ts`, transcribed from the content table in event-group PRs.                                                                                                                                     | 06b, 07a        | Every content-table row implemented; `validateContent` passes on the live pack.                                                                                                                                    |
+| 07a  | Content validator and content index.                                                                                                                                                                                                                                             | 04–06           | `validateContent` rules implemented and tested on valid and invalid fixture packs; speaker present at draw unless room/arrival speaker.                                                                            |
+| 07b… | Live content: `src/core/content/attendees.ts`, `events/*.ts`, `titles.ts`, `copy.ts`, transcribed from the content table in event-group PRs.                                                                                                                                     | 06b, 07a        | Every content-table row implemented; `validateContent` passes on the live pack; bind `drawEvent`/`getDrawCandidates` in `engine/index.ts` and test the public wrappers.                                            |
 | 08a  | Minimal simulation runner with Greedy and Random (balance diagnostic only).                                                                                                                                                                                                      | 07b…            | V3 balance smoke reported: win rates against bands, Greedy median turns, P = 100 reachability.                                                                                                                     |
 | 11a  | Store: `src/store/gameStore.ts` with the beat machine and complete action list (D17), `persistence.ts`, store tests.                                                                                                                                                             | 07b…            | Action table behaviour tested; double input ignored; restart keeps unlocked titles; failure-safe persistence.                                                                                                      |
 | 12a  | Text-only meeting loop: Title, Meeting and Results screens with no art or animation; meeting-loop E2E.                                                                                                                                                                           | 11a             | Start → results playable with touch and keyboard at 320 px; V4 playtest (Harry + two people) recorded; findings fed back into the content table.                                                                   |
@@ -76,7 +76,7 @@ unverified under the accepted task 02 deferral.
 | 03   | Give the game a common vocabulary and repeatable “shuffle,” like using the same numbered deck twice.      | **Now — terminal:** Run Tests below. Look for rng.test.ts, weighted.test.ts and conditions.test.ts passing. They check repeatable shuffling, correct odds and who qualifies for an option.                                                                       |
 | 04   | Make each choice update the meeting correctly, without changing the old state behind your back.           | **Now — terminal:** Run Tests. Look for state.test.ts, evaluation.test.ts, resolve.test.ts and transitions.test.ts passing. They cover owner protection, costs, expert departures and winning at the deadline. There is no player interface for these rules yet. |
 | 05   | Turn the finished meeting into a score and earned badges.                                                 | **Now — terminal:** Run Tests and inspect the six scoring examples against the design's worked-example table. The score shown in the browser arrives with later UI tasks.                                                                                        |
-| 06   | Pick the next meeting topic, remember used topics and bring parked issues back on time.                   | **Now — terminal:** Run Tests; draw/callback tests and the five saved example runs should pass. Browser topic flow arrives in 12a.                                                                                                                               |
+| 06   | Pick the next meeting topic, remember used topics and bring parked issues back on time.                   | **Now — terminal:** Run Tests; draw/callback tests and the six saved example runs should pass. Browser topic flow arrives in 12a.                                                                                                                                |
 | 06b  | Write the script: every topic, choice, consequence and ending.                                            | **Later — read:** Open docs/content-table.md. Read one topic with its expert present and absent, then follow its choices and consequences. Approve the table before it becomes game data.                                                                        |
 | 07a  | Build a proofreader that rejects broken game data.                                                        | **Later — terminal:** Run Tests; content-validation checks should pass for valid packs and reject the deliberately broken fixtures. No new screen to test.                                                                                                       |
 | 07b… | Put the approved script into the game, a small group of topics at a time.                                 | **Later — compare:** Pick one implemented family and compare every variant/choice to its approved content-table row. Run Tests to check the data. Repeat for each 07b content split.                                                                             |
@@ -284,13 +284,13 @@ Record progress below by replacing `not started` with `in progress`, `blocked: D
 | Milestone            | Tasks         | Status                                                                                                 |
 | -------------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
 | A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002) |
-| B — Headless game    | 04–07, 06b    | 04–06 complete (PRs #4–#5 merged); 07 and 06b not started                                              |
+| B — Headless game    | 04–07, 06b    | 04–05 complete (PRs #4–#5 merged); 06 local implementation, pending PR/CI; 07 and 06b not started      |
 | B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                            |
 | C — Balance evidence | 08b–10        | Not started                                                                                            |
 | D — Browser game     | 11b–15        | Not started                                                                                            |
 | E — Release          | 16–17         | Not started                                                                                            |
 
-The next blueprint task is 06: event selection and callback scheduler, including fixture goldens. Tasks 01–05 are implemented and verified; PR #5 is stacked on unmerged PR #4. Android evidence remains explicitly deferred (ADR 0002). No task 06 implementation has started.
+Task 06 is implemented locally and under review; remote PR and hosted Node 24 evidence await push authorization. Tasks 01–05 are implemented and merged, including PRs #4 and #5. After task 06 delivery, the next blueprint task is 06b: the reviewed content table. Android evidence remains deferred (ADR 0002).
 
 ## Task 01 completion — October 11, 2026
 
@@ -871,9 +871,9 @@ Final full-review hosted evidence:
   whitespace checks. PR #5 remains open, stacked on PR #4. **Task 05 complete; next task 06**.
   No further implementation is included.
 
-## Task 06 completion — October 12, 2026
+## Task 06 local implementation — October 12, 2026
 
-Task **06 complete** on `feat/task-06-draw`, based on main after the task 04/05 merges.
+Task **06 locally implemented; remote delivery pending** on `feat/task-06-draw`, based on main after the task 04/05 merges.
 Tasks **03 and 04** are present and verified: contracts/RNG/weights/conditions and
 transitions/evaluation/scheduling are implemented; their existing tests pass unchanged.
 Task 05 score APIs are also available for the recorded run outputs. Dependency PRs #4
@@ -900,7 +900,7 @@ and #5 are confirmed merged; their tree matches this task's tested baseline.
   approved content exists, as in the existing task 03 handoff. Android LinkedIn evidence
   is still the accepted ADR 0002 release risk. Dependency PRs #4 and #5 are merged.
 
-**Next task: 06b — author and obtain Harry's approval for `docs/content-table.md`.**
+**After task 06 delivery, next task: 06b — author and obtain Harry's approval for `docs/content-table.md`.**
 Task 07a's engine dependencies are now complete. No task 06b/07 work started; stop here.
 
 Task 06 delivery status:
@@ -913,3 +913,47 @@ Task 06 delivery status:
   The prepared PR description is retained locally; approval is needed only for remote delivery.
 - Implementation and every currently activated local check are complete. Hosted evidence is
   outstanding until remote delivery is authorized. No task 06b work was started.
+
+## Task 06 review fixes — October 12, 2026
+
+Read [the supplied review](task-06-review.md); its initial findings are preserved with
+resolution notes appended. Remote delivery is still pending authorization; the status
+and milestone table now distinguish local implementation from completed PR/hosted CI.
+Tasks 03/04 remain complete, and PRs #4/#5 are already merged.
+
+- Schedule validation now rejects due turns beyond `turn + 1` and requires one metadata
+  parent present in the pack and recorded in authoritative `seenEventIds`. Far-future,
+  orphan, ambiguous and missing-parent regressions cover both draw and candidate APIs.
+- Filler no longer enters `seenEventIds`, following tech-spec.md's base-family/callback
+  definition. The timeout golden changes only that list; all effects, log and score
+  remain identical. The spec, tests and thresholds were not relaxed.
+- Added a sixth frozen JSON golden with mixed rarities and weights, a minute/absence-gated
+  family, two uncommon negatives separated by the fairness guard, release during dialogue,
+  an absence presentation on the next event, and Call it with progress. Seed
+  `golden-mixed-77` yields the recorded score **477**. The five original outcomes remain.
+- Generated runs now include family conditions, Sam/Priya absence presentations, expert
+  requirements, releases during pending dialogue and generated early Call it. Every case
+  still checks deterministic replay, fairness, preview-enabled choices, cost at the current
+  headcount and termination. The all-email property retains all 17 families/3 callbacks
+  and its exact turn-49 timeout.
+- Expanded tests initially exceeded the unchanged five-second timeout. The fixture freeze
+  helper now caches only graphs whose descendants it already froze, and unchanged pending
+  states are not compared twice. No case count, assertion about a release, timeout, coverage
+  threshold or gate was reduced.
+- Restored the original acceptance criteria in task rows 05/06 and fixed the stale execution
+  handoff. Task 07a explicitly includes speaker-presence validation; task 07b explicitly
+  includes public draw/candidate binding and wrapper tests. No task 07 implementation added.
+
+Review-fix evidence on **Node 24.21.0 / pnpm 10.34.6**:
+
+- `pnpm check`: **226 tests in 21 files**, including **six goldens**; type/lint/format pass.
+- Core coverage: **346/348 lines (99.43%)**, **284/290 branches (97.93%)**;
+  draw **47/47 lines, 67/67 branches**. Existing 90%/85% floors unchanged.
+- `pnpm build && pnpm size`: **70,407/122,880 gzip JS bytes**, **0/409,600 image/font bytes**.
+- `pnpm e2e`: **18 passes** on the three required profiles, no retries/skips/browser errors.
+- The review's Node 22 passes are supplemental evidence from Claude, not a hosted Node 24
+  result. This task's recorded local gates use the installed Node 24 runtime.
+
+**Task 06 local fixes verified; remote PR and hosted Node 24 evidence outstanding.**
+Push/PR approval is the only remaining delivery input. Next blueprint task after delivery:
+**06b**. No subsequent task work was started.
