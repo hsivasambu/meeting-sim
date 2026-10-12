@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 implemented with review fixes and local Node 24 evidence; remote PR/hosted Node 24 evidence remain pending. Dependency PRs #4 and #5 are merged into main. Task 02 Android evidence remains deferred (ADR 0002). Next task: finish task 06 delivery, then 06b.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 02 Android evidence remains deferred (ADR 0002). Next task: 06b.
 
 ## Purpose and source of truth
 
@@ -281,16 +281,16 @@ Start each task by reading the files listed in `CLAUDE.md`. D01–D26 are settle
 
 Record progress below by replacing `not started` with `in progress`, `blocked: Dxx`, or `complete: PR/evidence`. “Complete” requires the task's acceptance evidence and the applicable quality gates; documentation planning alone does not validate the game.
 
-| Milestone            | Tasks         | Status                                                                                                 |
-| -------------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
-| A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002) |
-| B — Headless game    | 04–07, 06b    | 04–05 complete (PRs #4–#5 merged); 06 local implementation, pending PR/CI; 07 and 06b not started      |
-| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                            |
-| C — Balance evidence | 08b–10        | Not started                                                                                            |
-| D — Browser game     | 11b–15        | Not started                                                                                            |
-| E — Release          | 16–17         | Not started                                                                                            |
+| Milestone            | Tasks         | Status                                                                                                                                           |
+| -------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002)                                           |
+| B — Headless game    | 04–07, 06b    | 04–06 complete: PRs #4–#5 merged, [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7) with hosted Node 24 evidence; 07 and 06b not started |
+| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                                                                      |
+| C — Balance evidence | 08b–10        | Not started                                                                                                                                      |
+| D — Browser game     | 11b–15        | Not started                                                                                                                                      |
+| E — Release          | 16–17         | Not started                                                                                                                                      |
 
-Task 06 is implemented locally and under review; remote PR and hosted Node 24 evidence await push authorization. Tasks 01–05 are implemented and merged, including PRs #4 and #5. After task 06 delivery, the next blueprint task is 06b: the reviewed content table. Android evidence remains deferred (ADR 0002).
+Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. The next blueprint task is 06b: the reviewed content table. Android evidence remains deferred (ADR 0002).
 
 ## Task 01 completion — October 11, 2026
 
@@ -903,7 +903,7 @@ and #5 are confirmed merged; their tree matches this task's tested baseline.
 **After task 06 delivery, next task: 06b — author and obtain Harry's approval for `docs/content-table.md`.**
 Task 07a's engine dependencies are now complete. No task 06b/07 work started; stop here.
 
-Task 06 delivery status:
+Task 06 delivery status before user authorization (historical):
 
 - Implementation is committed locally as **03e4d7f**, with one task 06 commit rebased onto
   the identical merged main baseline. Local working tree is clean after documentation commits.
@@ -957,3 +957,23 @@ Review-fix evidence on **Node 24.21.0 / pnpm 10.34.6**:
 **Task 06 local fixes verified; remote PR and hosted Node 24 evidence outstanding.**
 Push/PR approval is the only remaining delivery input. Next blueprint task after delivery:
 **06b**. No subsequent task work was started.
+
+## Task 06 hosted delivery — October 12, 2026
+
+Harry explicitly authorized push, PR creation and merge. The earlier local-only delivery
+blocker is resolved. `feat/task-06-draw` was pushed and [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7)
+opened against main, including the supplied review and all review fixes.
+
+- [Hosted Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38286583589)
+  passed on **b221c9f**: frozen install, check, build/size, browser checks and report upload.
+- Downloaded reports verify **226 unit/property/golden passes, zero failures/errors**;
+  **18 E2E passes, zero skipped/flaky/unexpected**, with coverage/browser HTML reports.
+- Hosted core coverage matches local: **346/348 lines (99.43%)**, **284/290 branches
+  (97.93%)**. All original budgets, assertions and gates remain unchanged.
+- This evidence update changes documentation only and passes formatting, document
+  consistency and whitespace checks. Required hosted checks rerun on the final PR head
+  before the user-authorized squash merge; no required check is bypassed.
+
+**Task 06 complete and delivered via PR #7. Next task: 06b.**
+Dependencies 03/04 remain complete, and no subsequent task implementation was started.
+Android LinkedIn validation remains the accepted ADR 0002 release risk.

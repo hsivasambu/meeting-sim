@@ -91,3 +91,14 @@ all required assertions, coverage floors and CI configuration are unchanged.
 
 Task 07a/07b acceptance text now includes speaker validation and public API binding/tests.
 Task 06 remote delivery must finish before marking the delivery complete; next task is 06b.
+
+## Hosted delivery — October 12, 2026
+
+User authorization now covers push, PR creation and merge. [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7)
+delivers task 06 against main. [Node 24 CI](https://github.com/hsivasambu/meeting-sim/actions/runs/38286583589)
+passed on b221c9f. Downloaded reports confirm 226 unit/property/golden passes, zero failures;
+18 E2E passes, zero skipped/flaky/unexpected; core 346/348 lines and 284/290 branches,
+plus both HTML reports. Build/size and every active check passed unchanged.
+
+The earlier delivery blocker is resolved. Required checks rerun after this documentation
+update before the authorized squash merge. Task 06 is complete; next task is 06b.
