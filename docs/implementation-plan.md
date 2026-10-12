@@ -76,7 +76,7 @@ unverified under the accepted task 02 deferral.
 | 03   | Give the game a common vocabulary and repeatable “shuffle,” like using the same numbered deck twice.      | **Now — terminal:** Run Tests below. Look for rng.test.ts, weighted.test.ts and conditions.test.ts passing. They check repeatable shuffling, correct odds and who qualifies for an option.                                                                       |
 | 04   | Make each choice update the meeting correctly, without changing the old state behind your back.           | **Now — terminal:** Run Tests. Look for state.test.ts, evaluation.test.ts, resolve.test.ts and transitions.test.ts passing. They cover owner protection, costs, expert departures and winning at the deadline. There is no player interface for these rules yet. |
 | 05   | Turn the finished meeting into a score and earned badges.                                                 | **Now — terminal:** Run Tests and inspect the six scoring examples against the design's worked-example table. The score shown in the browser arrives with later UI tasks.                                                                                        |
-| 06   | Pick the next meeting topic, remember used topics and bring parked issues back on time.                   | **Later — terminal:** Run Tests; draw/callback tests and the five saved example runs should pass. Browser topic flow arrives in 12a.                                                                                                                             |
+| 06   | Pick the next meeting topic, remember used topics and bring parked issues back on time.                   | **Now — terminal:** Run Tests; draw/callback tests and the five saved example runs should pass. Browser topic flow arrives in 12a.                                                                                                                               |
 | 06b  | Write the script: every topic, choice, consequence and ending.                                            | **Later — read:** Open docs/content-table.md. Read one topic with its expert present and absent, then follow its choices and consequences. Approve the table before it becomes game data.                                                                        |
 | 07a  | Build a proofreader that rejects broken game data.                                                        | **Later — terminal:** Run Tests; content-validation checks should pass for valid packs and reject the deliberately broken fixtures. No new screen to test.                                                                                                       |
 | 07b… | Put the approved script into the game, a small group of topics at a time.                                 | **Later — compare:** Pick one implemented family and compare every variant/choice to its approved content-table row. Run Tests to check the data. Repeat for each 07b content split.                                                                             |
@@ -284,7 +284,7 @@ Record progress below by replacing `not started` with `in progress`, `blocked: D
 | Milestone            | Tasks         | Status                                                                                                 |
 | -------------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
 | A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002) |
-| B — Headless game    | 04–07, 06b    | 04–05 complete (PRs #4–#5 open); 06–07 and 06b not started                                             |
+| B — Headless game    | 04–07, 06b    | 04–06 complete (PRs #4–#5 merged); 07 and 06b not started                                              |
 | B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                            |
 | C — Balance evidence | 08b–10        | Not started                                                                                            |
 | D — Browser game     | 11b–15        | Not started                                                                                            |
@@ -902,3 +902,14 @@ and #5 are confirmed merged; their tree matches this task's tested baseline.
 
 **Next task: 06b — author and obtain Harry's approval for `docs/content-table.md`.**
 Task 07a's engine dependencies are now complete. No task 06b/07 work started; stop here.
+
+Task 06 delivery status:
+
+- Implementation is committed locally as **03e4d7f**, with one task 06 commit rebased onto
+  the identical merged main baseline. Local working tree is clean after documentation commits.
+- Remote push and PR creation were rejected by automatic approval review because exporting
+  the private repository changes to GitHub needs explicit user authorization for that
+  destination. No task 06 branch was pushed and no task 06 PR or hosted run was created.
+  The prepared PR description is retained locally; approval is needed only for remote delivery.
+- Implementation and every currently activated local check are complete. Hosted evidence is
+  outstanding until remote delivery is authorized. No task 06b work was started.
