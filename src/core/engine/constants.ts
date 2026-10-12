@@ -1,4 +1,4 @@
-import type { AttendeeId, Rarity } from './types';
+import type { AttendeeId, EventRules, Rarity } from './types';
 
 export const ZERO = 0;
 export const ONE = 1;
@@ -63,6 +63,42 @@ export const UTILITY_RULES = {
   costUnit: UTILITY_COST_PM,
 } as const;
 export const MAX_RESPONSE_MINUTES = 10;
+export const MAX_RESPONSES = 3;
+export const MIN_CONTENT_PROGRESS = -10;
+export const MAX_CONTENT_PROGRESS = 25;
+export const MIN_CONTENT_RISKS = -1;
+export const MAX_CONTENT_RISKS = 1;
+export const LINE_CODE_POINTS = 90;
+export const LABEL_CODE_POINTS = 24;
+export const TITLE_CODE_POINTS = 28;
+export const ROLE_CODE_POINTS = 48;
+export const ATTENDEE_IDS = [
+  ...INITIAL_ATTENDEES,
+  'vp',
+  'legal',
+] as const satisfies readonly AttendeeId[];
+export const EXPERT_ATTENDEE_IDS = [
+  'dev',
+  'sam',
+  'morgan',
+] as const satisfies readonly AttendeeId[];
+export const CONDITION_KEYS = [
+  'present',
+  'absent',
+  'minMinute',
+  'maxMinute',
+  'minRisks',
+  'maxRisks',
+] as const;
+export const MVP_EVENT_RULES = {
+  arrivalAttendees: { legal: 'legal', 'vp-joins': 'vp' },
+  callbackTargets: {
+    'circle-back': 'circle-back-return',
+    'support-training': 'support-follow-up',
+    'p1-bug': 'p1-follow-up',
+  },
+  bookingEventIds: ['room-booked'],
+} as const satisfies EventRules;
 
 export const DECIMAL_BASE = 10n;
 export const BIGINT_ZERO = 0n;

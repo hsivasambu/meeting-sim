@@ -8,6 +8,7 @@ import { score } from './score';
 import { fixturePack } from './fixtures/packs';
 import { previewWithRules } from './preview';
 import { matchesCondition } from './conditions';
+import { validateContent } from './contentValidation';
 import type {
   ContentPack,
   MeetingEvent,
@@ -247,6 +248,11 @@ function run(
   expect(result.total).toBeLessThanOrEqual(1000);
   return state;
 }
+
+it('validates the complete synthetic run packs under the content gate', () => {
+  for (const pack of [content, scenarioContent])
+    expect(validateContent(pack, { profile: 'synthetic' })).toEqual([]);
+});
 
 it('replays generated seeds, choices and releases with fairness, integer billing, bounded state and termination', () => {
   fc.assert(
