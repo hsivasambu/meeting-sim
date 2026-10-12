@@ -1,5 +1,5 @@
 import type { EventRules } from '../engine/types';
-// Approved relationship metadata only; live dialogue/events remain task 07 work.
+// Approved docs/content-table.md → Families and draw eligibility.
 export const engineRules = {
   arrivalAttendees: { legal: 'legal', 'vp-joins': 'vp' },
   callbackTargets: {
