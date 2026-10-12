@@ -49,3 +49,9 @@ Local Node 24.21.0 / pnpm 10.34.6 evidence: 277 tests in 25 files; core
 build/size 70,410/122,880 gzip JS bytes and 0/409,600 image/font bytes;
 18 E2E passes across the three required profiles. No dependency, lockfile, CI,
 coverage floor, scoring formula or tuning change. See the plan for hosted delivery.
+
+[PR #9](https://github.com/hsivasambu/meeting-sim/pull/9) delivers these changes
+on merged main. [Hosted Node 24 CI](https://github.com/hsivasambu/meeting-sim/actions/runs/38302537612)
+passed on f2b7aa1; downloaded unit, E2E and coverage reports confirm the counts
+above, with zero failures, skips or flakes. The final evidence commit is checked
+again before the authorized squash merge.

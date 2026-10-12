@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a review fixes implemented locally; hosted Node 24 evidence and merge pending. Approved synthetic/playable validation distinction recorded in the tech spec. Next implementation task after 07a delivery: 07b.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Next implementation task: 07b.
 
 ## Purpose and source of truth
 
@@ -55,13 +55,14 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 ## Plain-language task guide and easy checks
 
 This explains the same tasks above; it does not change their scope, dependencies or
-acceptance rules. **Now** means the check is available on the current task 06 branch;
-**Later** means wait until that task is implemented. Tasks 00–06 (including their splits)
-are implemented; task 06 is on feat/task-06-draw. Tasks 04 and 05 are merged into main via [PR #4](https://github.com/hsivasambu/meeting-sim/pull/4)
-and [PR #5](https://github.com/hsivasambu/meeting-sim/pull/5). Checks including task 06 require feat/task-06-draw rather than main.
+acceptance rules. **Now** means the check is available on the reviewed task 07a branch;
+**Later** means wait until that task is implemented. Tasks 00–07a (including their splits)
+are implemented. Tasks 04–06b are merged into main via PRs #4, #5, #7 and #8;
+task 07a is delivered in [PR #9](https://github.com/hsivasambu/meeting-sim/pull/9)
+with hosted Node 24 evidence. Its content checks are available on main after merge.
 
 The browser currently shows the title/objective and the separate sharing probe. The
-first playable meeting is task **12a**. Tasks 03–06 work under the hood, so their easiest
+first playable meeting is task **12a**. Tasks 03–07a work under the hood, so their easiest
 checks are automated tests. A simple check is a useful spot check, not a substitute for
 the technical spec's full gates or release checklist. Android LinkedIn testing is still
 unverified under the accepted task 02 deferral.
@@ -285,16 +286,16 @@ Start each task by reading the files listed in `CLAUDE.md`. D01–D26 are settle
 
 Record progress below by replacing `not started` with `in progress`, `blocked: Dxx`, or `complete: PR/evidence`. “Complete” requires the task's acceptance evidence and the applicable quality gates; documentation planning alone does not validate the game.
 
-| Milestone            | Tasks         | Status                                                                                                                                                                                                                                      |
-| -------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002)                                                                                                                                      |
-| B — Headless game    | 04–07, 06b    | 04–06 complete: PRs #4–#5 merged, [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7) with hosted Node 24 evidence; 06b complete with Harry's approval; Claude review addressed in PR #8 with hosted Node 24 evidence; 07 not started |
-| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                                                                                                                                                                 |
-| C — Balance evidence | 08b–10        | Not started                                                                                                                                                                                                                                 |
-| D — Browser game     | 11b–15        | Not started                                                                                                                                                                                                                                 |
-| E — Release          | 16–17         | Not started                                                                                                                                                                                                                                 |
+| Milestone            | Tasks         | Status                                                                                                                                                                                                                                                                                                            |
+| -------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002)                                                                                                                                                                                                            |
+| B — Headless game    | 04–07, 06b    | 04–06 complete: PRs #4–#5 merged, [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7) with hosted Node 24 evidence; 06b complete with Harry's approval; Claude review addressed in PR #8 with hosted Node 24 evidence; 07a complete with review fixes and hosted Node 24 evidence in PR #9; 07b not started |
+| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                                                                                                                                                                                                                                       |
+| C — Balance evidence | 08b–10        | Not started                                                                                                                                                                                                                                                                                                       |
+| D — Browser game     | 11b–15        | Not started                                                                                                                                                                                                                                                                                                       |
+| E — Release          | 16–17         | Not started                                                                                                                                                                                                                                                                                                       |
 
-Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 07a review fixes implemented locally; hosted Node 24 evidence and merge pending. Approved synthetic/playable validation distinction recorded in the tech spec. Next implementation task after 07a delivery: 07b. Android evidence remains deferred (ADR 0002).
+Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Next implementation task: 07b. Android evidence remains deferred (ADR 0002).
 
 ## Task 01 completion — October 11, 2026
 
@@ -1209,3 +1210,24 @@ Delivery uses merged task 06b main (`9ed47b4`), whose tree matches the former
 pre-squash base (`b88a56f`). Hosted Node 24 evidence and the final merge are pending;
 task 07a delivery is not yet complete. Next task after delivery: **07b**, with
 the complete live pack/catalog and public draw bindings; 07b has not started.
+
+## Task 07a hosted delivery — October 12, 2026
+
+Task **07a implementation and review fixes are complete**, delivered via
+[PR #9](https://github.com/hsivasambu/meeting-sim/pull/9), based on merged 06b main.
+All eight supplied review concerns are addressed in the resolution notes above.
+
+[Hosted Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38302537612)
+passed on `f2b7aa1`. Downloaded reports confirm **277 tests**, zero unit failures
+or errors; **18 E2E passes**, zero skipped/flaky/unexpected; core **588/590 lines
+(99.66%)** and **599/607 branches (98.68%)**. Logs confirm Node **24.21.0**, passing
+build/size (**70,410/122,880 gzip JS bytes**, **0/409,600 asset bytes**), and every
+activated gate. Vercel's PR preview also reports success. The earlier hosted
+delivery blocker is resolved; this evidence-only documentation commit receives
+its own required quality run before Harry's authorized squash merge.
+
+No task 07a defect remains; no test, threshold, content, tuning, frozen golden or
+CI rule was weakened. Task 02's Android release evidence remains deferred under
+ADR 0002. Next blueprint task: **07b**, with its explicit complete live catalog,
+approved-table transcription and public draw-wrapper acceptance. Stop here;
+no task 07b implementation has started.
