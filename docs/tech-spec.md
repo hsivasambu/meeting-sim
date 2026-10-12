@@ -269,6 +269,14 @@ getDrawCandidates(state: MeetingState): readonly DrawCandidate[] // no RNG consu
 
 `value` is internal to the engine (`value.ts`); callers read utility from an enabled `previewResponse` (D24). `formatCost` is the only cost formatter used by the HUD, results card, share card and share text.
 
+The public index also exports frozen, readonly `ENGINE_LIMITS`, backed by
+`constants.ts`: `progressMax`, `risksMax`, `minHeadcount`, `maxHeadcount`,
+`decisionOwner`, `initialBookingEnd`, `reducedBookingEnd`, `scoreMax` (the sum of
+the three component maxima), and `fillerMinutes`. Simulation assertions consume
+these limits rather than repeating game constants. This read-only observation
+API is approved in [ADR 0003](adr/0003-simulation-observation.md); it grants no
+engine-internal imports or alternate rule implementation.
+
 **Purity and immutability**
 
 - Every state-changing function returns a new state and MUST NOT mutate its input; read-only helpers return their documented values. Refused releases and already-pending draws return an equivalent new snapshot. Tests deep-freeze inputs to prove it.
@@ -287,6 +295,7 @@ getDrawCandidates(state: MeetingState): readonly DrawCandidate[] // no RNG consu
 - The only source of fresh randomness is `crypto.getRandomValues`, called once in the store to create the run seed. `Math.random` is banned everywhere (lint rule).
 - Implement cyrb53 with hash seed 0 over JavaScript UTF-16 code units, take its low 32 bits with `>>> 0`, and initialize mulberry32 with that value. Both live in `rng.ts` without dependencies; commit fixed string/hash/PRNG test vectors. Numeric seeds must not depend on platform encoding or locale.
 - The draw stream for turn *n* is seeded from `` `${seed}:draw:${n}` ``, so the draw on one turn never depends on how many numbers earlier turns used.
+- The Node-only Random policy stream uses SHA-256 of UTF-8 `` `${seed}:policy:random:${turn}:${counter}` ``, starting counter at 0, taking the first big-endian unsigned 32-bit ticket. Reject tickets at or above `2^32 - (2^32 % enabledCount)`, incrementing the counter, then select `ticket % enabledCount` in authored enabled-response order. Policy streams never consume the engine draw RNG. Harry approved this convention in the task 08a review resolution on October 12, 2026.
 - Weighted selection uses positive integer rarity weights 65/28/7 × event weight (default 1); these are per-candidate relative weights. Selection is exact: sort eligible candidates by ASCII ID, let W be the sum of their weights, take r = floor(rng() × W) with one call to the turn's stream, and pick the first candidate whose cumulative weight exceeds r. Follow the design’s draw rules exactly, including ASCII ID ordering, first two substantive draws, negative-event filtering and scheduled-only callbacks. Add a pure read-only candidate-distribution helper to the public engine exports for Lookahead; it returns candidates/probabilities without consuming or revealing the draw RNG.
 - If no event is eligible after the first two substantive draws, a filler event ("Awkward silence." +2 min, repeatable) is drawn so a run can never stall. An impossible first-two substantive pool is a content error; valid content must provide two unrestricted common substantive families with absence variants.
 

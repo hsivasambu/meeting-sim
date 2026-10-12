@@ -1,0 +1,48 @@
+{
+  "task": "08a",
+  "revision": "846340bde0bee701ac67d23fcf64d6f7fdc9dd56",
+  "workingTreeDirty": true,
+  "contentAndConstantsHash": "b6599bd8b4209e4c1a8457681a268406f53ebad45f9a5e8b50a9d3882cffd912",
+  "seedRange": "v3:0 through v3:1999",
+  "randomStream": "SHA-256 seed:policy:random:turn with counter and uint32 rejection sampling",
+  "invariants": "PASS: every transition checked; every complete run replayed identically",
+  "balance": "Diagnostic only; no tuning or acceptance thresholds changed",
+  "summaries": [
+    {
+      "policy": "greedy",
+      "runs": 2000,
+      "wins": 2000,
+      "winRate": 100,
+      "winBand": [70, 85],
+      "winBandMet": false,
+      "reached100": 2000,
+      "reachRate": 100,
+      "medianScore": 920,
+      "medianTurns": 11,
+      "greedyTurnBandMet": true,
+      "reservationResponses": {
+        "hear": 0,
+        "timebox": 1098,
+        "vp": 0
+      }
+    },
+    {
+      "policy": "random",
+      "runs": 2000,
+      "wins": 1392,
+      "winRate": 69.6,
+      "winBand": [20, 35],
+      "winBandMet": false,
+      "reached100": 1392,
+      "reachRate": 69.6,
+      "medianScore": 552.5,
+      "medianTurns": 15,
+      "greedyTurnBandMet": null,
+      "reservationResponses": {
+        "hear": 547,
+        "timebox": 570,
+        "vp": 111
+      }
+    }
+  ]
+}

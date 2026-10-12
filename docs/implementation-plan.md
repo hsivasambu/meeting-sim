@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; line-ending hygiene is isolated in PR #11. Next implementation task: 08a.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a is implemented; Claude review resolution, committed evidence, PR and hosted Node 24 verification are in progress. Next action: finish 08a delivery; next blueprint task after verification: 11a.
 
 ## Purpose and source of truth
 
@@ -55,8 +55,8 @@ Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents
 ## Plain-language task guide and easy checks
 
 This explains the same tasks above; it does not change their scope, dependencies or
-acceptance rules. **Now** means the check is available in the current task 07b checkout;
-**Later** means wait until that task is implemented. Tasks 00–07b (including their splits)
+acceptance rules. **Now** means the check is available in the current task 08a checkout;
+**Later** means wait until that task is implemented. Tasks 00–08a (including their splits)
 are implemented. Tasks 04–06b are merged into main via PRs #4, #5, #7 and #8;
 task 07a is delivered in [PR #9](https://github.com/hsivasambu/meeting-sim/pull/9)
 with hosted Node 24 evidence. Its content checks are available on main after merge.
@@ -290,12 +290,12 @@ Record progress below by replacing `not started` with `in progress`, `blocked: D
 | -------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002)                                                                                                                                                                                                                                                                 |
 | B — Headless game    | 04–07, 06b    | 04–06 complete: PRs #4–#5 merged, [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7) with hosted Node 24 evidence; 06b complete with Harry's approval; Claude review addressed in PR #8 with hosted Node 24 evidence; 07a complete with review fixes and hosted Node 24 evidence in PR #9; 07b complete with review fixes and hosted Node 24 evidence in PR #10 |
-| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                                                                                                                                                                                                                                                                                            |
+| B2 — Vertical slice  | 08a, 11a, 12a | 08a implemented; review resolution and hosted delivery in progress; 11a and 12a not started                                                                                                                                                                                                                                                                            |
 | C — Balance evidence | 08b–10        | Not started                                                                                                                                                                                                                                                                                                                                                            |
 | D — Browser game     | 11b–15        | Not started                                                                                                                                                                                                                                                                                                                                                            |
 | E — Release          | 16–17         | Not started                                                                                                                                                                                                                                                                                                                                                            |
 
-Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; line-ending hygiene is isolated in PR #11. Next implementation task: 08a. Android evidence remains deferred (ADR 0002).
+Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a is implemented; Claude review resolution, committed evidence, PR and hosted Node 24 verification are in progress. Next action: finish 08a delivery; next blueprint task after verification: 11a. Android evidence remains deferred (ADR 0002).
 
 ## Task 01 completion — October 11, 2026
 
@@ -1322,3 +1322,64 @@ No dependency, lockfile, engine rule, scoring, validator, fixture/golden, CI
 workflow or threshold change. Android evidence remains deferred under ADR 0002.
 **Next blueprint task: 08a — minimal Greedy/Random runner and V3 balance smoke.**
 Task 08a has not started; stop at the 07b boundary.
+
+## Task 08a implementation and review resolution — October 12, 2026
+
+Task **08a is implemented; delivery verification is in progress** on `feat/task-08a-simulation`. Its dependency,
+07b, is implemented: the approved 17 base families, three callbacks, filler,
+catalogs, live validation and bound public draw/candidate APIs are present.
+The preceding 07b review fixes and hosted evidence remain recorded above.
+
+Implemented `sim/{run,runner,policies,invariants,summary,settings}.ts` and colocated
+policy/runner tests. Policies consume public previews and state transitions;
+game rules, live content, constant values and scoring formulas are unchanged. The approved readonly ENGINE_LIMITS export observes canonical constants.
+Greedy releases Gary/Jordan in order before drawing and uses the documented
+utility/minutes/ASCII order. Random retains attendees and uniformly samples enabled
+responses from a separate seeded policy stream. Neither calls it early. Every
+engine mutation receives frozen input; every transition is checked, and every run
+is repeated with complete-state comparison. A natural-turn-bound violation fails
+the gate rather than forcing an ending.
+
+`pnpm check` now includes the activated `pnpm sim:ci` invariant gate. TypeScript
+and Vitest include `sim/`; CI runs the expanded check and publishes the simulation
+JSON through its existing `test-results/` artifact path. `all` currently runs
+Greedy and Random; the five remaining policies land in 09. Minimal CLI handling
+supports the existing commands; full CSV/metrics and argument handling remain 08b.
+
+Evidence and implementation assumptions: [V3 report](sim/task-08a-v3.md) and
+[machine-readable summary](sim/task-08a-v3.json). The preliminary live core revision was
+`846340bde0bee701ac67d23fcf64d6f7fdc9dd56`; `git diff --exit-code -- src/core`
+passed before review edits. Review resolution adds only the approved observation export and its contract test; committed-source evidence is regenerated after the implementation commit.
+Harry approved the SHA-256 stream and readonly ENGINE_LIMITS on October 12, 2026 (ADR 0003). The Random policy uses a SHA-256 counter stream with rejection sampling; its
+normative specification, uniformity, independent stream and fixed vectors are documented in
+the report. The engine's locked draw RNG is unchanged; ENGINE_LIMITS is the sole approved public API addition.
+
+Actual activated local Node 24.21.0 / pnpm 10.34.6 results:
+
+- `pnpm check`: pass, including types, zero-warning lint/format, **304 tests in
+  28 files**, live content validation, fixture goldens and simulation invariants.
+- Core coverage: **99.68% lines (617/619), 98.68% branches (599/607)**; the
+  existing 90%/85% thresholds remain intact.
+- `pnpm sim:ci`: **2,000 fixed seeds per policy**, each replayed; 8,000 total
+  executions, zero crashes, illegal states, mutation failures or replay mismatches.
+- `pnpm build && pnpm size`: pass; JS **70,410/122,880 gzip bytes**;
+  images/fonts **0/409,600 bytes**.
+- `pnpm e2e`: **18/18 pass** across the three configured browser/device projects.
+
+V3 findings: Greedy **100%** wins/P=100 reachability, median score **920**, median
+**11** resolved turns. Random **69.6%** wins/P=100 reachability, median score
+**552.5**, median **15** resolved turns. Both win rates and median scores exceed
+their design targets; Greedy's turn median meets 9–12. These are explicitly
+diagnostic findings for later tuning, not weakened gates or claims of balance.
+Greedy accepts :45 on all 1,098 reservation encounters; Random uses `hear`/`timebox`/
+`vp` 547/570/111 times. The VP-present tie is covered by a fixture test. The
+approved reservation response IDs and effects are preserved.
+
+Outstanding: balance needs task 09's complete policies and task 10 tuning;
+hosted 08a evidence is not claimed; Android LinkedIn remains deferred (ADR 0002).
+The initial malformed test fixtures were corrected without changing engine rules.
+All currently activated local checks pass; no dependency, asset, threshold or
+test weakening was introduced.
+
+**Next task: 11a — store and beat machine.** Stop at 08a; no 08b, 09, 10 or UI
+implementation is included.
