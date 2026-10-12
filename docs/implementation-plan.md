@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; task 06b PR/hosted evidence pending. Task 02 Android evidence remains deferred (ADR 0002). Next implementation task: 07a.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Next implementation task: 07a.
 
 ## Purpose and source of truth
 
@@ -77,7 +77,7 @@ unverified under the accepted task 02 deferral.
 | 04   | Make each choice update the meeting correctly, without changing the old state behind your back.           | **Now — terminal:** Run Tests. Look for state.test.ts, evaluation.test.ts, resolve.test.ts and transitions.test.ts passing. They cover owner protection, costs, expert departures and winning at the deadline. There is no player interface for these rules yet. |
 | 05   | Turn the finished meeting into a score and earned badges.                                                 | **Now — terminal:** Run Tests and inspect the six scoring examples against the design's worked-example table. The score shown in the browser arrives with later UI tasks.                                                                                        |
 | 06   | Pick the next meeting topic, remember used topics and bring parked issues back on time.                   | **Now — terminal:** Run Tests; draw/callback tests and the six saved example runs should pass. Browser topic flow arrives in 12a.                                                                                                                                |
-| 06b  | Write the script: every topic, choice, consequence and ending.                                            | **Now — read:** Open docs/content-table.md. Read one topic with its expert present and absent, then follow its choices and consequences. Harry approved the table on October 12, 2026; Claude review addressed; task 06b PR/hosted evidence pending.             |
+| 06b  | Write the script: every topic, choice, consequence and ending.                                            | **Now — read:** Open docs/content-table.md. Read one topic with its expert present and absent, then follow its choices and consequences. Harry approved the table on October 12, 2026; Claude review addressed; PR #8 has passing hosted Node 24 evidence.       |
 | 07a  | Build a proofreader that rejects broken game data.                                                        | **Later — terminal:** Run Tests; content-validation checks should pass for valid packs and reject the deliberately broken fixtures. No new screen to test.                                                                                                       |
 | 07b… | Put the approved script into the game, a small group of topics at a time.                                 | **Later — compare:** Pick one implemented family and compare every variant/choice to its approved content-table row. Run Tests to check the data. Repeat for each 07b content split.                                                                             |
 | 08a  | Let two simple robot players try the real game to find big problems early.                                | **Later — report:** Ask for the Greedy/Random simulation summary. Both should reach endings without crashes; win rates are evidence at this point, not a promise that balance is finished.                                                                       |
@@ -284,16 +284,16 @@ Start each task by reading the files listed in `CLAUDE.md`. D01–D26 are settle
 
 Record progress below by replacing `not started` with `in progress`, `blocked: Dxx`, or `complete: PR/evidence`. “Complete” requires the task's acceptance evidence and the applicable quality gates; documentation planning alone does not validate the game.
 
-| Milestone            | Tasks         | Status                                                                                                                                                                                                                            |
-| -------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002)                                                                                                                            |
-| B — Headless game    | 04–07, 06b    | 04–06 complete: PRs #4–#5 merged, [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7) with hosted Node 24 evidence; 06b complete with Harry's approval; Claude review addressed; PR/hosted evidence pending; 07 not started |
-| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                                                                                                                                                       |
-| C — Balance evidence | 08b–10        | Not started                                                                                                                                                                                                                       |
-| D — Browser game     | 11b–15        | Not started                                                                                                                                                                                                                       |
-| E — Release          | 16–17         | Not started                                                                                                                                                                                                                       |
+| Milestone            | Tasks         | Status                                                                                                                                                                                                                                      |
+| -------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A — Foundation       | 00–03         | 00–03 complete: [PR #3](https://github.com/hsivasambu/meeting-sim/pull/3); Android deferred (ADR 0002)                                                                                                                                      |
+| B — Headless game    | 04–07, 06b    | 04–06 complete: PRs #4–#5 merged, [PR #7](https://github.com/hsivasambu/meeting-sim/pull/7) with hosted Node 24 evidence; 06b complete with Harry's approval; Claude review addressed in PR #8 with hosted Node 24 evidence; 07 not started |
+| B2 — Vertical slice  | 08a, 11a, 12a | Not started                                                                                                                                                                                                                                 |
+| C — Balance evidence | 08b–10        | Not started                                                                                                                                                                                                                                 |
+| D — Browser game     | 11b–15        | Not started                                                                                                                                                                                                                                 |
+| E — Release          | 16–17         | Not started                                                                                                                                                                                                                                 |
 
-Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; task 06b PR/hosted evidence pending. Next implementation task: 07a. Android evidence remains deferred (ADR 0002).
+Task 06 is complete with local and hosted Node 24 evidence in PR #7. Tasks 01–05 are implemented and merged, including PRs #4 and #5. Task 06b's content table is authored, locally verified and approved by Harry; Claude review addressed; PR #8 has passing hosted Node 24 evidence. Next implementation task: 07a. Android evidence remains deferred (ADR 0002).
 
 ## Task 01 completion — October 11, 2026
 
@@ -1050,7 +1050,8 @@ rule, ADR exception or unrelated content change is inferred.
 
 - Moved task 06b onto **docs/task-06b-content-table**, based on **origin/main
   c63516e**, preserving the task 06 baseline and the existing document work.
-  Remote PR and hosted evidence are pending delivery, not reported complete.
+  Committed as **5f4c8e0** and delivered in [PR #8](https://github.com/hsivasambu/meeting-sim/pull/8).
+  Hosted verification evidence is recorded below.
 - Replaced press-present / hear with **legal** (hear, 6 minutes, +20 P, -1 R),
   requiring Legal; retained Morgan's owner option and the email fallback. Replaced
   room-booked / park with **vp** (owner, 1 minute, 0 P/R, booking end 60), requiring
@@ -1091,5 +1092,13 @@ Review-fix checks on **Node 24.21.0 / pnpm 10.34.6**:
 - Document links resolve, `git diff --check` passes and the original 06b acceptance
   row matches origin/main after whitespace normalization. No gate was weakened.
 
-Hosted delivery evidence will be recorded after the task PR checks run.
+Hosted [Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38296846168)
+passes on **5f4c8e0**: frozen install, check, build/size, all browser tests and report
+upload. Downloaded reports verify **226 unit tests, zero failures/errors** and
+core **346/348 lines (99.43%)**, **284/290 branches (97.93%)**; the hosted browser
+log records **18 passes**. No test, threshold or required check was bypassed.
+The final evidence-only documentation commit receives its own required hosted run.
+
+**Task 06b content and Claude review fixes are complete and delivered via PR #8.**
+The PR remains open for review; no merge is performed by this task.
 Next blueprint task remains **07a**; no task 07 implementation started.
