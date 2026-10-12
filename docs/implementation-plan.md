@@ -1325,61 +1325,69 @@ Task 08a has not started; stop at the 07b boundary.
 
 ## Task 08a implementation and review resolution — October 12, 2026
 
-Task **08a is implemented; delivery verification is in progress** on `feat/task-08a-simulation`. Its dependency,
-07b, is implemented: the approved 17 base families, three callbacks, filler,
-catalogs, live validation and bound public draw/candidate APIs are present.
-The preceding 07b review fixes and hosted evidence remain recorded above.
+Task **08a is committed and locally verified; PR/hosted delivery is pending**.
+The branch is `feat/task-08a-simulation`, based on main after Harry-authorized
+merges of PR #11 (LF checkout policy) then PR #10 (07b). Before #10 merged,
+its updated head passed [Node 24 quality checks](https://github.com/hsivasambu/meeting-sim/actions/runs/38316227250).
+07b's approved live pack and public APIs are therefore a merged dependency,
+not a stacked PR base. The 08a acceptance row retains its original text verbatim.
 
-Implemented `sim/{run,runner,policies,invariants,summary,settings}.ts` and colocated
-policy/runner tests. Policies consume public previews and state transitions;
-game rules, live content, constant values and scoring formulas are unchanged. The approved readonly ENGINE_LIMITS export observes canonical constants.
-Greedy releases Gary/Jordan in order before drawing and uses the documented
-utility/minutes/ASCII order. Random retains attendees and uniformly samples enabled
-responses from a separate seeded policy stream. Neither calls it early. Every
-engine mutation receives frozen input; every transition is checked, and every run
-is repeated with complete-state comparison. A natural-turn-bound violation fails
-the gate rather than forcing an ending.
+Implemented `sim/{run,runner,policies,invariants,summary,settings}.ts`, policy/runner
+tests and the activated `pnpm sim:ci` gate inside `pnpm check`. TypeScript/Vitest
+include the harness; sim coverage is reported without changing core thresholds.
+CI's existing artifact path publishes the simulation summary. `all` means the two
+implemented policies until task 09 adds the other five. Full CLI tests/CSV/metrics
+and migration to `policies/`/`report.ts` remain 08b/09.
 
-`pnpm check` now includes the activated `pnpm sim:ci` invariant gate. TypeScript
-and Vitest include `sim/`; CI runs the expanded check and publishes the simulation
-JSON through its existing `test-results/` artifact path. `all` currently runs
-Greedy and Random; the five remaining policies land in 09. Minimal CLI handling
-supports the existing commands; full CSV/metrics and argument handling remain 08b.
+[Claude review](task-08a-review.md) and [resolution](task-08a-review-resolution.md)
+record every finding. Harry explicitly approved SHA-256 plus the readonly
+`ENGINE_LIMITS` export; [ADR 0003](adr/0003-simulation-observation.md) records that
+authority. The tech spec was updated before final implementation. The shared
+frozen observation object references canonical constants; invariant checks no
+longer repeat those limits. No game constant value, content effect, scoring formula,
+draw RNG, dependency, lockfile, test or threshold was changed or weakened.
 
-Evidence and implementation assumptions: [V3 report](sim/task-08a-v3.md) and
-[machine-readable summary](sim/task-08a-v3.json). The preliminary live core revision was
-`846340bde0bee701ac67d23fcf64d6f7fdc9dd56`; `git diff --exit-code -- src/core`
-passed before review edits. Review resolution adds only the approved observation export and its contract test; committed-source evidence is regenerated after the implementation commit.
-Harry approved the SHA-256 stream and readonly ENGINE_LIMITS on October 12, 2026 (ADR 0003). The Random policy uses a SHA-256 counter stream with rejection sampling; its
-normative specification, uniformity, independent stream and fixed vectors are documented in
-the report. The engine's locked draw RNG is unchanged; ENGINE_LIMITS is the sole approved public API addition.
+Every mutation receives frozen input, every transition is checked and each complete
+run is replayed with full-state comparison. The per-run gate additionally verifies
+policy release identity/order/before-first-draw and absence of Call it. The natural
+bound derives from live unique family counts and canonical booking/filler constants:
+`17 + 3 + ceil(60 / 2) = 50`. Exceeding it fails; it never forces an ending.
 
-Actual activated local Node 24.21.0 / pnpm 10.34.6 results:
+Reproducible implementation commit: **c29eef058a9294bd9e0480824ff78a5197129d82**.
+The regenerated [V3 JSON](sim/task-08a-v3.json) was produced on this clean committed
+tree (`workingTreeDirty: false`), so its revision now contains the runner.
+The [report](sim/task-08a-v3.md) explains the constant/content fingerprint and
+exact Node 24 runtime invocation. Evidence-only follow-up commits preserve the
+implementation. Both `pnpm sim:ci` and `pnpm sim -- --runs 2000` produced exactly
+the same JSON on that clean tree.
 
-- `pnpm check`: pass, including types, zero-warning lint/format, **304 tests in
-  28 files**, live content validation, fixture goldens and simulation invariants.
-- Core coverage: **99.68% lines (617/619), 98.68% branches (599/607)**; the
-  existing 90%/85% thresholds remain intact.
-- `pnpm sim:ci`: **2,000 fixed seeds per policy**, each replayed; 8,000 total
-  executions, zero crashes, illegal states, mutation failures or replay mismatches.
+Actual activated local Node 24.21.0 / pnpm 10.34.6 results on that commit:
+
+- `pnpm check`: types, zero-warning lint/format, **306 tests in 29 files**, live
+  validation, fixture goldens and simulation invariants pass.
+- Core coverage: **99.68% lines (618/620), 98.68% branches (599/607)**, above
+  unchanged 90%/85% thresholds. Sim unit coverage: 85.60% lines, 78.72% branches;
+  full CLI unit coverage is explicitly left to 08b.
+- `pnpm sim:ci`: **2,000 fixed seeds per policy**, each replayed; 8,000 executions,
+  zero crashes, illegal states, mutation failures, policy failures or replay mismatches.
 - `pnpm build && pnpm size`: pass; JS **70,410/122,880 gzip bytes**;
   images/fonts **0/409,600 bytes**.
 - `pnpm e2e`: **18/18 pass** across the three configured browser/device projects.
+- Fresh Windows clone with `core.autocrlf=true`: all tracked files have LF,
+  and Prettier passes without normalization. The merged `.gitattributes` is inherited.
+- Document links, accepted decisions, lint boundary probes, dependency allowlist,
+  strict TS flags and `git diff --check` pass.
 
-V3 findings: Greedy **100%** wins/P=100 reachability, median score **920**, median
-**11** resolved turns. Random **69.6%** wins/P=100 reachability, median score
-**552.5**, median **15** resolved turns. Both win rates and median scores exceed
-their design targets; Greedy's turn median meets 9–12. These are explicitly
-diagnostic findings for later tuning, not weakened gates or claims of balance.
-Greedy accepts :45 on all 1,098 reservation encounters; Random uses `hear`/`timebox`/
-`vp` 547/570/111 times. The VP-present tie is covered by a fixture test. The
-approved reservation response IDs and effects are preserved.
+V3 remains unchanged: Greedy **100%** wins/P=100 reachability, median score **920**,
+median **11** resolved turns. Random **69.6%** wins/P=100 reachability, median
+score **552.5**, median **15** turns. Both win/score targets are exceeded; Greedy's
+turn target is met. Balance is diagnostic until task 10 completes. Greedy chooses
+:45 in all 1,098 reservation encounters; Random uses `hear`/`timebox`/`vp`
+547/570/111 times. The trap's content is preserved, but currently does not make
+Greedy lose. V4 remains before tuning to assess goal comprehension, topic
+recognition and interaction with this easy content; difficulty feedback will inform
+later tuning. No 08b, 09, tuning or UI implementation is included.
 
-Outstanding: balance needs task 09's complete policies and task 10 tuning;
-hosted 08a evidence is not claimed; Android LinkedIn remains deferred (ADR 0002).
-The initial malformed test fixtures were corrected without changing engine rules.
-All currently activated local checks pass; no dependency, asset, threshold or
-test weakening was introduced.
-
-**Next task: 11a — store and beat machine.** Stop at 08a; no 08b, 09, 10 or UI
-implementation is included.
+Next action: open and verify the 08a PR on hosted Node 24 before recording complete
+delivery. **Next blueprint task after verification: 11a — store and beat machine.**
+Android LinkedIn evidence remains deferred under ADR 0002.

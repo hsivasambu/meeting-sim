@@ -8,10 +8,11 @@ Task 07b is merged into main: approved live content, structural/authored
 validation, every transcribed row and the public draw/candidate/preview wrappers
 are present. Its review fixes and hosted Node 24 evidence are recorded in the plan.
 Dependencies #11 (line endings) and #10 (07b) are merged, in that order, with
-passing hosted checks. Task 08a's clean implementation revision and regenerated
-content/constants fingerprint will be recorded after committing and rebasing onto
-main. The [preliminary JSON report](task-08a-v3.json) currently records the original
-working tree and is awaiting replacement; it is not committed-source evidence.
+passing hosted checks. Task 08a is committed on main's merged dependencies as
+`c29eef058a9294bd9e0480824ff78a5197129d82`. The regenerated
+[JSON report](task-08a-v3.json) records that reproducible source revision with
+`workingTreeDirty: false` and its content/constants fingerprint. Later evidence-only
+commits retain the same implementation; the report revision contains the runner.
 Core rule values and content are unchanged. Review adds only the approved frozen
 readonly observation export and its contract test (ADR 0003).
 
@@ -72,16 +73,23 @@ Replay compares the entire final state, including logs and decisions. Errors inc
 the seed and policy for reproduction. The assertion function deliberately keeps
 related checks together for auditing despite exceeding the 40-line suggestion.
 
-Original local activated gates (before review; final verification pending):
+Activated local gates on the clean committed implementation:
 
-- `pnpm check`: types and lint/format pass; 304 tests across 28 files pass;
+- `pnpm check`: types and lint/format pass; 306 tests across 29 files pass;
   live content validation and fixture goldens pass; `pnpm sim:ci` invariants pass.
-- Aggregate core coverage: 617/619 lines (99.68%) and 599/607 branches (98.68%),
+- Aggregate core coverage: 618/620 lines (99.68%) and 599/607 branches (98.68%),
   above the unchanged 90%/85% thresholds across all existing core files.
 - `pnpm build && pnpm size`: pass; JS 70,410/122,880 gzip bytes;
   deployed images/fonts 0/409,600 bytes. Simulation is outside the browser bundle.
 - `pnpm e2e`: 18/18 pass on Pixel 7 Chromium, iPhone 14 WebKit and desktop
   Chromium, including 320 px/reduced-motion shell and sharing probe checks.
+- `pnpm sim -- --runs 2000`: reproduces `sim:ci`'s full clean-tree JSON exactly.
+- Fresh Windows clone with `core.autocrlf=true`: every tracked file is LF;
+  Prettier passes without manual conversion. The merged `.gitattributes` is inherited.
+
+Sim coverage is now reported (85.60% lines, 78.72% branches on this unit run);
+the existing mandatory core thresholds are unchanged. The CLI entry point remains
+uncovered by unit tests; its full argument/error/report-write tests belong to 08b.
 
 The first test run exposed two malformed new fixtures (a zero-minute non-email
 response and a booking effect on an unrelated event ID). The fixtures were

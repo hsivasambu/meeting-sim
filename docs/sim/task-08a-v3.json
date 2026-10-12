@@ -1,8 +1,8 @@
 {
   "task": "08a",
-  "revision": "846340bde0bee701ac67d23fcf64d6f7fdc9dd56",
-  "workingTreeDirty": true,
-  "contentAndConstantsHash": "b6599bd8b4209e4c1a8457681a268406f53ebad45f9a5e8b50a9d3882cffd912",
+  "revision": "c29eef058a9294bd9e0480824ff78a5197129d82",
+  "workingTreeDirty": false,
+  "contentAndConstantsHash": "6cf33638c5d4cc1be09ef338e79f3a8e17b485e52c772023247b56c201596e0a",
   "seedRange": "v3:0 through v3:1999",
   "randomStream": "SHA-256 seed:policy:random:turn with counter and uint32 rejection sampling",
   "invariants": "PASS: every transition checked; every complete run replayed identically",
