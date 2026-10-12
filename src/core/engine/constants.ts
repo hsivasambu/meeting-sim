@@ -62,13 +62,9 @@ export const UTILITY_RULES = {
   riskWeight: W_RISK,
   costUnit: UTILITY_COST_PM,
 } as const;
-export const REQUIREMENTS_REASON_KEY = 'requirements-not-met';
-export const CALLBACK_TARGETS: Readonly<Partial<Record<string, string>>> = {
-  'circle-back': 'circle-back-return',
-  'support-training': 'support-follow-up',
-  'p1-bug': 'p1-follow-up',
-};
-export const ARRIVAL_ATTENDEES: Readonly<Partial<Record<string, AttendeeId>>> =
-  { legal: 'legal', 'vp-joins': 'vp' };
-
 export const MAX_RESPONSE_MINUTES = 10;
+
+export const DECIMAL_BASE = 10n;
+export const BIGINT_ZERO = 0n;
+export const BIGINT_ONE = 1n;
+export const UTILITY_RATIO_DIGITS = 17;

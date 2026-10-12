@@ -107,3 +107,11 @@ it('rejects actions after ending with typed errors', () => {
     expect(action).toThrow('ended');
   }
 });
+
+it('retains the delivered pending event when called, while forbidding further actions', () => {
+  const state = deepFreeze(pending([fixtureResponse]));
+  const ended = callIt(state);
+  expect(ended.current).toBe(state.current);
+  expect(ended.phase).toBe('ended');
+  expect(() => release(ended, 'sam')).toThrow('ended');
+});

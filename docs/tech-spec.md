@@ -96,6 +96,13 @@ meeting-sim/                   # at C:\dev\meeting-sim, outside OneDrive (D23)
 │  │  │  ├─ types.ts          # MeetingState, PresentedEvent, LogEntry, ContentPack, ...
 │  │  │  ├─ constants.ts      # every tunable number, in one place
 │  │  │  ├─ rng.ts            # seed hashing + PRNG streams
+│  │  │  ├─ weighted.ts       # validated weighted tickets
+│  │  │  ├─ conditions.ts     # inclusive serializable conditions
+│  │  │  ├─ errors.ts         # typed programmer errors
+│  │  │  ├─ applyEffect.ts    # single clamp/billing implementation
+│  │  │  ├─ preview.ts        # read-only response previews
+│  │  │  ├─ responseValidation.ts # shared context validation
+│  │  │  ├─ utilityFraction.ts # exact decimal utility comparison
 │  │  │  ├─ state.ts          # initialState, release
 │  │  │  ├─ draw.ts           # drawEvent + fairness guards
 │  │  │  ├─ resolve.ts
@@ -105,6 +112,7 @@ meeting-sim/                   # at C:\dev\meeting-sim, outside OneDrive (D23)
 │  │  │  ├─ fixtures/         # small ContentPacks for rule tests and goldens (D13, D21)
 │  │  │  └─ index.ts          # the only public export surface; the only engine importer of content
 │  │  └─ content/
+│  │     ├─ engineRules.ts   # approved relationship metadata, data only
 │  │     ├─ attendees.ts
 │  │     ├─ events/           # one file per event, named by event id
 │  │     ├─ titles.ts         # title names and copy
@@ -160,6 +168,7 @@ interface MeetingState {
   readonly risks: number;                // R, clamped 0–5
   readonly personMinutes: number;        // integer; cost is derived from it
   readonly present: readonly AttendeeId[];
+  readonly releasedAttendeeIds: readonly AttendeeId[]; // authoritative no-reentry history
   readonly peakHeadcount: number;
   readonly seenEventIds: readonly string[]; // base-family and callback IDs marked on draw
   readonly spokenAttendeeIds: readonly AttendeeId[];
@@ -223,14 +232,21 @@ type TitleId =
   | 'skeleton-crew' | 'reply-all-royalty' | 'parking-lot-attendant' | 'gary-free-zone'
   | 'played-it-right' | 'take-this-offline' | 'calendar-criminal' | 'could-have-been-an-email';
 
+interface EventRules {
+  readonly arrivalAttendees: Readonly<Record<string, AttendeeId>>;
+  readonly callbackTargets: Readonly<Record<string, string>>;
+  readonly bookingEventIds: readonly string[];
+}
+
 interface ContentPack {                  // fields may be added when an engine rule needs them
+  readonly eventRules: EventRules;             // content-owned relationship metadata
   readonly events: readonly MeetingEvent[];     // the 17 base families
   readonly callbacks: readonly MeetingEvent[];  // scheduled-only targets
   readonly filler: MeetingEvent;
 }
 ```
 
-**Counters and log (D15).** The counters `parkedCount`, `peakHeadcount`, `spokenAttendeeIds`, `seenEventIds`, `substantiveDrawCount` and `previousDrawWasUncommonNegative` are authoritative for every rule and title. `log` is narrative only: the results moment, the outcome line and sim traces. No rule reads the log. `decisions` is scoring data only.
+**Counters and log (D15).** The counters `releasedAttendeeIds`, `parkedCount`, `peakHeadcount`, `spokenAttendeeIds`, `seenEventIds`, `substantiveDrawCount` and `previousDrawWasUncommonNegative` are authoritative for every rule and title. `log` is narrative only: the results moment, the outcome line and sim traces. No rule reads the log. `decisions` is scoring data only.
 
 **Public API (`core/engine/index.ts`)**
 
@@ -286,6 +302,12 @@ getDrawCandidates(state: MeetingState): readonly DrawCandidate[] // no RNG consu
 Use the design document's expanded serializable schema: optional positive `weight`, explicit `negative`, `speaker: AttendeeId | 'room'`, ordered absent-speaker `variants`, `Condition.maxRisks` and optional `bookingEnd: 45 | 60`. Conditional `effectCases` are removed (D24): risk- or minute-dependent options are draw-time variants, because risks and minutes cannot change between draw and resolution; presence-dependent options use `requires`. Base IDs are family IDs; variants never add draws. Remove `leaves` from MVP effects; release is the sole removal action. All expert-best responses require that expert, including the base variant, so release during dialogue cannot retain expert benefits.
 
 Implement the pure read-only `previewResponse` and `getDrawCandidates` contracts defined under Supporting types and export their types through the engine index. UI and policies use them rather than duplicate rules. `applyEffect` is the single clamp implementation used by preview and resolution. Preview must not log, advance turns, schedule callbacks or mutate state. Decision-quality evaluation (the internal `value`) compares effective/clamped deltas of enabled responses immediately before resolution; one/equal-valued choices are unscored. Calling the internal `value` on a disabled response is a programmer error. Store null quality for unscored records; average q and D are zero when none are scored.
+
+**Task 04 precision and response metadata.** Utility uses the approved formula unchanged. Convert finite numeric tuning coefficients from their shortest decimal representation to exact rational coefficients, and compare common-denominator integer utility numerators for equality and decision quality. Convert to numbers only for public utility/quality results; no BigInt enters MeetingState or ResponsePreview. There is no broad epsilon that turns genuinely different utilities into ties. Tests cover the reported current public profile, multi-response decimal ties, and genuinely close alternatives.
+
+Response adds optional `disabledReasonKey: string`, required and nonempty whenever `requires` is present. Return that authored key for a disabled preview; UI/content own its text. Missing authored metadata is a programmer/content error. Shared responseValidation runs in the evaluator for both preview and resolution. Generic effect-only previews may have no current event; joins, booking changes and callbacks require pending context. Resolution additionally requires running phase and a unique current response ID. Call it retains the delivered current event for narrative inspection; ended meetings cannot take further actions and task 06 candidate lookup must return an empty list.
+
+EventRules are plain content-owned relationship metadata. Only engine/index imports the live metadata and forwards it through the internal evaluation profile; fixture profiles inject their own metadata, including renamed IDs. ContentPack carries eventRules for future pool lookup/validation. Generic numeric fixture profiles may omit it only when they have no context-dependent effect. Validate that pack metadata refers to its actual families/targets, conditional responses have authored reason keys, and callback relationships are legal in task 07a. This adds no live dialogue or event design before the reviewed content table.
 
 **Scoring module**
 
@@ -440,7 +462,7 @@ DOM/events/focus, canvas 2D for share export, CSS animation, `crypto.getRandomVa
 - The design doc is ambiguous or contradicts this spec.
 - A task needs a dependency outside the explicit allowlist, an asset outside approved source classes, or a browser capability outside the approved list above.
 - A gate can't pass without lowering a threshold.
-- A task would take more than about 400 changed lines; propose a split first.
+- Harry accepted keeping PR #4 and larger future PRs on October 11, 2026. Use understandable commits; size alone does not require multiple PRs or approval.
 - A task needs a rule or convention the documents do not state; propose the document change in the PR before coding it.
 
 ## Testing and quality gates
@@ -630,5 +652,5 @@ The room is DOM sprites + CSS. No game engine.
 
 ## Stop and ask when
 - A locked choice looks wrong, the docs conflict or are silent on a needed rule,
-  a gate can't pass, or a task needs more than ~400 changed lines.
+  a gate can't pass.
 ```

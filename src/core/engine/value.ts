@@ -1,3 +1,5 @@
+import { validateResponse } from './responseValidation';
+import { utilityFraction, fractionNumber } from './utilityFraction';
 import { applyEffect } from './applyEffect';
 import { matchesCondition } from './conditions';
 import { EngineError } from './errors';
@@ -10,13 +12,22 @@ export function evaluateResponse(
 ) {
   if (!matchesCondition(state, response.requires))
     throw new EngineError('disabled-response');
-  const applied = applyEffect(state, response.effect);
+  validateResponse(state, response, rules);
+  const applied = applyEffect(
+    state,
+    response.effect,
+    Object.values(rules.eventRules?.arrivalAttendees ?? {}),
+  );
+  const exact = utilityFraction(
+    applied.progressDelta,
+    applied.personMinutesDelta,
+    applied.risksDelta,
+    rules,
+  );
   return {
     ...applied,
-    utility:
-      applied.progressDelta -
-      (rules.costWeight * applied.personMinutesDelta) / rules.costUnit -
-      rules.riskWeight * applied.risksDelta,
+    utilityNumerator: exact.numerator,
+    utility: fractionNumber(exact.numerator, exact.denominator),
   };
 }
 /** Implements Design Doc v2 → Scoring → Decisions: disabled options have no utility. */

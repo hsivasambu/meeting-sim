@@ -36,6 +36,7 @@ export interface Response {
   readonly label: string;
   readonly technique: Technique;
   readonly requires?: Condition;
+  readonly disabledReasonKey?: string;
   readonly effect: Effect;
   readonly line: string;
 }
@@ -145,7 +146,13 @@ export type TitleId =
   | 'take-this-offline'
   | 'calendar-criminal'
   | 'could-have-been-an-email';
+export interface EventRules {
+  readonly arrivalAttendees: Readonly<Record<string, AttendeeId>>;
+  readonly callbackTargets: Readonly<Record<string, string>>;
+  readonly bookingEventIds: readonly string[];
+}
 export interface ContentPack {
+  readonly eventRules: EventRules;
   readonly events: readonly MeetingEvent[];
   readonly callbacks: readonly MeetingEvent[];
   readonly filler: MeetingEvent;
@@ -182,4 +189,5 @@ export interface UtilityRules {
   readonly costWeight: number;
   readonly riskWeight: number;
   readonly costUnit: number;
+  readonly eventRules?: EventRules;
 }

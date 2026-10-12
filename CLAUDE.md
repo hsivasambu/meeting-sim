@@ -67,7 +67,7 @@ The room is DOM sprites + CSS. No game engine.
 ## Stop and ask when
 
 - A locked choice looks wrong, the docs conflict or are silent on a needed rule,
-  a gate can't pass, or a task needs more than ~400 changed lines.
+  a gate can't pass.
 
 ## Plan maintenance
 
@@ -75,3 +75,9 @@ Follow docs/implementation-plan.md. Before implementing, identify the current ta
 Update that plan after each task with completed work, actual check results, outstanding issues
 and the next task. Read docs/content-table.md when it exists; it is created in task 06b.
 Stop at the task boundary requested by Harry.
+
+## Review size preference
+
+Harry explicitly accepted keeping PR #4 and larger future PRs on October 11, 2026.
+Keep one blueprint task per PR and use understandable commits; a large diff alone
+does not require splitting into multiple PRs or asking for approval.

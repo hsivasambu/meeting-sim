@@ -8,7 +8,7 @@ import {
   REDUCED_BOOKING_END,
 } from './constants';
 import { EngineError } from './errors';
-import type { Effect, MeetingState } from './types';
+import type { AttendeeId, Effect, MeetingState } from './types';
 export interface AppliedEffect {
   readonly state: MeetingState;
   readonly progressDelta: number;
@@ -32,10 +32,11 @@ function validateEffect(effect: Effect): void {
 function presentAfter(
   state: MeetingState,
   effect: Effect,
+  allowedJoins: readonly AttendeeId[],
 ): MeetingState['present'] {
   const joins = effect.joins ?? [];
   if (
-    joins.some((id) => id !== 'legal' && id !== 'vp') ||
+    joins.some((id) => !allowedJoins.includes(id)) ||
     new Set(joins).size !== joins.length ||
     joins.some(
       (id) =>
@@ -46,8 +47,12 @@ function presentAfter(
     throw new EngineError('invalid-join');
   return [...state.present, ...joins];
 }
-function effectState(state: MeetingState, effect: Effect): MeetingState {
-  const present = presentAfter(state, effect);
+function effectState(
+  state: MeetingState,
+  effect: Effect,
+  allowedJoins: readonly AttendeeId[],
+): MeetingState {
+  const present = presentAfter(state, effect, allowedJoins);
   const minute = state.minute + effect.minutes;
   const personMinutes =
     state.personMinutes + state.present.length * effect.minutes;
@@ -74,9 +79,10 @@ function effectState(state: MeetingState, effect: Effect): MeetingState {
 export function applyEffect(
   state: MeetingState,
   effect: Effect,
+  allowedJoins: readonly AttendeeId[] = [],
 ): AppliedEffect {
   validateEffect(effect);
-  const next = effectState(state, effect);
+  const next = effectState(state, effect, allowedJoins);
   return {
     state: next,
     progressDelta: next.progress - state.progress,

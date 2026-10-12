@@ -4,6 +4,8 @@ export type EngineErrorCode =
   | 'missing-event'
   | 'unknown-response'
   | 'disabled-response'
+  | 'invalid-response'
+  | 'invalid-rules'
   | 'invalid-effect'
   | 'invalid-join'
   | 'invalid-schedule';

@@ -14,8 +14,8 @@ count, never narrative logs, to distinguish cancellation from an early call.
 applyEffect owns all progress/risk clamping and returns the effective deltas. It bills the
 full duration at pre-effect headcount, then joins/booking changes, and retains actual minutes
 past the deadline. Preview uses this evaluator without logging, turn advancement or scheduling.
-The opaque requirements-not-met key denotes a failed requires condition; future content owns
-its display copy. Internal value on a disabled response is an EngineError.
+Conditional responses carry an authored disabledReasonKey; missing/empty keys are errors.
+Preview returns that key, and content/UI own its display copy. Internal value on a disabled response is an EngineError.
 
 Resolution rechecks requirements after releases, values only enabled responses at the current
 state, records null for one/equal-valued choices, and preserves every earlier quality. It then
@@ -27,7 +27,16 @@ Callbacks schedule from the old turn at n+2, with approved parent/target/techniq
 no repeated target or due-turn collision. They are not consumed here: draw/fairness/callback
 consumption belong to task 06. Ended meetings cannot resolve more events.
 
-State/materialized-response modules need no live content import. Pool lookup and live-pack
-binding remain in their scheduled tasks. Draw, score, titles, store, UI loop and simulation
+Only engine/index imports content-owned engineRules metadata; internal profiles inject it.
+ContentPack carries eventRules, and fixture packs/profiles can rename relationship IDs.
+Pool lookup and complete live-pack binding remain in their scheduled tasks. Draw, score, titles, store, UI loop and simulation
 are not provided by task 04. Next task: 05. Android release validation remains outstanding
 under the explicit task 02 evidence deferral.
+
+Review hardening uses exact common-denominator integer utility numerators from decimal
+coefficients. Equality/ranking and decision normalization use those exact values; public
+utility/quality outputs are numbers and no BigInt enters serializable state. The formula
+is unchanged, and no broad epsilon erases genuine near-ties. Shared responseValidation
+runs for preview, utility and resolution, including callback/arrival/deadline contexts.
+Call it keeps the delivered event for narrative inspection; task 06 must return no draw
+candidates after ending. Larger future PRs are explicitly accepted by Harry.

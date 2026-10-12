@@ -1,3 +1,4 @@
+import { engineRules } from '../content/engineRules';
 // Task 04 adds state actions and preview/resolve; draw and scoring land in 05–06.
 // This is the sole public surface and, when task 07 supplies it, the live-pack importer.
 export type {
@@ -18,6 +19,7 @@ export type {
   ScoreBreakdown,
   TitleId,
   ContentPack,
+  EventRules,
   MeetingState,
 } from './types';
 
@@ -32,9 +34,15 @@ export function previewResponse(
   state: MeetingState,
   response: Response,
 ): ResponsePreview {
-  return previewWithRules(state, response, UTILITY_RULES);
+  return previewWithRules(state, response, {
+    ...UTILITY_RULES,
+    eventRules: engineRules,
+  });
 }
 /** Implements Design Doc v2 → Game state model → Resolution and attendance boundaries. */
 export function resolve(state: MeetingState, responseId: string): MeetingState {
-  return resolveWithRules(state, responseId, UTILITY_RULES);
+  return resolveWithRules(state, responseId, {
+    ...UTILITY_RULES,
+    eventRules: engineRules,
+  });
 }

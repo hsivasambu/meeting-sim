@@ -283,6 +283,7 @@ interface Response {
   label: string;
   technique: Technique;
   requires?: Condition;     // greyed out with a reason if not met
+  disabledReasonKey?: string; // authored, nonempty whenever requires is present
   effect: Effect;           // the response's one fixed effect
   line: string;             // dialogue shown after the choice
 }

@@ -19,7 +19,7 @@ The technical spec remains the source of normative rules. Numerical balance is u
 
 ## Delivery sequence
 
-Each numbered task is a blueprint task and a candidate PR. Before code, state its source section, touched files, and any rule it strains. If the proposed diff exceeds ~400 changed lines, present a split before implementation, using suffixes such as 03a/03b. This table describes scope boundaries, not permission to exceed the limit. Each split retains relevant tests and its own acceptance evidence.
+Each numbered task is a blueprint task and a candidate PR. Before code, state its source section, touched files, and any rule it strains. Harry explicitly accepted keeping PR #4 and larger future PRs on October 11, 2026. A large diff may use one PR with understandable commits; size alone does not require multiple PRs or approval. Optional task splits retain relevant tests and acceptance evidence.
 
 Create the repository at `C:\dev\meeting-sim` (D23) and move the three documents into `docs/` as their only copies (D22). Keep this plan synchronized with ADRs.
 
@@ -107,7 +107,7 @@ Check — catches type/style errors and runs all unit/property tests with covera
 ```
 
 Tests — the simplest under-the-hood check for tasks 03 and 04. All tests should pass;
-at this update there are 108 tests. It prints each test file and writes a readable
+at this update there are 129 tests. It prints each test file and writes a readable
 coverage report to coverage/index.html. A green test run is evidence for the tested
 rules; it does not mean the unfinished game features exist.
 
@@ -636,8 +636,8 @@ Verification evidence:
 
 Outstanding issues and next task:
 
-- No task 04 blocker or known implementation defect. The requirements-not-met reason key
-  is an opaque engine identifier, not player copy; its display text belongs in future content/UI.
+- No task 04 blocker remains after the review hardening below. Disabled responses now return
+  authored content reason keys; their display text belongs in future content/UI.
 - Task 02 Android LinkedIn behavior remains unverified with Harry's accepted deferral;
   verify before release. No Android success is inferred.
 - **Next task: 05 — utility, score and titles, with exact worked-example fixtures.**
@@ -672,3 +672,53 @@ Hosted task 04 evidence:
 - Documentation checks: task-guide completeness, unchanged technical delivery table,
   linked local files, assistant rules and D01–D26 register; Prettier and whitespace.
   Next implementation task remains 05; no later task was implemented.
+
+## Task 04 review hardening — October 11, 2026
+
+Sources: [full review](task-04-review.md), Design Decisions/equal utilities, preview/evaluation
+contracts and authored reasons. Task 03 findings 1–5 remain fixed; its pending module-layout
+note is now incorporated into the technical spec. Next task remains 05; no scoring/title or
+other later feature was added.
+
+- **Tie bug fixed:** decimal coefficients are represented as exact integer fractions.
+  Compare/normalize common-denominator utility numerators; convert only public outputs
+  to numbers. No scoring formula, threshold or broad tolerance changed. Public regressions
+  cover the actual reported six- and two-person cases. Injected decimal profiles test all
+  legal headcounts, both choices and genuine near-ties. Future tuning must keep an equivalent
+  mathematical-tie regression when the current public profile changes.
+- **Preview agreement fixed:** the evaluator shares responseValidation across preview,
+  utility and resolution. Invalid durations/techniques, booking/arrival/callback contexts
+  and duplicate/colliding callback schedules no longer preview as enabled.
+- **Content ownership fixed:** approved relationship IDs are plain data in content/engineRules.
+  Only the public index imports that data; internal profiles inject EventRules. ContentPack
+  stores eventRules. Renamed fixture IDs exercise arrivals/bookings/callbacks without changing
+  engine code. The join allowlist is derived from supplied arrival metadata.
+- **Authored reasons fixed:** Response.disabledReasonKey is required when requires exists;
+  disabled previews return the content key. Sam/Dev keys remain distinct; missing/empty keys
+  produce a programmer/content error. No UI rules are duplicated.
+- **Spec synchronized:** releasedAttendeeIds, EventRules/ContentPack metadata, response reasons,
+  precision behavior and modules from both tasks 03–04 are documented. Added state/error,
+  preview, effect, weighted/condition and new shared-validation/numeric module layout entries.
+- **PR size preference resolved:** Harry explicitly instructed keeping #4 and accepting larger
+  future PRs. CLAUDE, the spec and plan now record that size alone does not require splitting
+  or approval. Historical commit splits remain evidence, not an unapproved general exception.
+- **Property gaps addressed:** new multi-choice properties vary releases (including owner),
+  arrivals, booking changes, callbacks and binary/decimal profiles; all preview deltas,
+  bounded quality, attendance/range/cost invariants and replay are checked. The original
+  broader clamp/property test is retained. A unit regression pins pending-event retention
+  after Call it; ended actions remain forbidden and task 06 has the empty-candidate requirement.
+- Local Node 24 check currently passes **129 unit/property tests**. Existing 90% core lines /
+  85% branches thresholds are unchanged. Final local evidence is below; hosted checks follow.
+- The external review is preserved as historical findings, with resolution notes appended.
+  Task 02 Android evidence remains explicitly deferred and must be obtained before release.
+
+Final local review evidence:
+
+- Node 24 typecheck, zero-warning lint/format and 129 unit/property tests passed. Core coverage
+  is **229/231 lines (99.13%)** and **188/194 branches (96.91%)**. Build/size
+  passed at 70,407 / 122,880 gzip JS bytes and deployed media 0 / 409,600. All 18 E2E cases
+  passed without retries/skips/console errors on the three required profiles.
+- The original 18 seeded architecture violations remain rejected, three approved imports
+  pass, and the 24-package allowlist / five TS flags / unchanged lockfile were verified.
+- Larger future PRs are accepted by Harry; PR #4 remains the task 04 delivery. All review
+  findings have code/doc resolutions, no known task 04 blocker remains, and task 05 is next.

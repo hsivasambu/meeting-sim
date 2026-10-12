@@ -6,13 +6,21 @@ import { EngineError } from './errors';
 import { fixtureState } from './fixtures/packs';
 import {
   deepFreeze,
+  pending,
   fixtureResponse,
   fixtureUtilityRules,
 } from './fixtures/transitions';
-import type { Effect, Response } from './types';
+import type { Effect, Response, MeetingState } from './types';
 
+function applyFixtureEffect(state: MeetingState, effect: Effect) {
+  return applyEffect(
+    state,
+    effect,
+    Object.values(fixtureUtilityRules.eventRules.arrivalAttendees),
+  );
+}
 it('uses effective clamped deltas and full pre-join person-minutes without side effects', () => {
-  const state = deepFreeze({
+  const baseline = deepFreeze({
     ...fixtureState,
     progress: 95,
     risks: 0,
@@ -22,8 +30,11 @@ it('uses effective clamped deltas and full pre-join person-minutes without side 
     ...fixtureResponse,
     effect: { minutes: 10, progress: 20, risks: -4, joins: ['legal'] },
   };
+  const state = deepFreeze(
+    pending([response], baseline, { id: 'legal', kind: 'escalation' }),
+  );
   const before = JSON.stringify(state);
-  const result = applyEffect(state, response.effect);
+  const result = applyFixtureEffect(state, response.effect);
   const preview = previewWithRules(state, response, fixtureUtilityRules);
   expect(result).toMatchObject({
     progressDelta: 5,
@@ -55,7 +66,7 @@ it('uses effective clamped deltas and full pre-join person-minutes without side 
 it('clamps negative progress and high risk in the single shared effect helper', () => {
   const state = deepFreeze({ ...fixtureState, progress: 2, risks: 4 });
   expect(
-    applyEffect(state, { minutes: 0, progress: -20, risks: 3 }),
+    applyFixtureEffect(state, { minutes: 0, progress: -20, risks: 3 }),
   ).toMatchObject({ progressDelta: -2, risksDelta: 1 });
 });
 it('returns a disabled preview and throws on disabled internal valuation', () => {
@@ -64,7 +75,7 @@ it('returns a disabled preview and throws on disabled internal valuation', () =>
     requires: { present: ['legal'] },
   };
   expect(previewWithRules(fixtureState, response, fixtureUtilityRules)).toEqual(
-    { enabled: false, responseId: 'choose', reasonKey: 'requirements-not-met' },
+    { enabled: false, responseId: 'choose', reasonKey: 'fixture-unavailable' },
   );
   expect(() => value(fixtureState, response, fixtureUtilityRules)).toThrow(
     'disabled-response',
@@ -78,7 +89,7 @@ it.each([
   { minutes: 1, progress: Infinity },
   { minutes: 1, risks: 0.5 },
 ])('rejects malformed effect %j without mutation', (effect) => {
-  expect(() => applyEffect(deepFreeze(fixtureState), effect)).toThrow(
+  expect(() => applyFixtureEffect(deepFreeze(fixtureState), effect)).toThrow(
     EngineError,
   );
 });
@@ -121,7 +132,7 @@ it.each([
   'rejects duplicate, unapproved, released or over-capacity joins',
   ({ present, joins, releasedAttendeeIds }) => {
     expect(() =>
-      applyEffect(
+      applyFixtureEffect(
         { ...fixtureState, present, releasedAttendeeIds },
         { minutes: 1, joins },
       ),
@@ -130,19 +141,19 @@ it.each([
 );
 it('rejects invalid booking and unsafe accumulated time/cost', () => {
   expect(() =>
-    applyEffect(fixtureState, {
+    applyFixtureEffect(fixtureState, {
       minutes: 1,
       bookingEnd: 99,
     } as unknown as Effect),
   ).toThrow('invalid-effect');
   expect(() =>
-    applyEffect(
+    applyFixtureEffect(
       { ...fixtureState, minute: Number.MAX_SAFE_INTEGER },
       { minutes: 1 },
     ),
   ).toThrow('invalid-effect');
   expect(() =>
-    applyEffect(
+    applyFixtureEffect(
       { ...fixtureState, personMinutes: Number.MAX_SAFE_INTEGER },
       { minutes: 1 },
     ),

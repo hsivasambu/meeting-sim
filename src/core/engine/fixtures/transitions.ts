@@ -4,11 +4,16 @@ import type {
   Response,
   UtilityRules,
 } from '../types';
-import { fixtureState } from './packs';
+import { fixtureState, fixturePack } from './packs';
 export const fixtureUtilityRules = {
   costWeight: 2,
   riskWeight: 3,
   costUnit: 4,
+  eventRules: {
+    ...fixturePack.eventRules,
+    arrivalAttendees: { legal: 'legal', 'vp-joins': 'vp' },
+    bookingEventIds: ['room-booked'],
+  },
 } as const satisfies UtilityRules;
 /** Supports Design Doc v2 → Game state model immutability checks with frozen fixtures. */
 export function deepFreeze<T>(input: T): T {
@@ -41,6 +46,7 @@ export function pending(
 }
 export const fixtureResponse: Response = {
   id: 'choose',
+  disabledReasonKey: 'fixture-unavailable',
   label: 'Fixture choose',
   technique: 'owner',
   effect: { minutes: 3, progress: 20, risks: -1 },

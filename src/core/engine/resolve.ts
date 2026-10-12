@@ -1,63 +1,25 @@
+import { fractionNumber } from './utilityFraction';
 import { matchesCondition } from './conditions';
-import {
-  ONE,
-  ZERO,
-  PROGRESS_MAX,
-  CALLBACK_DELAY,
-  CALLBACK_TARGETS,
-  ARRIVAL_ATTENDEES,
-} from './constants';
+import { ONE, ZERO, PROGRESS_MAX, CALLBACK_DELAY } from './constants';
 import { assertRunning, EngineError } from './errors';
-import { evaluateResponse, value } from './value';
+import { evaluateResponse } from './value';
 import type {
   MeetingState,
   PresentedEvent,
   Response,
   UtilityRules,
 } from './types';
-function validateContext(event: PresentedEvent, response: Response): void {
-  const expected = Object.hasOwn(ARRIVAL_ATTENDEES, event.id)
-    ? ARRIVAL_ATTENDEES[event.id]
-    : undefined;
-  const joins = response.effect.joins ?? [];
-  if (
-    (expected === undefined && joins.length > ZERO) ||
-    (expected !== undefined &&
-      (joins.length !== ONE || joins[ZERO] !== expected))
-  )
-    throw new EngineError('invalid-join');
-  if (
-    (response.effect.bookingEnd !== undefined) !==
-    (event.id === 'room-booked')
-  )
-    throw new EngineError('invalid-effect');
-  if (
-    response.effect.minutes === ZERO &&
-    (response.technique !== 'email' || event.kind === 'callback')
-  )
-    throw new EngineError('invalid-effect');
-}
 function schedule(
   state: MeetingState,
-  event: PresentedEvent,
   response: Response,
 ): MeetingState['scheduled'] {
   const callback = response.effect.callback;
-  if (callback === undefined) return [...state.scheduled];
-  const dueTurn = state.turn + CALLBACK_DELAY;
-  if (
-    event.kind === 'callback' ||
-    (response.technique !== 'park' && response.technique !== 'email') ||
-    CALLBACK_TARGETS[event.id] !== callback.eventId ||
-    callback.afterTurns !== CALLBACK_DELAY ||
-    state.seenEventIds.includes(callback.eventId) ||
-    state.scheduled.some(
-      (entry) =>
-        entry.eventId === callback.eventId || entry.dueTurn === dueTurn,
-    )
-  )
-    throw new EngineError('invalid-schedule');
-  return [...state.scheduled, { eventId: callback.eventId, dueTurn }];
+  return callback === undefined
+    ? [...state.scheduled]
+    : [
+        ...state.scheduled,
+        { eventId: callback.eventId, dueTurn: state.turn + CALLBACK_DELAY },
+      ];
 }
 function quality(
   state: MeetingState,
@@ -67,12 +29,17 @@ function quality(
 ): number | null {
   const utilities = event.responses
     .filter((option) => matchesCondition(state, option.requires))
-    .map((option) => value(state, option, rules));
-  const worst = Math.min(...utilities),
-    best = Math.max(...utilities);
+    .map((option) => evaluateResponse(state, option, rules).utilityNumerator);
+  const first = utilities[ZERO];
+  if (first === undefined) throw new EngineError('disabled-response');
+  const worst = utilities.reduce((a, b) => (a < b ? a : b), first);
+  const best = utilities.reduce((a, b) => (a > b ? a : b), first);
   return best === worst
     ? null
-    : (value(state, response, rules) - worst) / (best - worst);
+    : fractionNumber(
+        evaluateResponse(state, response, rules).utilityNumerator - worst,
+        best - worst,
+      );
 }
 function resolutionLog(
   state: MeetingState,
@@ -123,7 +90,7 @@ function finishResolution(
     ...next,
     turn: state.turn + ONE,
     current: null,
-    scheduled: schedule(state, event, response),
+    scheduled: schedule(state, response),
     parkedCount:
       state.parkedCount + (response.technique === 'park' ? ONE : ZERO),
     phase: ending === null ? 'running' : 'ended',
@@ -147,7 +114,6 @@ export function resolveWithRules(
   const response = responses[ZERO];
   if (responses.length !== ONE || response === undefined)
     throw new EngineError('unknown-response');
-  validateContext(event, response);
   const applied = evaluateResponse(state, response, rules);
   return finishResolution(state, applied.state, event, response, rules);
 }

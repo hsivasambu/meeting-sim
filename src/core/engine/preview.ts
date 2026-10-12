@@ -1,5 +1,5 @@
 import { matchesCondition } from './conditions';
-import { REQUIREMENTS_REASON_KEY } from './constants';
+import { reasonFor } from './responseValidation';
 import { evaluateResponse } from './value';
 import type {
   MeetingState,
@@ -13,12 +13,13 @@ export function previewWithRules(
   response: Response,
   rules: UtilityRules,
 ): ResponsePreview {
-  if (!matchesCondition(state, response.requires))
+  if (!matchesCondition(state, response.requires)) {
     return {
       enabled: false,
       responseId: response.id,
-      reasonKey: REQUIREMENTS_REASON_KEY,
+      reasonKey: reasonFor(response),
     };
+  }
   const applied = evaluateResponse(state, response, rules);
   return {
     enabled: true,

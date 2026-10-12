@@ -6,6 +6,7 @@ const expertResponses = [
     label: 'Fixture expert',
     technique: 'owner',
     requires: { present: ['sam'] },
+    disabledReasonKey: 'fixture-needs-sam',
     effect: { minutes: 3, progress: 11 },
     line: 'Fixture resolved.',
   },
@@ -45,6 +46,11 @@ const ackResponses = [
 ] as const satisfies readonly Response[];
 // Synthetic fixture copy and weights are intentionally unrelated to live content.
 export const fixturePack = {
+  eventRules: {
+    arrivalAttendees: {},
+    callbackTargets: { 'support-training': 'support-follow-up' },
+    bookingEventIds: [],
+  },
   events: [
     {
       id: 'support-training',
