@@ -1,7 +1,13 @@
 # This Could've Been an Email
 
-Tasks 01–04 are complete. State actions, preview and resolution are available in the engine; see docs/task-04-transitions.md. Task 03 adds engine types, conditions, deterministic RNG and the core coverage gate; see docs/task-03-contracts.md. The reported iOS LinkedIn probe passed. Android evidence is deferred with Harry's approval; the risk is recorded in ADR 0002. The React shell displays the Friday launch objective;
-the playable meeting loop is implemented in later tasks.
+The current code is the text-only launch meeting baseline. The lunch redesign
+rules and plan were approved on October 13, 2026; gameplay has not switched yet.
+L01's ratified documentation is awaiting separate PR/hosted delivery. Next is
+L02's complete lunch draft, followed by the dedicated L02b writing review and
+Harry's final D18 content approval. See the [approved plan](docs/lunch-redesign-plan.md),
+[task sequence](docs/implementation-plan.md) and [review brief](docs/lunch-writing-review.md).
+Successful lunch runs must record/display the actual agreed cuisine. Original
+12a V4 evidence stays pending; L09 is the separate lunch playtest.
 
 Read [CLAUDE.md](CLAUDE.md) and [the implementation plan](docs/implementation-plan.md)
 before making changes. See [task 02 setup](docs/task-02-setup.md) for the Vercel preview and real-device probe.
@@ -19,5 +25,6 @@ fnm exec --using 24 cmd /c corepack pnpm dev
 
 On this machine the downloaded fnm executable is `.tools/fnm/fnm.exe`.
 Replace `fnm` with that path if it is not on PATH. No shell profile was changed.
-`pnpm check` runs typecheck, lint/format and Vitest with coverage. `pnpm e2e` runs against the built preview. Simulation scripts
-remain reserved for their scheduled tasks and are not part of the active check.
+`pnpm check` runs typecheck, lint/format, Vitest with coverage and the active
+Greedy/Random simulation invariants. `pnpm e2e` runs against the built preview.
+Seven-policy reporting and balance follow L10–L12; the technical spec owns gates.

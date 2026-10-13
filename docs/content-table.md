@@ -1,5 +1,13 @@
 # Friday Launch Meeting — Content table
 
+**L01 handoff, October 13, 2026:** This is the approved historical launch table
+and remains the source for the current launch runtime during L03–L07 preparation.
+It is not the lunch transcription source. Harry has accepted the lunch rules;
+**L02 is next:** author the complete lunch draft, then run the dedicated
+[L02b adult workplace writing review](lunch-writing-review.md) and obtain D18
+approval of the revised full table before lunch transcription. This note changes
+no table row or human acceptance result.
+
 Task 06b · October 12, 2026 · **Approved by Harry (D18).**
 
 This is the approved transcription source for task 07b, authored from

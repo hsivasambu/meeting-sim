@@ -1,5 +1,12 @@
 # Task 12a — text-only V4 playtest
 
+**October 13 redesign handoff:** Original V4 acceptance remains pending. Harry
+reports aggregate feedback that the concept/mechanics make sense but the events
+are jargon-heavy and responses terse/technical. No individual answers, devices,
+timings or tester results were supplied. He approved the lunch redesign and L09
+as a separate new playtest prerequisite before tuning; this does not mark the
+three original rows below complete. See [the approved plan](lunch-redesign-plan.md).
+
 Status: implementation and local/hosted automated gates pass; human V4 evidence pending.
 Harry agreed on October 12, 2026 to play and recruit two other people.
 That agreement is not a recorded playtest result.
