@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → tv-no-signal.
+// Approved docs/content-table-launch.md → tv-no-signal.
 export const tvNoSignal = {
   id: 'tv-no-signal',
   kind: 'noise',

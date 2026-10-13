@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → circle-back-return.
+// Approved docs/content-table-launch.md → circle-back-return.
 export const circleBackReturn = {
   id: 'circle-back-return',
   kind: 'callback',

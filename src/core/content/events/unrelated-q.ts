@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → unrelated-q.
+// Approved docs/content-table-launch.md → unrelated-q.
 export const unrelatedQ = {
   id: 'unrelated-q',
   kind: 'tangent',

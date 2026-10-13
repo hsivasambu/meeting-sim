@@ -2,12 +2,13 @@
 
 The current code is the text-only launch meeting baseline. The lunch redesign
 rules and plan were approved on October 13, 2026; gameplay has not switched yet.
-L01's ratified documentation is awaiting separate PR/hosted delivery. Next is
-L02's complete lunch draft, followed by the dedicated L02b writing review and
-Harry's final D18 content approval. See the [approved plan](docs/lunch-redesign-plan.md),
-[task sequence](docs/implementation-plan.md) and [review brief](docs/lunch-writing-review.md).
-Successful lunch runs must record/display the actual agreed cuisine. Original
-12a V4 evidence stays pending; L09 is the separate lunch playtest.
+The complete [L02 lunch draft](docs/content-table.md) is authored. Next is
+**L02b: dedicated AI adult workplace humour/writing review**, before final D18
+content approval. See the
+[approved plan](docs/lunch-redesign-plan.md), [task sequence](docs/implementation-plan.md)
+and [writing review brief](docs/lunch-writing-review.md). A successful lunch run
+must record and display the actual agreed cuisine. Original task 12a V4 human
+evidence remains pending; L09 is the separate new lunch playtest.
 
 Read [CLAUDE.md](CLAUDE.md) and [the implementation plan](docs/implementation-plan.md)
 before making changes. See [task 02 setup](docs/task-02-setup.md) for the Vercel preview and real-device probe.

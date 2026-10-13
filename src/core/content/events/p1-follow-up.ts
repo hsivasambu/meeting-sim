@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → p1-follow-up.
+// Approved docs/content-table-launch.md → p1-follow-up.
 export const p1FollowUp = {
   id: 'p1-follow-up',
   kind: 'callback',

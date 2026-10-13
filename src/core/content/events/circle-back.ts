@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → circle-back.
+// Approved docs/content-table-launch.md → circle-back.
 export const circleBack = {
   id: 'circle-back',
   kind: 'tangent',

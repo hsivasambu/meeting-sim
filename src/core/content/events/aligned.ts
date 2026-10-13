@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → aligned.
+// Approved docs/content-table-launch.md → aligned.
 export const aligned = {
   id: 'aligned',
   kind: 'gift',

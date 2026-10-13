@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → legal.
+// Approved docs/content-table-launch.md → legal.
 export const legal = {
   id: 'legal',
   kind: 'escalation',

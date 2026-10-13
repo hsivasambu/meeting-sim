@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → where-we-stand.
+// Approved docs/content-table-launch.md → where-we-stand.
 export const whereWeStand = {
   id: 'where-we-stand',
   kind: 'substantive',

@@ -65,7 +65,7 @@ function condition(value: string): Condition | undefined {
   return result;
 }
 const source = readFileSync(
-  new URL('../docs/content-table.md', import.meta.url),
+  new URL('../docs/content-table-launch.md', import.meta.url),
   'utf8',
 );
 const headings = [...source.matchAll(/^### ([\w-]+)\r?$/gm)];

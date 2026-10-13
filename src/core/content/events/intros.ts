@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → intros.
+// Approved docs/content-table-launch.md → intros.
 export const intros = {
   id: 'intros',
   kind: 'tangent',

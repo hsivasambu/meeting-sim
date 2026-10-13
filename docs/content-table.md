@@ -1,584 +1,840 @@
-# Friday Launch Meeting — Content table
+# Lunch meeting — complete content draft
 
-**L01 handoff, October 13, 2026:** This is the approved historical launch table
-and remains the source for the current launch runtime during L03–L07 preparation.
-It is not the lunch transcription source. Harry has accepted the lunch rules;
-**L02 is next:** author the complete lunch draft, then run the dedicated
-[L02b adult workplace writing review](lunch-writing-review.md) and obtain D18
-approval of the revised full table before lunch transcription. This note changes
-no table row or human acceptance result.
+Task **L02** · October 13, 2026 · Revision **lunch-l02-draft-2**.
+**Authored draft, not D18 approved. L02b writing review is next.**
 
-Task 06b · October 12, 2026 · **Approved by Harry (D18).**
+Sources: [design](design-doc-v2.md), [technical spec](tech-spec.md),
+[approved redesign](lunch-redesign-plan.md), accepted ADRs
+[0005](adr/0005-lunch-agreement-and-attendance.md),
+[0006](adr/0006-lunch-response-outcomes.md),
+[0007](adr/0007-lunch-score-and-policies.md),
+[0008](adr/0008-lunch-presentation-and-unlocks.md).
+Rules/formulas are accepted; these words, initial effects and weights need
+[L02b](lunch-writing-review.md) and Harry's final D18 approval.
+The illustrative 80/20 is not tuning. No runtime content is implemented here.
 
-This is the approved transcription source for task 07b, authored from
-[Design Doc v2](design-doc-v2.md) (Events and responses; Event schema and roster;
-Endings, titles and the results card). Architecture and validation follow
-[the technical spec](tech-spec.md) (Engine contracts; Content validation).
-Dependency 00b is complete: [ADR 0001](adr/0001-stack.md) records accepted D01–D26.
-No live event data is implemented by this task. Harry's approval is recorded below
-for task 07b's transcription of these rows. Balance remains a hypothesis until tasks
-08a–10; the hand walkthrough below proves one legal route, not a win-rate target.
+The [preserved launch table](content-table-launch.md) is the historical approved
+source for unchanged launch behavior during L03–L07. Its old approval does not
+approve this lunch draft. Original [12a V4](task-12a-playtest.md) remains pending;
+the separate [L09 record](lunch-playtest.md) contains no observed evidence yet.
 
-## How to transcribe
+## Transcription and review conventions
 
-The family table supplies `id`, `kind`, `rarity`, `weight`, `negative` and `when`.
-Each presentation table supplies the base or ordered variants, `speaker`, `line`
-and a response-set reference. Each referenced set below is the complete response
-array for that presentation; shared sets are copied as data, never resolved at
-runtime. Presentation/set names are documentation references, not extra event IDs.
+Family IDs are future file stems. Presentation IDs are review references, not
+new event IDs. Each presentation references the complete response set named after
+its family. First matching ordered variant wins, otherwise base; a fixed delivered
+presentation never changes. There are no starter-absence variants: nobody leaves.
+The sole variant changes wording when Pat is present, not effects or choice count.
 
-Conditions use the schema's field names. `—` means no condition, no reason key,
-no callback, no joins or no booking change, according to its column. P and R are
-fixed authored deltas, including explicit zeroes; min is the full billed duration.
-All callbacks have `afterTurns: 2`. `Join` and `End` are effect fields; End is an
-absolute booking end, not extra minutes. Every family uses weight 1 initially.
-No row releases an attendee. No response has conditional effects.
+Response IDs are local to their set; outcome IDs are local to a response.
+Review address is family/presentation or family/response/outcome.
+Response order is table order. Repeated response cells on two branches are one
+response, not two buttons. Each branch is a complete effect: do not stack rows.
+Deterministic outcome weight is 1; two weights are relative positive tickets,
+not a player-visible probability. Event weights start at 1; rarity multipliers
+remain 65/28/7. Initial event/outcome weights and effects are draft content.
 
-Select the first matching variant in the listed order, otherwise the base. The
-`where-we-stand` risk variant lowers refocus's fixed progress and enables hear's
-risk reduction. Its owner is
-Priya, who cannot be released, so it needs no absence variant. All other variants
-are single speaker-absence conditions and cannot overlap within their family.
-Release after draw keeps the selected presentation; response requirements are
-rechecked. A fallback remains enabled in every presentation.
+`—` means omitted field. Min is required full billed minutes; P is signed progress
+delta (explicit zero allowed). Join is one attendee ID; End is absolute bookingEnd,
+not added time. Nom is nominateCuisine. CB is callback event ID with afterTurns: 2,
+due at pre-resolution turn n+2. Conditions are conjunctive; present/absent are the
+schema's all-present/all-absent arrays. No branch conditions, shared effects,
+departures, risk effects or callback chains. Park increments parkedCount once per
+selected response; callback resolution increments resolvedCallbackCount once.
 
-Expert work explicitly requires the expert, even in the base presentation. Arrival
-choices arrange the incoming person's participation; they do not claim to have
-obtained their expert advice before joining. Gifts are collective acknowledgements,
-not expert work, and remain available after the speaker leaves. These choices
-implement the existing arrival and pending-presentation rules.
+Bill Min × pre-response headcount, clamp P to 0–100, apply joins/booking, check
+agreement before expiry. Nonterminal lines describe movement or a local concern,
+never unanimous cuisine agreement. A modest line can accompany a completing
+response; the success surface then states all present agree. An ending cancels
+later delivery. No new win guarantee or turn cap. See the source spec for rules.
+
+Labels ≤24; roles ≤48; titles ≤28; opening/description/outcome/moment/epilogue lines
+≤90 Unicode code points. Disabled reasons/commentary and individual interface/share
+lines also stay ≤90. Substitutions are authored: {cuisine} is the nominated display
+name during play; {agreedCuisine} is the actual agreed name on success only.
+{attendee} is a catalog name; {topic} is a relationship-table topic.
+Numeric display facts use engine/formatCost; they never become choice previews.
+Labels/descriptions/reasons contain no numeric effect deltas, odds or utility.
+
+## Cuisine catalog
+
+| ID      | Name    |
+| ------- | ------- |
+| italian | Italian |
+| mexican | Mexican |
+| thai    | Thai    |
+
+Only nominate-cuisine sets Nom. Its three effects differ only in cuisine ID;
+later responses never swap cuisines. Failed runs keep agreedCuisine null.
+
+## Attendees and voice guide
+
+Stable IDs preserve asset identity; roles are plain name-card descriptions.
+These are voice intentions for L02b, not human humour findings.
+
+| ID     | Name   | Role                            | Starts present | Voice / comic friction                                                                          |
+| ------ | ------ | ------------------------------- | -------------- | ----------------------------------------------------------------------------------------------- |
+| priya  | Priya  | Trying to get everyone to lunch | yes            | Calm, specific, politely interrupts; names the decision instead of performing authority.        |
+| dev    | Dev    | Checks before committing        | yes            | Literal, practical, notices missing information; equipment is a distraction, not a personality. |
+| sam    | Sam    | Wants a proper meal             | yes            | Direct, patient until brushed off; real needs expose other people's empty helpfulness.          |
+| morgan | Morgan | Makes suggestions sound final   | yes            | Confident social shorthand; treats a few nods as momentum, then has to hear objections.         |
+| gary   | Gary   | Has some historical context     | yes            | Solemn ownership of irrelevant precedent; talks as though silence requested his expertise.      |
+| jordan | Jordan | Would like everyone included    | yes            | Earnest, over-organises simple courtesies; makes useful compromises once given a boundary.      |
+| legal  | Alex   | Actually reads the menu         | no             | Quiet precision, restrained corrections; brings information, not an automatic solution.         |
+| vp     | Pat    | Senior enough to interrupt      | no             | Warm confidence, wants a recap; assumes a preference becomes simpler once they repeat it.       |
+
+room is a narrator, not a ninth person or billed seat. Door speaker exceptions
+apply only to legal at alex-arrives and vp at pat-arrives.
 
 ## Families and draw eligibility
 
-The 17 base rows retain the design roster's kinds and rarities. Common noise and
-tangents are non-negative; the three uncommon launch/escalation threats and the
-room deadline are explicitly negative for the consecutive-negative draw guard.
-The guard applies to the event, regardless of which response the player chooses.
+17 unseen base families. Nomination is forced at draw 0. Draw 1 uses unrestricted
+common substantive menu-needs, lunch-window, portion-plan or quick-agreement.
+Later draws retain the guard against adjacent uncommon negative events.
 
-| ID               | Kind        | Rarity   | Weight | Negative | Family when     |
-| ---------------- | ----------- | -------- | ------ | -------- | --------------- |
-| hdmi             | noise       | common   | 1      | false    | —               |
-| tv-no-signal     | noise       | common   | 1      | false    | —               |
-| intros           | tangent     | common   | 1      | false    | present: jordan |
-| scope-revisit    | tangent     | common   | 1      | false    | present: gary   |
-| unrelated-q      | tangent     | common   | 1      | false    | present: jordan |
-| another-meeting  | tangent     | common   | 1      | false    | present: gary   |
-| circle-back      | tangent     | common   | 1      | false    | —               |
-| where-we-stand   | substantive | common   | 1      | false    | —               |
-| support-training | substantive | common   | 1      | false    | —               |
-| failing-tests    | substantive | common   | 1      | false    | —               |
-| press-date       | substantive | common   | 1      | false    | —               |
-| p1-bug           | substantive | uncommon | 1      | true     | —               |
-| legal            | escalation  | uncommon | 1      | true     | —               |
-| vp-joins         | escalation  | uncommon | 1      | true     | minMinute: 15   |
-| room-booked      | noise       | uncommon | 1      | true     | —               |
-| pre-read         | gift        | rare     | 1      | false    | —               |
-| aligned          | gift        | rare     | 1      | false    | —               |
+| ID                | Kind        | Rarity   | Weight | Negative | Family when               |
+| ----------------- | ----------- | -------- | ------ | -------- | ------------------------- |
+| nominate-cuisine  | substantive | common   | 1      | false    | —                         |
+| menu-needs        | substantive | common   | 1      | false    | —                         |
+| lunch-window      | substantive | common   | 1      | false    | —                         |
+| portion-plan      | substantive | common   | 1      | false    | —                         |
+| quick-agreement   | substantive | common   | 1      | false    | —                         |
+| projector         | noise       | common   | 1      | false    | —                         |
+| introductions     | tangent     | common   | 1      | false    | —                         |
+| soup-debate       | tangent     | common   | 1      | false    | —                         |
+| lunch-history     | tangent     | common   | 1      | false    | —                         |
+| lunch-committee   | tangent     | common   | 1      | false    | —                         |
+| chair-arrangement | noise       | common   | 1      | false    | —                         |
+| spice-question    | substantive | uncommon | 1      | true     | —                         |
+| alex-arrives      | escalation  | uncommon | 1      | true     | absent: legal             |
+| pat-arrives       | escalation  | uncommon | 1      | true     | minMinute: 15; absent: vp |
+| room-booked       | noise       | uncommon | 1      | true     | —                         |
+| menu-read         | gift        | rare     | 1      | false    | —                         |
+| small-concession  | gift        | rare     | 1      | false    | —                         |
 
-Arrival eligibility also applies the engine's existing no-reentry rule: `legal`
-joins only `legal`, and `vp-joins` only `vp`; already-present or released arrivals
-are ineligible. Neither needs a family-level absence condition. Gary/Jordan gates
-remove harmless tangents without removing any substantive family. Four common
-substantive families are unrestricted, exceeding the first-two guarantee.
+Negative flags mark interruption/setback families for the draw guard; they do not
+mean a dietary need is bad. Callback/filler never enter the random pool.
 
-| Scheduled/fallback ID | Kind     | Rarity | Weight | Negative | Family when | Source                       |
-| --------------------- | -------- | ------ | ------ | -------- | ----------- | ---------------------------- |
-| circle-back-return    | callback | common | 1      | false    | —           | circle-back                  |
-| support-follow-up     | callback | common | 1      | false    | —           | support-training             |
-| p1-follow-up          | callback | common | 1      | false    | —           | p1-bug                       |
-| filler                | noise    | common | 1      | false    | —           | exhausted eligible pool only |
+| ID           | Kind     | Rarity | Weight | Negative | Family when | Source                       |
+| ------------ | -------- | ------ | ------ | -------- | ----------- | ---------------------------- |
+| menu-return  | callback | common | 1      | false    | —           | menu-needs                   |
+| soup-return  | callback | common | 1      | false    | —           | soup-debate                  |
+| spice-return | callback | common | 1      | false    | —           | spice-question               |
+| filler       | noise    | common | 1      | false    | —           | exhausted eligible pool only |
 
-Relationship metadata for task 07: `arrivalAttendees` maps legal → legal and
-vp-joins → vp; `callbackTargets` maps exactly the three source/target pairs above;
-`bookingEventIds` contains only room-booked. Callbacks never enter the random pool,
-have no family conditions and never schedule another event. Filler is repeatable.
+## Relationship metadata
 
-## Presentations and responses
+nominationEventId = nominate-cuisine; bookingEventIds = [room-booked].
+This is the entire arrivalPermissions list. Every branch joins the named person;
+no other response joins. Spontaneous families become ineligible after invitation.
+Invitations disable after arrival, with other choices available. Invitations
+discuss the entrant's contribution, never pretend it happened before entry.
 
-All response tables use these columns: ID, label, technique, requires, reason key,
-minutes, progress delta, risk delta, callback target, joins, booking end, outcome
-line. Disabled reason copy is listed after the events.
+| Event ID        | Response ID | Attendee ID | Requires / family guard          | Door speaker |
+| --------------- | ----------- | ----------- | -------------------------------- | ------------ |
+| menu-needs      | invite      | legal       | response absent: legal           | —            |
+| quick-agreement | invite      | vp          | response absent: vp              | —            |
+| alex-arrives    | hear        | legal       | family absent: legal             | legal        |
+| alex-arrives    | timebox     | legal       | family absent: legal             | legal        |
+| pat-arrives     | hear        | vp          | family absent: vp; minMinute: 15 | vp           |
+| pat-arrives     | timebox     | vp          | family absent: vp; minMinute: 15 | vp           |
+| pat-arrives     | park        | vp          | family absent: vp; minMinute: 15 | vp           |
 
-### hdmi
+| Parent         | Target       | Scheduling responses | Topic            |
+| -------------- | ------------ | -------------------- | ---------------- |
+| menu-needs     | menu-return  | park                 | meal options     |
+| soup-debate    | soup-return  | park                 | soup debate      |
+| spice-question | spice-return | park                 | spice preference |
 
-| Presentation | Variant when | Speaker | Opening line                                                    | Response set |
-| ------------ | ------------ | ------- | --------------------------------------------------------------- | ------------ |
-| base         | —            | dev     | Does anyone have a USB-C to HDMI adapter?                       | hdmi-present |
-| variant 1    | absent: dev  | priya   | Dev left. Does anyone know which cable makes the slides appear? | hdmi-absent  |
+Only those park responses schedule. Targets are unconditional/common/non-negative,
+never schedule anything, and state that discussion was deferred. Returning copy
+does not imply a settled issue mysteriously became unsafe.
 
-| Set          | ID      | Label              | Technique | Requires     | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                                  |
-| ------------ | ------- | ------------------ | --------- | ------------ | ---------- | --- | --- | --- | -------- | ---- | --- | ------------------------------------------------------------- |
-| hdmi-present | hear    | Find the adapter   | hear      | present: dev | dev-absent | 6   | 2   | 0   | —        | —    | —   | Dev finds four adapters. None have the same ends.             |
-| hdmi-present | timebox | Give it one minute | timebox   | —            | —          | 1   | 0   | 0   | —        | —    | —   | One minute later, the laptop becomes the presentation screen. |
-| hdmi-present | park    | Skip the slides    | park      | —            | —          | 1   | 0   | 0   | —        | —    | —   | The decision survives without a gradient background.          |
-| hdmi-absent  | timebox | Give it one minute | timebox   | —            | —          | 2   | 0   | 0   | —        | —    | —   | The cable remains a mystery. We gather around the laptop.     |
-| hdmi-absent  | park    | Skip the slides    | park      | —            | —          | 1   | 0   | 0   | —        | —    | —   | The decision survives without a gradient background.          |
+## Presentations and complete response branches
 
-### tv-no-signal
+### nominate-cuisine
 
-| Presentation | Variant when   | Speaker | Opening line                                         | Response set |
-| ------------ | -------------- | ------- | ---------------------------------------------------- | ------------ |
-| base         | —              | morgan  | The TV just says 'No Signal'.                        | tv-present   |
-| variant 1    | absent: morgan | priya   | Morgan left. The TV is still presenting 'No Signal'. | tv-absent    |
+| Presentation | Variant when | Speaker | Opening line                                                    | Response set     |
+| ------------ | ------------ | ------- | --------------------------------------------------------------- | ---------------- |
+| base         | —            | priya   | Six adults. One lunch. Which cuisine should we try to agree on? | nominate-cuisine |
 
-| Set        | ID      | Label               | Technique | Requires        | Reason key    | Min | P   | R   | Callback | Join | End | Outcome line                                                             |
-| ---------- | ------- | ------------------- | --------- | --------------- | ------------- | --- | --- | --- | -------- | ---- | --- | ------------------------------------------------------------------------ |
-| tv-present | hear    | Try every input     | hear      | present: morgan | morgan-absent | 7   | 2   | 0   | —        | —    | —   | Morgan discovers an input called Hospitality Mode. It is not hospitable. |
-| tv-present | timebox | Use the whiteboard  | timebox   | —               | —             | 2   | 3   | 0   | —        | —    | —   | Friday's decision fits on the whiteboard. The TV contributes nothing.    |
-| tv-present | email   | Send the slide link | email     | —               | —             | 0   | 0   | 0   | —        | —    | —   | Everyone has the link. Nobody needs the television's approval.           |
-| tv-absent  | timebox | Use the whiteboard  | timebox   | —               | —             | 2   | 3   | 0   | —        | —    | —   | Friday's decision fits on the whiteboard. The TV contributes nothing.    |
-| tv-absent  | email   | Send the slide link | email     | —               | —             | 0   | 0   | 0   | —        | —    | —   | Everyone has the link. Nobody needs the television's approval.           |
+| Response | Label           | Description                                                                         | Technique | Requires | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom     | Outcome line                                                                           |
+| -------- | --------------- | ----------------------------------------------------------------------------------- | --------- | -------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | ------- | -------------------------------------------------------------------------------------- |
+| italian  | Suggest Italian | Start with Italian. A clear suggestion starts discussion; it does not settle lunch. | refocus   | —        | —          | nominated | 1      | 2   | 8   | —   | —    | —   | italian | Italian is on the board. Gary asks whether this is the final version of the board.     |
+| mexican  | Suggest Mexican | Start with Mexican. A clear suggestion starts discussion; it does not settle lunch. | refocus   | —        | —          | nominated | 1      | 2   | 8   | —   | —    | —   | mexican | Mexican is the suggestion. Nobody has agreed to lunch merely by spelling it correctly. |
+| thai     | Suggest Thai    | Start with Thai. A clear suggestion starts discussion; it does not settle lunch.    | refocus   | —        | —          | nominated | 1      | 2   | 8   | —   | —    | —   | thai    | Thai is nominated. Priya underlines it once, before anyone can request a logo.         |
 
-### intros
+### menu-needs
 
-| Presentation | Variant when | Speaker | Opening line                                        | Response set |
-| ------------ | ------------ | ------- | --------------------------------------------------- | ------------ |
-| base         | —            | jordan  | Before we start, can everyone introduce themselves? | intros       |
+| Presentation | Variant when | Speaker | Opening line                                                                          | Response set |
+| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------- | ------------ |
+| base         | —            | sam     | Can we find a proper vegetarian meal? I'd like lunch, rather than a decorative salad. | menu-needs   |
 
-| Set    | ID      | Label                | Technique | Requires | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                                       |
-| ------ | ------- | -------------------- | --------- | -------- | ---------- | --- | --- | --- | -------- | ---- | --- | ------------------------------------------------------------------ |
-| intros | hear    | Full introductions   | hear      | —        | —          | 8   | 2   | 0   | —        | —    | —   | Everyone reads the title already printed on their name card.       |
-| intros | timebox | Names and roles only | timebox   | —        | —          | 2   | 1   | 0   | —        | —    | —   | Six names. Six roles. One decision still waiting.                  |
-| intros | park    | Use the name cards   | park      | —        | —          | 1   | 0   | 0   | —        | —    | —   | Jordan checks the name cards. The information was there all along. |
+| Response | Label                  | Description                                                                                | Technique | Requires      | Reason key   | Outcome        | Weight | Min | P   | CB          | Join  | End | Nom | Outcome line                                                                            |
+| -------- | ---------------------- | ------------------------------------------------------------------------------------------ | --------- | ------------- | ------------ | -------------- | ------ | --- | --- | ----------- | ----- | --- | --- | --------------------------------------------------------------------------------------- |
+| hear     | Check the meal options | Find a proper meal for everyone. Reliable reassurance, with a longer discussion.           | hear      | —             | —            | checked        | 1      | 6   | 18  | —           | —     | —   | —   | There are proper meal options. Sam can stop defending the radical idea of eating lunch. |
+| invite   | Ask Alex to join       | Bring in a menu reader. More future cost; an unclear menu note may mean longer discussion. | owner     | absent: legal | alex-present | helpful        | 3      | 4   | 16  | —           | legal | —   | —   | Alex joins with useful menu details. For once, additional paperwork earns its chair.    |
+| invite   | Ask Alex to join       | Bring in a menu reader. More future cost; an unclear menu note may mean longer discussion. | owner     | absent: legal | alex-present | more-questions | 2      | 7   | 4   | —           | legal | —   | —   | Alex joins and finds an unclear menu note. We spend longer checking it, not guessing.   |
+| park     | Return to meals later  | Keep moving now. Sam plans to return to the meal question.                                 | park      | —             | —            | deferred       | 1      | 1   | 0   | menu-return | —     | —   | —   | Sam writes down the meal question. Postponing it has not made a salad more filling.     |
 
-### scope-revisit
+### lunch-window
 
-| Presentation | Variant when | Speaker | Opening line                                                         | Response set  |
-| ------------ | ------------ | ------- | -------------------------------------------------------------------- | ------------- |
-| base         | —            | gary    | I think we should revisit the entire project scope before we decide. | scope-revisit |
+| Presentation | Variant when | Speaker | Opening line                                                                          | Response set |
+| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------- | ------------ |
+| base         | —            | priya   | We need time to eat {cuisine}, as well as time to explain why we picked it.           | lunch-window |
+| variant-1    | present: vp  | priya   | Pat is here. Can we protect a lunch break from whatever Pat just put in the calendar? | lunch-window |
 
-The sample's effects and copy are retained.
+| Response | Label                    | Description                                                                        | Technique | Requires    | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                         |
+| -------- | ------------------------ | ---------------------------------------------------------------------------------- | --------- | ----------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------------ |
+| hear     | Check everyone's break   | Hear the timing constraints. Takes longer, but gives people a workable lunch plan. | hear      | —           | —          | checked   | 1      | 6   | 18  | —   | —    | —   | —   | We find a workable lunch window. Gary reserves the right to call it a working lunch. |
+| pat      | Ask Pat to protect lunch | Ask the senior colleague to protect the break. Quick help, if Pat is already here. | owner     | present: vp | pat-absent | protected | 1      | 3   | 16  | —   | —    | —   | —   | Pat protects the lunch break from other meetings. This meeting remains an exception. |
+| timebox  | Keep lunch simple        | Limit timing talk to the main constraint. Quicker, with less detail settled.       | timebox   | —           | —          | bounded   | 1      | 3   | 11  | —   | —    | —   | —   | We keep the break plan simple. Nobody gets a separate calendar colour for chewing.   |
 
-| Set           | ID      | Label               | Technique | Requires | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                         |
-| ------------- | ------- | ------------------- | --------- | -------- | ---------- | --- | --- | --- | -------- | ---- | --- | ---------------------------------------------------- |
-| scope-revisit | hear    | Hear it out         | hear      | —        | —          | 9   | 4   | 0   | —        | —    | —   | Gary shares a 2019 slide deck. One slide was useful. |
-| scope-revisit | timebox | Timebox it to 3 min | timebox   | —        | —          | 3   | 3   | 0   | —        | —    | —   | Scope confirmed in three minutes. Moving on.         |
-| scope-revisit | park    | Parking lot         | park      | —        | —          | 1   | 0   | 0   | —        | —    | —   | Noted on the board. Gary nods slowly.                |
+### portion-plan
 
-### unrelated-q
+| Presentation | Variant when | Speaker | Opening line                                                                            | Response set |
+| ------------ | ------------ | ------- | --------------------------------------------------------------------------------------- | ------------ |
+| base         | —            | jordan  | Could we each choose our own meal within {cuisine}? I have made a seating chart anyway. | portion-plan |
 
-| Presentation | Variant when | Speaker | Opening line                                      | Response set |
-| ------------ | ------------ | ------- | ------------------------------------------------- | ------------ |
-| base         | —            | jordan  | Actually, I have a completely unrelated question. | unrelated-q  |
+| Response | Label                 | Description                                                                              | Technique | Requires | Reason key | Outcome    | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                               |
+| -------- | --------------------- | ---------------------------------------------------------------------------------------- | --------- | -------- | ---------- | ---------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------------------ |
+| owner    | Let people pick meals | Keep the cuisine suggestion and let adults choose their dishes. Some useful sorting now. | owner     | —        | —          | individual | 1      | 4   | 18  | —   | —    | —   | —   | Personal meal choices stay personal. Jordan files the seating chart under personal loss.   |
+| hear     | Hear the sharing plan | Discuss sharing versus separate meals. Thorough, but everyone will have an example.      | hear      | —        | —          | discussed  | 1      | 7   | 20  | —   | —    | —   | —   | We settle how to choose dishes. Gary's story about a stolen chip is entered in the record. |
+| email    | Send the suggestion   | Email the suggestion and move on. Quick clarity, with meal details still to discuss.     | email     | —        | —          | sent       | 1      | 2   | 7   | —   | —    | —   | —   | The {cuisine} suggestion is emailed. Everyone nearby checks a separate inbox.              |
 
-| Set         | ID      | Label             | Technique | Requires | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                                          |
-| ----------- | ------- | ----------------- | --------- | -------- | ---------- | --- | --- | --- | -------- | ---- | --- | --------------------------------------------------------------------- |
-| unrelated-q | hear    | Hear the question | hear      | —        | —          | 7   | 1   | 0   | —        | —    | —   | The question is about the office toaster. Friday remains unaddressed. |
-| unrelated-q | timebox | One sentence only | timebox   | —        | —          | 2   | 0   | 0   | —        | —    | —   | The sentence has three semicolons. We stop there.                     |
-| unrelated-q | email   | Take it to email  | email     | —        | —          | 0   | 0   | 0   | —        | —    | —   | The toaster gets its own thread. Nobody subscribes.                   |
+### quick-agreement
 
-### another-meeting
+| Presentation | Variant when | Speaker | Opening line                                                                          | Response set    |
+| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------- | --------------- |
+| base         | —            | morgan  | We have a cuisine suggestion. Shall we try agreeing to {cuisine} before it gets cold? | quick-agreement |
 
-| Presentation | Variant when | Speaker | Opening line                                     | Response set    |
-| ------------ | ------------ | ------- | ------------------------------------------------ | --------------- |
-| base         | —            | gary    | I think we need another meeting to discuss this. | another-meeting |
+| Response | Label                 | Description                                                                              | Technique | Requires   | Reason key  | Outcome    | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                               |
+| -------- | --------------------- | ---------------------------------------------------------------------------------------- | --------- | ---------- | ----------- | ---------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------------------ |
+| refocus  | Try a quick agreement | Ask for a quick yes. It may build momentum, or reopen objections and take longer.        | refocus   | —          | —           | momentum   | 3      | 3   | 23  | —   | —    | —   | —   | Several heads nod toward {cuisine}. Morgan starts a summary before the nods have finished. |
+| refocus  | Try a quick agreement | Ask for a quick yes. It may build momentum, or reopen objections and take longer.        | refocus   | —          | —           | objections | 2      | 7   | -6  | —   | —    | —   | —   | The quick ask reopens objections. Morgan's summary was more confident than the room.       |
+| hear     | Hear each concern     | Give everyone a turn on the suggestion. Slower, but concerns get a proper hearing.       | hear      | —          | —           | heard      | 1      | 7   | 20  | —   | —    | —   | —   | Each concern gets a hearing. Having a turn turns out to be one of the concerns.            |
+| invite   | Bring Pat up to speed | Invite Pat to hear the suggestion. Useful support, with another adult staying afterward. | owner     | absent: vp | pat-present | briefed    | 1      | 4   | 12  | —   | vp   | —   | —   | Pat joins and hears the {cuisine} suggestion. The recap now has senior attendance.         |
 
-| Set             | ID      | Label                | Technique | Requires | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                              |
-| --------------- | ------- | -------------------- | --------- | -------- | ---------- | --- | --- | --- | -------- | ---- | --- | --------------------------------------------------------- |
-| another-meeting | hear    | Discuss the agenda   | hear      | —        | —          | 8   | 2   | 0   | —        | —    | —   | We have drafted an agenda for discussing this agenda.     |
-| another-meeting | timebox | Decide the next step | timebox   | —        | —          | 3   | 3   | 0   | —        | —    | —   | The next step is to finish the meeting we are already in. |
-| another-meeting | park    | Park the invitation  | park      | —        | —          | 1   | 0   | 0   | —        | —    | —   | Gary's proposed meeting becomes a sticky note instead.    |
+### projector
 
-### circle-back
+| Presentation | Variant when | Speaker | Opening line                                                                    | Response set |
+| ------------ | ------------ | ------- | ------------------------------------------------------------------------------- | ------------ |
+| base         | —            | dev     | The menu is on my laptop. The screen is waiting for a cable none of us brought. | projector    |
 
-| Presentation | Variant when   | Speaker | Opening line                                                   | Response set |
-| ------------ | -------------- | ------- | -------------------------------------------------------------- | ------------ |
-| base         | —              | morgan  | Can we circle back to this?                                    | circle-back  |
-| variant 1    | absent: morgan | priya   | Morgan left a note asking us to circle back. To what, exactly? | circle-back  |
+| Response | Label                | Description                                                                            | Technique | Requires | Reason key | Outcome  | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                        |
+| -------- | -------------------- | -------------------------------------------------------------------------------------- | --------- | -------- | ---------- | -------- | ------ | --- | --- | --- | ---- | --- | --- | ----------------------------------------------------------------------------------- |
+| hear     | Find the right cable | Try the big screen. Everyone waits while Dev checks the cupboard.                      | hear      | —        | —          | searched | 1      | 7   | 2   | —   | —    | —   | —   | Dev finds four cables. The cupboard has prepared for every meeting except this one. |
+| timebox  | Use the laptop       | Read the menu together on the laptop. Less comfortable, less discussion about cables.  | timebox   | —        | —          | shared   | 1      | 2   | 3   | —   | —    | —   | —   | The laptop becomes the screen. The large screen continues to supervise.             |
+| park     | Skip the big screen  | Skip the big screen and return to the cuisine. Fast, with the menu left on the laptop. | park      | —        | —          | skipped  | 1      | 1   | 0   | —   | —    | —   | —   | Lunch survives on the laptop. Dev stops negotiating with the large screen.          |
 
-This is a vague tangent, so postponing adds no launch risk. Its callback is still
-real meeting work. Both presentations share the complete set below.
+### introductions
 
-| Set         | ID      | Label                   | Technique | Requires | Reason key | Min | P   | R   | Callback           | Join | End | Outcome line                                                    |
-| ----------- | ------- | ----------------------- | --------- | -------- | ---------- | --- | --- | --- | ------------------ | ---- | --- | --------------------------------------------------------------- |
-| circle-back | hear    | Find the original point | hear      | —        | —          | 6   | 1   | 0   | —                  | —    | —   | We locate the original point. It was a formatting suggestion.   |
-| circle-back | timebox | Close the loop now      | timebox   | —        | —          | 2   | 0   | 0   | —                  | —    | —   | The circle is closed. The launch decision is still ahead of us. |
-| circle-back | park    | Circle back later       | park      | —        | —          | 1   | 0   | 0   | circle-back-return | —    | —   | Added to the parking lot. This circle has a return address.     |
+| Presentation | Variant when | Speaker | Opening line                                                                         | Response set  |
+| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------ | ------------- |
+| base         | —            | jordan  | Before lunch, could we go around and say who we are? I know, but it feels inclusive. | introductions |
 
-### where-we-stand
+| Response | Label                 | Description                                                                          | Technique | Requires | Reason key | Outcome    | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                           |
+| -------- | --------------------- | ------------------------------------------------------------------------------------ | --------- | -------- | ---------- | ---------- | ------ | --- | --- | --- | ---- | --- | --- | -------------------------------------------------------------------------------------- |
+| hear     | Make introductions    | Let everyone introduce themselves. Polite, with a long detour from choosing lunch.   | hear      | —        | —          | introduced | 1      | 8   | 2   | —   | —    | —   | —   | Everyone reads the name already printed on their card. Jordan thanks them for sharing. |
+| timebox  | Keep it to names      | Give each person a brief hello. A little courtesy without everyone's career history. | timebox   | —        | —          | brief      | 1      | 2   | 1   | —   | —    | —   | —   | Names are exchanged. Most were already in the email that brought us here.              |
+| refocus  | Return to the cuisine | Remind everyone why we are here. Quick movement, with the welcome kept informal.     | refocus   | —        | —          | returned   | 1      | 1   | 3   | —   | —    | —   | —   | Priya welcomes the people she sees every morning, then returns to {cuisine}.           |
 
-| Presentation | Variant when | Speaker | Opening line                                                     | Response set |
-| ------------ | ------------ | ------- | ---------------------------------------------------------------- | ------------ |
-| base         | —            | priya   | Okay. Where do we actually stand?                                | stand-clear  |
-| variant 1    | minRisks: 1  | priya   | Where do we stand? The parking lot still has launch risks in it. | stand-risk   |
+### soup-debate
 
-| Set         | ID      | Label                  | Technique | Requires       | Reason key   | Min | P   | R   | Callback | Join | End | Outcome line                                                         |
-| ----------- | ------- | ---------------------- | --------- | -------------- | ------------ | --- | --- | --- | -------- | ---- | --- | -------------------------------------------------------------------- |
-| stand-clear | hear    | Check the launch gates | hear      | present: priya | priya-absent | 6   | 18  | 0   | —        | —    | —   | Priya checks the launch gates. We agree what ready actually means.   |
-| stand-clear | owner   | Assign the decision    | owner     | present: priya | priya-absent | 4   | 16  | 0   | —        | —    | —   | Priya owns the go/no-go checklist. Nobody owns a new slide deck.     |
-| stand-clear | refocus | Return to the decision | refocus   | —              | —            | 2   | 12  | 0   | —        | —    | —   | Friday. Go or no-go. The room remembers why it is here.              |
-| stand-risk  | hear    | Check the launch gates | hear      | present: priya | priya-absent | 6   | 18  | -1  | —        | —    | —   | Priya checks the launch gates and closes one unresolved launch risk. |
-| stand-risk  | owner   | Assign the decision    | owner     | present: priya | priya-absent | 4   | 16  | 0   | —        | —    | —   | Priya owns the checklist. The parked risks still need answers.       |
-| stand-risk  | refocus | Return to the decision | refocus   | —              | —            | 2   | 6   | 0   | —        | —    | —   | The question is clearer. The unanswered risks are still unanswered.  |
+| Presentation | Variant when | Speaker | Opening line                                                            | Response set |
+| ------------ | ------------ | ------- | ----------------------------------------------------------------------- | ------------ |
+| base         | —            | gary    | Before we choose lunch, should we agree whether soup counts as a drink? | soup-debate  |
 
-### support-training
+| Response | Label                | Description                                                                             | Technique | Requires | Reason key | Outcome  | Weight | Min | P   | CB          | Join | End | Nom | Outcome line                                                                             |
+| -------- | -------------------- | --------------------------------------------------------------------------------------- | --------- | -------- | ---------- | -------- | ------ | --- | --- | ----------- | ---- | --- | --- | ---------------------------------------------------------------------------------------- |
+| hear     | Hear the soup theory | Let Gary explain his distinction. Long discussion, with little help choosing a cuisine. | hear      | —        | —          | theory   | 1      | 9   | 2   | —           | —    | —   | —   | Gary cites a mug from 2018. Nobody expected the crockery to become a witness.            |
+| refocus  | Return to lunch      | Set soup aside and focus on the cuisine. Quick, without settling the theory.            | refocus   | —        | —          | returned | 1      | 2   | 4   | —           | —    | —   | —   | Soup remains unclassified. Choosing {cuisine} no longer requires a ruling on liquids.    |
+| park     | Promise a last word  | Postpone the theory for now. Gary will return to collect the last word you promised.    | park      | —        | —          | promised | 1      | 1   | 0   | soup-return | —    | —   | —   | Gary writes down his soup question. The promise is now more durable than the lunch plan. |
 
-| Presentation | Variant when | Speaker | Opening line                                                                 | Response set    |
-| ------------ | ------------ | ------- | ---------------------------------------------------------------------------- | --------------- |
-| base         | —            | sam     | Support hasn't seen the release notes. We'd be taking calls blind on Friday. | support-present |
-| variant 1    | absent: sam  | priya   | Has anyone told Support? We need a release-notes plan.                       | support-absent  |
+### lunch-history
 
-The sample's effects and copy are retained; authored disabled reasons complete its
-schema. Sam's absence removes the fast expert path, never the substantive family.
+| Presentation | Variant when | Speaker | Opening line                                                                                 | Response set  |
+| ------------ | ------------ | ------- | -------------------------------------------------------------------------------------------- | ------------- |
+| base         | —            | gary    | The last time we chose {cuisine}, things got complicated. I should explain the full context. | lunch-history |
 
-| Set             | ID      | Label          | Technique | Requires     | Reason key | Min | P   | R   | Callback          | Join | End | Outcome line                                         |
-| --------------- | ------- | -------------- | --------- | ------------ | ---------- | --- | --- | --- | ----------------- | ---- | --- | ---------------------------------------------------- |
-| support-present | hear    | Hear it out    | hear      | present: sam | sam-absent | 7   | 18  | 0   | —                 | —    | —   | Plan agreed: release notes out Wednesday.            |
-| support-present | owner   | Name an owner  | owner     | present: sam | sam-absent | 3   | 14  | 0   | —                 | —    | —   | Sam owns it. Done.                                   |
-| support-present | park    | Parking lot    | park      | —            | —          | 1   | 0   | 1   | support-follow-up | —    | —   | Another sticky note. Sam looks worried.              |
-| support-absent  | timebox | Timebox a plan | timebox   | —            | —          | 5   | 8   | 0   | —                 | —    | —   | A partial plan. Someone still needs to tell Support. |
-| support-absent  | park    | Parking lot    | park      | —            | —          | 1   | 0   | 1   | support-follow-up | —    | —   | Another sticky note.                                 |
+| Response | Label                 | Description                                                                             | Technique | Requires | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                              |
+| -------- | --------------------- | --------------------------------------------------------------------------------------- | --------- | -------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ----------------------------------------------------------------------------------------- |
+| hear     | Hear the old story    | Let Gary explain what happened. Slow, with little help separating precedent from lunch. | hear      | —        | —          | history   | 1      | 9   | 3   | —   | —    | —   | —   | The historic problem was a missing receipt. Gary still has the envelope.                  |
+| timebox  | Ask what matters now  | Limit the story to today's choice. Some context, without the archive.                   | timebox   | —        | —          | relevant  | 1      | 3   | 4   | —   | —    | —   | —   | We extract the relevant detail. It fits in a sentence Gary would have put in an appendix. |
+| email    | Request the old notes | Ask Gary to email the history. Quick now; the story does not help this choice.          | email     | —        | —          | requested | 1      | 1   | 0   | —   | —    | —   | —   | Gary promises an attachment. The meeting has outsourced its next nine pages.              |
 
-### failing-tests
+### lunch-committee
 
-| Presentation | Variant when | Speaker | Opening line                                               | Response set  |
-| ------------ | ------------ | ------- | ---------------------------------------------------------- | ------------- |
-| base         | —            | dev     | Two regression tests are still failing.                    | tests-present |
-| variant 1    | absent: dev  | priya   | Dev left two red regression tests on the launch checklist. | tests-absent  |
+| Presentation | Variant when | Speaker | Opening line                                                                             | Response set    |
+| ------------ | ------------ | ------- | ---------------------------------------------------------------------------------------- | --------------- |
+| base         | —            | jordan  | Would a small lunch committee help? I have a larger group in mind to choose the members. | lunch-committee |
 
-| Set           | ID      | Label                 | Technique | Requires     | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                                             |
-| ------------- | ------- | --------------------- | --------- | ------------ | ---------- | --- | --- | --- | -------- | ---- | --- | ------------------------------------------------------------------------ |
-| tests-present | hear    | Inspect both failures | hear      | present: dev | dev-absent | 8   | 22  | -1  | —        | —    | —   | Dev finds the regression and agrees the fix and verification steps.      |
-| tests-present | owner   | Own the fix and rerun | owner     | present: dev | dev-absent | 5   | 18  | 0   | —        | —    | —   | Dev owns the fix and rerun before Friday. The checklist gets a name.     |
-| tests-present | timebox | Accept a workaround   | timebox   | —            | —          | 3   | 18  | 1   | —        | —    | —   | The workaround unblocks launch. The regression is still real.            |
-| tests-absent  | hear    | Audit the test notes  | hear      | —            | —          | 8   | 10  | -1  | —        | —    | —   | We close one documented risk. The fix still needs engineering follow-up. |
-| tests-absent  | timebox | Accept a workaround   | timebox   | —            | —          | 3   | 12  | 1   | —        | —    | —   | Without Dev, the workaround rests on assumptions nobody can verify.      |
-| tests-absent  | park    | Park the failures     | park      | —            | —          | 1   | 0   | 1   | —        | —    | —   | Two red tests become one unresolved launch risk.                         |
+| Response | Label                  | Description                                                                                | Technique | Requires | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                               |
+| -------- | ---------------------- | ------------------------------------------------------------------------------------------ | --------- | -------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------------------ |
+| hear     | Discuss a committee    | Explore who would help choose lunch. Long discussion, with little progress on the cuisine. | hear      | —        | —          | committee | 1      | 8   | 2   | —   | —    | —   | —   | The committee needs everyone here. We have discovered the meeting we are already in.       |
+| owner    | Give Priya the summary | Ask Priya to summarise the cuisine and concerns. Useful focus, with a little work now.     | owner     | —        | —          | summary   | 1      | 3   | 7   | —   | —    | —   | —   | Priya summarises {cuisine} and the remaining concerns. Jordan asks who approves summaries. |
+| park     | Postpone the committee | Put the committee aside. Quick, but it contributes nothing to choosing lunch.              | park      | —        | —          | aside     | 1      | 1   | 0   | —   | —    | —   | —   | The committee proposal is filed. It has not been assigned a committee.                     |
 
-### press-date
+### chair-arrangement
 
-| Presentation | Variant when   | Speaker | Opening line                                                          | Response set  |
-| ------------ | -------------- | ------- | --------------------------------------------------------------------- | ------------- |
-| base         | —              | morgan  | The press release says Thursday.                                      | press-present |
-| variant 1    | absent: morgan | priya   | Morgan's press draft says Thursday. Our launch checklist says Friday. | press-absent  |
+| Presentation | Variant when | Speaker | Opening line                                                                      | Response set      |
+| ------------ | ------------ | ------- | --------------------------------------------------------------------------------- | ----------------- |
+| base         | —            | morgan  | Could we move the chairs into a circle? The current shape feels quite indecisive. | chair-arrangement |
 
-| Set           | ID      | Label                 | Technique | Requires        | Reason key    | Min | P   | R   | Callback | Join | End | Outcome line                                                            |
-| ------------- | ------- | --------------------- | --------- | --------------- | ------------- | --- | --- | --- | -------- | ---- | --- | ----------------------------------------------------------------------- |
-| press-present | legal   | Have Legal clear it   | hear      | present: legal  | legal-absent  | 6   | 20  | -1  | —        | —    | —   | Legal clears the release and the date. Friday is now legally Friday.    |
-| press-present | owner   | Own the correction    | owner     | present: morgan | morgan-absent | 4   | 16  | 0   | —        | —    | —   | Morgan owns the correction and confirms the press list will get it.     |
-| press-present | email   | Email a correction    | email     | —               | —             | 0   | 10  | 1   | —        | —    | —   | A correction is sent. Nobody confirms which draft the press will use.   |
-| press-absent  | timebox | Check the draft dates | timebox   | —               | —             | 6   | 8   | 0   | —        | —    | —   | We mark Friday on the draft. Marketing still needs to confirm the send. |
-| press-absent  | email   | Email a correction    | email     | —               | —             | 0   | 6   | 1   | —        | —    | —   | The correction leaves the room. Confirmation does not come back.        |
-| press-absent  | park    | Park the mismatch     | park      | —               | —             | 1   | 0   | 1   | —        | —    | —   | Two launch dates remain in circulation. What could go wrong?            |
+| Response | Label                | Description                                                                             | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                           |
+| -------- | -------------------- | --------------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | -------------------------------------------------------------------------------------- |
+| hear     | Rearrange the chairs | Make the room feel collaborative. Takes time without settling a lunch preference.       | hear      | —        | —          | moved   | 1      | 6   | 1   | —   | —    | —   | —   | The chairs form a circle. The conversation had achieved this shape without assistance. |
+| refocus  | Keep the seats       | Keep everyone seated and return to lunch. Quick focus, without improving the furniture. | refocus   | —        | —          | seated  | 1      | 1   | 3   | —   | —    | —   | —   | We continue from the existing chairs. Morgan calls it an interim arrangement.          |
 
-### p1-bug
+### spice-question
 
-| Presentation | Variant when | Speaker | Opening line                                                               | Response set |
-| ------------ | ------------ | ------- | -------------------------------------------------------------------------- | ------------ |
-| base         | —            | dev     | We just found a P1 in checkout.                                            | p1-present   |
-| variant 1    | absent: dev  | priya   | Engineering flagged a P1 in checkout. Dev is no longer here to explain it. | p1-absent    |
+| Presentation | Variant when | Speaker | Opening line                                                                         | Response set   |
+| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------ | -------------- |
+| base         | —            | sam     | I'd consider {cuisine}, but I'd like a mild option. Can we check rather than assume? | spice-question |
 
-| Set        | ID      | Label                   | Technique | Requires     | Reason key | Min | P   | R   | Callback     | Join | End | Outcome line                                                                  |
-| ---------- | ------- | ----------------------- | --------- | ------------ | ---------- | --- | --- | --- | ------------ | ---- | --- | ----------------------------------------------------------------------------- |
-| p1-present | hear    | Triage with Dev         | hear      | present: dev | dev-absent | 8   | 20  | -1  | —            | —    | —   | Dev isolates the checkout failure. Fix, rollback and verification are agreed. |
-| p1-present | timebox | Launch with a guardrail | timebox   | —            | —          | 3   | 16  | 1   | —            | —    | —   | A guardrail is agreed quickly. Checkout still has an unresolved failure.      |
-| p1-present | park    | Park the P1             | park      | —            | —          | 1   | 0   | 1   | p1-follow-up | —    | —   | The P1 enters the parking lot. It will not stay politely parked.              |
-| p1-absent  | hear    | Read the incident notes | hear      | —            | —          | 9   | 10  | -1  | —            | —    | —   | The notes settle one known risk. We still lack Dev's full diagnosis.          |
-| p1-absent  | timebox | Launch with a guardrail | timebox   | —            | —          | 5   | 10  | 1   | —            | —    | —   | The guardrail is based on secondhand details. Checkout remains a risk.        |
-| p1-absent  | park    | Park the P1             | park      | —            | —          | 1   | 0   | 1   | p1-follow-up | —    | —   | The P1 enters the parking lot. It will not stay politely parked.              |
+| Response | Label                  | Description                                                                               | Technique | Requires | Reason key | Outcome  | Weight | Min | P   | CB           | Join | End | Nom | Outcome line                                                                         |
+| -------- | ---------------------- | ----------------------------------------------------------------------------------------- | --------- | -------- | ---------- | -------- | ------ | --- | --- | ------------ | ---- | --- | --- | ------------------------------------------------------------------------------------ |
+| hear     | Check mild options     | Read the options properly. A reliable answer takes time and respects the preference.      | hear      | —        | —          | checked  | 1      | 7   | 20  | —            | —    | —   | —   | We check the mild options. Sam wanted information, not a character assessment.       |
+| timebox  | Try a quick menu check | Look quickly for a mild option. It may reassure Sam, or an unclear note may set us back.  | timebox   | —        | —          | clear    | 2      | 3   | 22  | —            | —    | —   | —   | The quick check finds a clear mild option. Sam can stop negotiating with adjectives. |
+| timebox  | Try a quick menu check | Look quickly for a mild option. It may reassure Sam, or an unclear note may set us back.  | timebox   | —        | —          | unclear  | 1      | 6   | -4  | —            | —    | —   | —   | The menu note is unclear. Sam is less convinced, and we spend longer reading it.     |
+| park     | Check spice later      | Move on now and return to the mild option question. The preference still needs attention. | park      | —        | —          | deferred | 1      | 1   | 0   | spice-return | —    | —   | —   | Sam notes the mild option question. Calling it later has not answered it.            |
 
-### legal
+### alex-arrives
 
-| Presentation | Variant when   | Speaker | Opening line                                               | Response set  |
-| ------------ | -------------- | ------- | ---------------------------------------------------------- | ------------- |
-| base         | —              | morgan  | We should probably get Legal involved.                     | legal-arrival |
-| variant 1    | absent: morgan | priya   | Morgan left, but the launch still needs Legal in the room. | legal-arrival |
+| Presentation | Variant when | Speaker | Opening line                                                                               | Response set |
+| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------------ | ------------ |
+| base         | —            | legal   | I heard there was a menu discussion. I have the menu, which seemed a useful qualification. | alex-arrives |
 
-Every choice admits Legal once. No choice supplies a completed legal review;
-these are facilitation choices about defining the incoming person's remit.
+| Response | Label                  | Description                                                                       | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join  | End | Nom | Outcome line                                                                      |
+| -------- | ---------------------- | --------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ----- | --- | --- | --------------------------------------------------------------------------------- |
+| hear     | Give Alex the history  | Welcome Alex and explain the discussion fully. Useful context, with a long recap. | hear      | —        | —          | joined  | 1      | 8   | 10  | —   | legal | —   | —   | Alex joins and gets the full history of a cuisine we have not yet agreed on.      |
+| timebox  | Give Alex the question | Welcome Alex with the cuisine and question. A short recap; Alex stays afterward.  | timebox   | —        | —          | joined  | 1      | 3   | 8   | —   | legal | —   | —   | Alex joins and opens the {cuisine} menu. Relevant reading makes a quiet entrance. |
 
-| Set           | ID      | Label                    | Technique | Requires | Reason key | Min | P   | R   | Callback | Join  | End | Outcome line                                                             |
-| ------------- | ------- | ------------------------ | --------- | -------- | ---------- | --- | --- | --- | -------- | ----- | --- | ------------------------------------------------------------------------ |
-| legal-arrival | hear    | Explain the whole launch | hear      | —        | —          | 8   | 8   | 0   | —        | legal | —   | Legal joins and receives the full history, including the adapter search. |
-| legal-arrival | timebox | Define Legal's remit     | timebox   | —        | —          | 4   | 6   | 0   | —        | legal | —   | Legal joins with a focused launch checklist and a reason to stay.        |
-| legal-arrival | email   | Send Legal the brief     | email     | —        | —          | 0   | 0   | 0   | —        | legal | —   | Legal joins with the brief in their inbox. The review is still ahead.    |
+### pat-arrives
 
-### vp-joins
+| Presentation | Variant when | Speaker | Opening line                                                                       | Response set |
+| ------------ | ------------ | ------- | ---------------------------------------------------------------------------------- | ------------ |
+| base         | —            | vp      | Mind if I join? I saw lunch in the invitation. Tell me where we are before I help. | pat-arrives  |
 
-| Presentation | Variant when | Speaker | Opening line      | Response set |
-| ------------ | ------------ | ------- | ----------------- | ------------ |
-| base         | —            | vp      | Mind if I sit in? | vp-arrival   |
-
-The VP is the designated arrival speaker and can speak at the door before joining.
-Every response joins the VP; none of them means refusing entry.
-
-| Set        | ID      | Label                    | Technique | Requires | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                                            |
-| ---------- | ------- | ------------------------ | --------- | -------- | ---------- | --- | --- | --- | -------- | ---- | --- | ----------------------------------------------------------------------- |
-| vp-arrival | hear    | Give the full recap      | hear      | —        | —          | 8   | 8   | 0   | —        | vp   | —   | The VP joins. We recap the recap so the recap has executive visibility. |
-| vp-arrival | timebox | Give a decision brief    | timebox   | —        | —          | 3   | 5   | 0   | —        | vp   | —   | The VP joins, hears the decision brief and asks for the launch gate.    |
-| vp-arrival | park    | Save questions for later | park      | —        | —          | 1   | 0   | 0   | —        | vp   | —   | The VP joins. Their questions join the parking lot.                     |
+| Response | Label                    | Description                                                                                | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                            |
+| -------- | ------------------------ | ------------------------------------------------------------------------------------------ | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | --------------------------------------------------------------------------------------- |
+| hear     | Give Pat the full recap  | Welcome Pat and recap the discussion. Adds context and another person to later costs.      | hear      | —        | —          | joined  | 1      | 8   | 8   | —   | vp   | —   | —   | Pat joins and asks for background. Our attempt to avoid a recap gets its own recap.     |
+| timebox  | Give Pat the short recap | Welcome Pat with the cuisine and main concern. Quicker, with Pat staying for the rest.     | timebox   | —        | —          | joined  | 1      | 3   | 6   | —   | vp   | —   | —   | Pat joins and hears the {cuisine} suggestion. The short version receives a long nod.    |
+| park     | Save Pat's questions     | Welcome Pat but postpone the questions. Quick now, with another adult staying in the room. | park      | —        | —          | joined  | 1      | 1   | 0   | —   | vp   | —   | —   | Pat joins and writes down a question. The room contains another person with stationery. |
 
 ### room-booked
 
-| Presentation | Variant when | Speaker | Opening line                     | Response set |
-| ------------ | ------------ | ------- | -------------------------------- | ------------ |
-| base         | —            | room    | We have this room at :45, right? | room-booked  |
+| Presentation | Variant when | Speaker | Opening line                                                                   | Response set |
+| ------------ | ------------ | ------- | ------------------------------------------------------------------------------ | ------------ |
+| base         | —            | room    | The next team says this room is theirs from minute 45. Our invitation says 60. | room-booked  |
 
-The knock is a narrator, not another billed attendee. Every response explicitly
-sets 45 or keeps 60. Negotiation never extends the original hour.
+| Response | Label                  | Description                                                                          | Technique | Requires    | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                           |
+| -------- | ---------------------- | ------------------------------------------------------------------------------------ | --------- | ----------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | -------------------------------------------------------------------------------------- |
+| hear     | Check the reservation  | Confirm the full booking. Keeps the original hour, at the cost of discussion time.   | hear      | —           | —          | confirmed | 1      | 5   | 0   | —   | —    | 60  | —   | The original hour is confirmed. The next team looks for another room to discuss rooms. |
+| timebox  | Accept the earlier end | Accept the shorter booking and keep moving. Quick now, with less time left to agree. | timebox   | —           | —          | shortened | 1      | 1   | 0   | —   | —    | 45  | —   | We accept the earlier finish. The room now has a deadline smaller than its ambitions.  |
+| vp       | Ask Pat to handle it   | Let Pat protect the booking. Quick if Pat is here; the lunch question still waits.   | owner     | present: vp | pat-absent | protected | 1      | 1   | 0   | —   | —    | 60  | —   | Pat mentions the original booking. The next team suddenly remembers another room.      |
 
-| Set         | ID      | Label                 | Technique | Requires    | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                                      |
-| ----------- | ------- | --------------------- | --------- | ----------- | ---------- | --- | --- | --- | -------- | ---- | --- | ----------------------------------------------------------------- |
-| room-booked | hear    | Check the reservation | hear      | —           | —          | 5   | 0   | 0   | —        | —    | 60  | The reservation says an hour. The next team finds another room.   |
-| room-booked | timebox | Agree to leave at :45 | timebox   | —           | —          | 1   | 0   | 0   | —        | —    | 45  | We agree to leave at :45. The clock has become more persuasive.   |
-| room-booked | vp      | Let the VP handle it  | owner     | present: vp | vp-absent  | 1   | 0   | 0   | —        | —    | 60  | The VP mentions their calendar. The next team finds another room. |
+### menu-read
 
-The reservation trap is intentional: without the VP, keeping the hour via hear is
-the costliest, lowest-scored choice because immediate utility does not value the
-booking end; the player pays for those extra minutes in decision quality.
-With the VP present, vp keeps 60 at the same one-minute utility as timebox.
-The tie-break selects timebox (`timebox` precedes `vp` in ASCII order), so the VP
-option helps human players without changing Greedy's choice. Keep P = 0 and ID vp;
-do not retune this deliberate trade-off merely to make simulation targets pass.
+| Presentation | Variant when | Speaker | Opening line                                                                      | Response set |
+| ------------ | ------------ | ------- | --------------------------------------------------------------------------------- | ------------ |
+| base         | —            | dev     | I read the menu before coming. It has actual answers to several of our questions. | menu-read    |
 
-### pre-read
+| Response | Label                | Description                                                                           | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                               |
+| -------- | -------------------- | ------------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------------------ |
+| ack      | Use the useful notes | Accept the relevant information and move on. A brief, reliable step toward agreement. | ack       | —        | —          | used    | 1      | 1   | 20  | —   | —    | —   | —   | Dev's notes clarify the {cuisine} options. Preparation has made an unscheduled appearance. |
 
-| Presentation | Variant when | Speaker | Opening line                         | Response set |
-| ------------ | ------------ | ------- | ------------------------------------ | ------------ |
-| base         | —            | priya   | Everyone actually read the pre-read. | pre-read     |
+### small-concession
 
-| Set      | ID  | Label             | Technique | Requires | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                             |
-| -------- | --- | ----------------- | --------- | -------- | ---------- | --- | --- | --- | -------- | ---- | --- | -------------------------------------------------------- |
-| pre-read | ack | Enjoy the miracle | ack       | —        | —          | 1   | 20  | 0   | —        | —    | —   | We skip the summary. Nobody asks which document we mean. |
+| Presentation | Variant when | Speaker | Opening line                                                                            | Response set     |
+| ------------ | ------------ | ------- | --------------------------------------------------------------------------------------- | ---------------- |
+| base         | —            | gary    | I could go along with {cuisine}. You don't need to record that as a change of position. | small-concession |
 
-### aligned
+| Response | Label                 | Description                                                                       | Technique | Requires | Reason key | Outcome  | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                             |
+| -------- | --------------------- | --------------------------------------------------------------------------------- | --------- | -------- | ---------- | -------- | ------ | --- | --- | --- | ---- | --- | --- | ---------------------------------------------------------------------------------------- |
+| ack      | Accept the concession | Let Gary soften his position without a speech. A short, reliable bit of progress. | ack       | —        | —          | accepted | 1      | 1   | 18  | —   | —    | —   | —   | Gary moves toward {cuisine}. The record will show he was already standing quite near it. |
 
-| Presentation | Variant when | Speaker | Opening line                                                          | Response set |
-| ------------ | ------------ | ------- | --------------------------------------------------------------------- | ------------ |
-| base         | —            | dev     | Honestly? I think we're all aligned.                                  | aligned      |
-| variant 1    | absent: dev  | priya   | Dev's notes match our checklist. Honestly, I think we're all aligned. | aligned      |
+### menu-return
 
-| Set     | ID  | Label                | Technique | Requires | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                          |
-| ------- | --- | -------------------- | --------- | -------- | ---------- | --- | --- | --- | -------- | ---- | --- | ----------------------------------------------------- |
-| aligned | ack | Record the agreement | ack       | —        | —          | 1   | 15  | -1  | —        | —    | —   | Agreement recorded. One loose end is finally tied up. |
+| Presentation | Variant when | Speaker | Opening line                                                                            | Response set |
+| ------------ | ------------ | ------- | --------------------------------------------------------------------------------------- | ------------ |
+| base         | —            | sam     | We postponed the meal options. Can we finish that question instead of postponing lunch? | menu-return  |
 
-### circle-back-return
+| Response | Label                 | Description                                                                         | Technique | Requires       | Reason key  | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                               |
+| -------- | --------------------- | ----------------------------------------------------------------------------------- | --------- | -------------- | ----------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------------------ |
+| hear     | Finish the menu check | Settle the deferred meal question. Reliable progress, with a longer check.          | hear      | —              | —           | finished  | 1      | 6   | 18  | —   | —    | —   | —   | We finish the meal check. Sam thanks everyone for establishing that lunch includes food.   |
+| owner    | Use Alex's menu notes | Ask Alex to explain the options. Efficient help if the menu reader is already here. | owner     | present: legal | alex-absent | explained | 1      | 3   | 16  | —   | —    | —   | —   | Alex explains the meal options. The deferred question finally earns a full stop.           |
+| timebox  | Read the main options | Check the main options together. Quicker, with less reassurance than a full review. | timebox   | —              | —           | read      | 1      | 3   | 10  | —   | —    | —   | —   | We read the main options. Sam gets information rather than another promise to investigate. |
 
-| Presentation | Variant when   | Speaker | Opening line                                                              | Response set  |
-| ------------ | -------------- | ------- | ------------------------------------------------------------------------- | ------------- |
-| base         | —              | morgan  | We circled back. I still want to discuss the slide formatting.            | circle-return |
-| variant 1    | absent: morgan | priya   | Morgan's formatting note is back. The launch still has the same deadline. | circle-return |
+### soup-return
 
-| Set           | ID      | Label                 | Technique | Requires | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                                 |
-| ------------- | ------- | --------------------- | --------- | -------- | ---------- | --- | --- | --- | -------- | ---- | --- | ------------------------------------------------------------ |
-| circle-return | hear    | Review the formatting | hear      | —        | —          | 6   | 1   | 0   | —        | —    | —   | The headings are now consistent. Friday is no closer.        |
-| circle-return | timebox | Close the format note | timebox   | —        | —          | 1   | 0   | 0   | —        | —    | —   | We close the formatting note. No second circle is scheduled. |
+| Presentation | Variant when | Speaker | Opening line                                                                     | Response set |
+| ------------ | ------------ | ------- | -------------------------------------------------------------------------------- | ------------ |
+| base         | —            | gary    | You promised me a last word on soup. I have reduced it to three opening remarks. | soup-return  |
 
-### support-follow-up
+| Response | Label                 | Description                                                                           | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                           |
+| -------- | --------------------- | ------------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | -------------------------------------------------------------------------------------- |
+| hear     | Hear the last word    | Honour the promised discussion. Takes time and does little for choosing a cuisine.    | hear      | —        | —          | heard   | 1      | 6   | 1   | —   | —    | —   | —   | Gary finishes his soup remarks. The lunch discussion is permitted to resume.           |
+| refocus  | Close the soup debate | Acknowledge Gary and close the tangent. Quick focus, with the soup theory unresolved. | refocus   | —        | —          | closed  | 1      | 1   | 4   | —   | —    | —   | —   | Soup keeps its ambiguous status. The promise is discharged; no sequel is commissioned. |
 
-| Presentation | Variant when | Speaker | Opening line                                                           | Response set           |
-| ------------ | ------------ | ------- | ---------------------------------------------------------------------- | ---------------------- |
-| base         | —            | sam     | That parked release-notes plan? Support still needs it before Friday.  | support-return-present |
-| variant 1    | absent: sam  | priya   | Support's parked release-notes plan is back. Sam isn't here to own it. | support-return-absent  |
+### spice-return
 
-| Set                    | ID      | Label                    | Technique | Requires     | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                                                 |
-| ---------------------- | ------- | ------------------------ | --------- | ------------ | ---------- | --- | --- | --- | -------- | ---- | --- | ---------------------------------------------------------------------------- |
-| support-return-present | owner   | Give Sam the follow-up   | owner     | present: sam | sam-absent | 4   | 14  | -1  | —        | —    | —   | Sam owns the briefing and closes the release-notes risk.                     |
-| support-return-present | hear    | Review the briefing      | hear      | present: sam | sam-absent | 8   | 18  | -1  | —        | —    | —   | Sam walks us through the briefing. Support will not learn from social media. |
-| support-return-present | timebox | Draft a minimal briefing | timebox   | —            | —          | 5   | 8   | 0   | —        | —    | —   | A draft exists. Getting it to Support is still an open risk.                 |
-| support-return-absent  | hear    | Finish the written plan  | hear      | —            | —          | 9   | 10  | -1  | —        | —    | —   | We finish the written plan and close one risk without Sam's shortcut.        |
-| support-return-absent  | timebox | Draft a minimal briefing | timebox   | —            | —          | 5   | 8   | 0   | —        | —    | —   | A draft exists. Getting it to Support is still an open risk.                 |
+| Presentation | Variant when | Speaker | Opening line                                                                         | Response set |
+| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------ | ------------ |
+| base         | —            | sam     | The mild option question is back. I still need an answer, rather than encouragement. | spice-return |
 
-### p1-follow-up
-
-| Presentation | Variant when | Speaker | Opening line                                                              | Response set      |
-| ------------ | ------------ | ------- | ------------------------------------------------------------------------- | ----------------- |
-| base         | —            | dev     | The parked checkout P1 is back. Customers will not use the parking lot.   | p1-return-present |
-| variant 1    | absent: dev  | priya   | The checkout P1 is still open. We released the person with the diagnosis. | p1-return-absent  |
-
-| Set               | ID      | Label                    | Technique | Requires     | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                                         |
-| ----------------- | ------- | ------------------------ | --------- | ------------ | ---------- | --- | --- | --- | -------- | ---- | --- | -------------------------------------------------------------------- |
-| p1-return-present | hear    | Finish Dev's triage      | hear      | present: dev | dev-absent | 9   | 20  | -1  | —        | —    | —   | Dev finishes triage. The fix and rollback close the checkout risk.   |
-| p1-return-present | owner   | Own fix verification     | owner     | present: dev | dev-absent | 5   | 16  | -1  | —        | —    | —   | Dev owns verification. Checkout finally leaves the parking lot.      |
-| p1-return-present | timebox | Keep the guardrail       | timebox   | —            | —          | 3   | 10  | 0   | —        | —    | —   | The guardrail stays. So does the unresolved checkout risk.           |
-| p1-return-absent  | hear    | Finish the incident plan | hear      | —            | —          | 10  | 10  | -1  | —        | —    | —   | The written incident plan closes one risk, slowly and without Dev.   |
-| p1-return-absent  | timebox | Keep the guardrail       | timebox   | —            | —          | 4   | 6   | 0   | —        | —    | —   | We keep the secondhand guardrail. Checkout still needs verification. |
+| Response | Label                   | Description                                                                           | Technique | Requires       | Reason key  | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                              |
+| -------- | ----------------------- | ------------------------------------------------------------------------------------- | --------- | -------------- | ----------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ----------------------------------------------------------------------------------------- |
+| hear     | Finish the spice check  | Settle the deferred preference. Reliable reassurance takes a longer discussion.       | hear      | —              | —           | finished  | 1      | 6   | 18  | —   | —    | —   | —   | We finish checking mild options. Nobody has to defend a preference to a whiteboard.       |
+| owner    | Ask Alex for the detail | Use Alex's menu reading to answer. Efficient, if Alex is already in the room.         | owner     | present: legal | alex-absent | explained | 1      | 3   | 16  | —   | —    | —   | —   | Alex clarifies the mild options. Sam's preference is treated as information, which helps. |
+| timebox  | Check the key wording   | Read the key wording together. Quicker than the full check, with less detail settled. | timebox   | —              | —           | read      | 1      | 3   | 10  | —   | —    | —   | —   | We read the relevant wording. The conversation gets more specific and less motivational.  |
 
 ### filler
 
-| Presentation | Variant when | Speaker | Opening line     | Response set |
-| ------------ | ------------ | ------- | ---------------- | ------------ |
-| base         | —            | room    | Awkward silence. | filler       |
+| Presentation | Variant when | Speaker | Opening line                                                 | Response set |
+| ------------ | ------------ | ------- | ------------------------------------------------------------ | ------------ |
+| base         | —            | room    | Nobody speaks. The clock has no such professional restraint. | filler       |
 
-| Set    | ID  | Label                    | Technique | Requires | Reason key | Min | P   | R   | Callback | Join | End | Outcome line                                    |
-| ------ | --- | ------------------------ | --------- | -------- | ---------- | --- | --- | --- | -------- | ---- | --- | ----------------------------------------------- |
-| filler | ack | Wait through the silence | ack       | —        | —          | 2   | 0   | 0   | —        | —    | —   | Someone caps a marker. Two minutes have passed. |
+| Response | Label                  | Description                                                                             | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                   |
+| -------- | ---------------------- | --------------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------ |
+| ack      | Wait through the pause | Let the silence pass. Discussion time still passes, without moving the cuisine forward. | ack       | —        | —          | waited  | 1      | 2   | 0   | —   | —    | —   | —   | Someone caps a marker. The room has spent another pause considering {cuisine}. |
 
 ## Disabled reasons
 
-Every conditional response refers to an authored nonempty key. Priya's key is
-included for schema completeness; no permitted release can make it visible.
+These are all used reason keys, with no unused starter-absence keys. A disabled
+invitation is not a refusal to let someone leave; the entrant is already present.
 
-| Key           | Copy                                                           |
-| ------------- | -------------------------------------------------------------- |
-| dev-absent    | Dev has left. Engineering expertise is no longer in the room.  |
-| sam-absent    | Sam has left. Support expertise is no longer in the room.      |
-| morgan-absent | Morgan has left. Marketing expertise is no longer in the room. |
-| priya-absent  | Priya must be present to own the launch decision.              |
-| legal-absent  | Legal isn't in the room. Nobody can clear the claims.          |
-| vp-absent     | The VP isn't in the room. Nobody here outranks the next team.  |
+| Key          | Copy                                                                           |
+| ------------ | ------------------------------------------------------------------------------ |
+| alex-present | Alex is already here. Use the menu discussion rather than inviting Alex twice. |
+| pat-present  | Pat is already here. A second invitation would only encourage a second recap.  |
+| alex-absent  | Alex has not joined. You can still check the menu together.                    |
+| pat-absent   | Pat has not joined. Choose an option the people here can carry out.            |
 
-## Epilogues
+## Title catalog
 
-The four endings use six lines because a decision has three risk tiers. These
-retain the design's example copy as the approved final copy. Tier selection uses
-the final authoritative risk counter, never the log.
+All predicates and IDs below are accepted, not new tuning. Names and flavour lines
+are draft copy. Display priority remains slots 12,9,10,11,1,2,3,4,5,6,7,8; unlock
+all earned, display first in that order. Use unrounded average q; no scored q
+means slot 9 cannot unlock. Score thresholds use rounded component total.
+Every successful title appears beside the cuisine result; a title alone is not
+the success summary. Flavour lines below make no success claim on failure titles.
 
-| Key                 | Ending       | Risk condition | Line                                                                                 |
-| ------------------- | ------------ | -------------- | ------------------------------------------------------------------------------------ |
-| decision-clean      | decision     | R = 0          | Friday's launch goes smoothly. Nobody remembers the meeting. The highest compliment. |
-| decision-loose-ends | decision     | R = 1–2        | Friday's launch goes ahead. A few loose ends become Monday's problem.                |
-| decision-risky      | decision     | R = 3–5        | Support learned about the launch from social media.                                  |
-| called-early        | called-early | any            | Decision deferred to a follow-up meeting. Invite sent.                               |
-| time-expired        | time-expired | any            | The next team is standing at the glass door.                                         |
-| cancelled           | cancelled    | any            | This could've been an email. It is now an email.                                     |
+| Slot | ID                       | Name                         | Exact predicate                                              | Flavour line                                                                         |
+| ---- | ------------------------ | ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| 1    | inbox-zero               | Inbox Zero                   | total score ≥950                                             | A meeting so efficient someone will ask you to organise another one.                 |
+| 2    | efficient-facilitator    | Efficient Facilitator        | ending=decision and score ≥850                               | You kept lunch within sight of the people discussing it.                             |
+| 3    | lunch-agreed             | Lunch Is Settled             | ending=decision and agreedCuisine recorded                   | The board can stop auditioning headings. {agreedCuisine} survives the final draft.   |
+| 4    | death-by-diligence       | Death by Diligence           | ending=decision and personMinutes ≥270                       | The discussion developed traditions. At last, one of them is eating {agreedCuisine}. |
+| 5    | table-for-six            | Table for Six                | ending=decision and final headcount=6                        | The original six agreed on {agreedCuisine}. Nobody had to book an extra chair.       |
+| 6    | reply-all-royalty        | Reply-All Royalty            | peakHeadcount=8                                              | Eight adults were involved. Lunch acquired an audience.                              |
+| 7    | parking-lot-attendant    | Parking Lot Attendant        | parkedCount ≥4                                               | Several topics were postponed. Your notes have a busier afternoon than you do.       |
+| 8    | second-helping           | Second Helping               | ending=decision and resolvedCallbackCount ≥1                 | We returned to a postponed topic and still reached {agreedCuisine}. Seconds, anyone? |
+| 9    | played-it-right          | Played It Right, Lost Anyway | scored decision count ≥1 and avg q ≥0.85 and ending≠decision | Sensible choices, no agreement. The room declines to reward your judgement.          |
+| 10   | take-this-offline        | Let's Take This Offline      | ending=called-early                                          | You ended the discussion. The invitation for the next one is already being drafted.  |
+| 11   | calendar-criminal        | Calendar Criminal            | ending=time-expired                                          | The booking ended before the discussion did. The next team brought witnesses.        |
+| 12   | could-have-been-an-email | This Could've Been an Email  | ending=cancelled                                             | No discussion was resolved. An email can still have a subject line.                  |
 
-## Results heading and moments copy handoff
+Fallback heading is noncollectible and ending-specific in the copy catalog below.
+Slot 3 covers every valid success. Store only lunch awards in tcbae:v2:titles;
+preserve raw tcbae:v1:titles separately, with no automatic earning/remapping.
 
-For task 07b's `core/content/copy.ts`, the design's exact fixed copy is approved:
-fallback heading “Decision Made”; cancellation without a moment “No meeting
-moments. Just an email.”; decision without a moment “The meeting ended with a
-decision.”; other endings without a moment “The decision will need another
-meeting.” These are separate from the ending epilogues.
+For legacy display retain names from the historical launch catalog. Its complete
+IDs are inbox-zero, efficient-facilitator, ship-it-and-pray, death-by-diligence,
+skeleton-crew, reply-all-royalty, parking-lot-attendant, gary-free-zone,
+played-it-right, take-this-offline, calendar-criminal, could-have-been-an-email.
+The three retired names are Ship It and Pray, Skeleton Crew, Gary-Free Zone.
+The other nine names match the retained names above. Legacy awards never count
+toward the twelve lunch slots; no legacy predicate is evaluated during lunch.
 
-Task 15 must author the dynamic release, parked-item and arrival moment templates
-in `core/content/copy.ts`, each at most 90 Unicode code points after substitution,
-with no ad hoc UI strings. The design's release example (“Gary was released at
-minute 3.”) establishes the wording for release moments. Parking/arrival templates
-still need authorship and review in task 15; this task does not invent their copy.
-Use the design's first-release → first-park → first-arrival priority and log order,
-and test longest attendee names and elapsed-minute values before shipping.
+## Epilogues and factual moments
 
-## Hand walkthroughs and review evidence
+Exactly one epilogue by ending, no risk tiers. Success uses agreedCuisine, never
+the nomination as a substitute. A cancelled run has no resolved nomination; an
+unresolved first presentation is not an agreement or an earned lunch decision.
 
-These are constructed possible draws, not seeded simulations or claims of median
-behaviour. All weighted candidate choices have positive probability; uncommon
-negative events are separated by common draws. Effects and billing follow the
-existing engine; no new rule is introduced. The normal example uses no rare gifts.
+| Key          | Ending       | Line                                                                                |
+| ------------ | ------------ | ----------------------------------------------------------------------------------- |
+| decision     | decision     | Everyone present agrees on {agreedCuisine}. Lunch may now proceed without minutes.  |
+| called-early | called-early | No agreement. The discussion ends; the lunch suggestion remains a suggestion.       |
+| time-expired | time-expired | No agreement. The next team gets the room and inherits none of our lunch expertise. |
+| cancelled    | cancelled    | No agreement. This could have been an email. There is still time to make it one.    |
 
-### A careful ten-turn decision
+Moment priority: first postponed topic in resolve-log order, else first join,
+else ending fallback. These are narrative summaries only, never rule inputs.
+For any selected park response, obtain topic from the catalog below; for join,
+attendee/minute are the recorded post-response join facts. No speaker speech-time
+claim. Minute is elapsed discussion time, not wall-clock play duration.
 
-Release Gary and Jordan before drawing; H = 4, with Priya, Dev, Sam and Morgan
-retained. The first two draws are unrestricted common substantive families. Use
-the base presentations; risk remains zero throughout. Legal joins at T = 15;
-its four minutes bill the old H = 4. The VP joins after minute 15; release each
-new arrival immediately after its response, returning H to 4 at no meeting cost.
+| Event / park response  | Topic            |
+| ---------------------- | ---------------- |
+| menu-needs / park      | meal options     |
+| projector / park       | big screen       |
+| soup-debate / park     | soup debate      |
+| lunch-committee / park | lunch committee  |
+| spice-question / park  | spice preference |
+| pat-arrives / park     | Pat's questions  |
 
-| Draw turn | Family / response        | Delta P | Min | H billed | P after | T after | R after | Total person-minutes |
-| --------- | ------------------------ | ------- | --- | -------- | ------- | ------- | ------- | -------------------- |
-| 0         | where-we-stand / hear    | 18      | 6   | 4        | 18      | 6       | 0       | 24                   |
-| 1         | support-training / owner | 14      | 3   | 4        | 32      | 9       | 0       | 36                   |
-| 2         | hdmi / park              | 0       | 1   | 4        | 32      | 10      | 0       | 40                   |
-| 3         | failing-tests / owner    | 18      | 5   | 4        | 50      | 15      | 0       | 60                   |
-| 4         | legal / timebox          | 6       | 4   | 4        | 56      | 19      | 0       | 76                   |
-| 5         | press-date / owner       | 16      | 4   | 4        | 72      | 23      | 0       | 92                   |
-| 6         | p1-bug / hear            | 20      | 8   | 4        | 92      | 31      | 0       | 124                  |
-| 7         | circle-back / timebox    | 0       | 2   | 4        | 92      | 33      | 0       | 132                  |
-| 8         | vp-joins / timebox       | 5       | 3   | 4        | 97      | 36      | 0       | 144                  |
-| 9         | tv-no-signal / timebox   | 3       | 2   | 4        | 100     | 38      | 0       | 152                  |
+| Key               | Use                        | Line                                                                                |
+| ----------------- | -------------------------- | ----------------------------------------------------------------------------------- |
+| first-postponed   | first selected park        | Postponed at minute {minute}: {topic}. The notes will remember.                     |
+| first-arrival     | first join, if no park     | {attendee} joined at minute {minute}. The discussion acquired another chair.        |
+| decision-fallback | decision, no park/join     | The room agreed on {agreedCuisine}. Nobody needed a follow-up to identify lunch.    |
+| early-fallback    | called-early, no park/join | The discussion stopped before agreement. The suggestion is still only a suggestion. |
+| expiry-fallback   | time-expired, no park/join | No cuisine was agreed before the booking ended. The next team would like its room.  |
+| cancel-fallback   | cancelled                  | No discussion resolved. No cuisine agreed. Just an available email subject.         |
 
-Result: **decision, P = 100, R = 0, T = 38 < 60, 152 person-minutes**. The choices
-mix hear, owner, park and timebox. Releasing arrivals is optional for feasibility:
-retaining both still gives the same P/R/T, with 173 person-minutes and peak H = 6.
-The review's Legal and VP responses do not alter this constructed route: it still
-chooses press-date / owner and never draws room-booked. Keeping Legal now also
-enables an alternative on press-date; immediate release is no longer a free
-improvement in every possible subsequent draw.
-This checks the requested approximate ten-turn route within the hour. It does not
-establish Greedy/Random bands, title reachability or technique frequencies.
+The short topic labels support log moments, not a new visible risk/topic meter.
+Slot 7 is the existing park-action count; topics may be acknowledged without
+scheduling a return. soup-return itself never increments parkedCount.
 
-### Callbacks and expert absence
+## Interface, results and share copy
 
-From a fresh H = 4 state (Gary/Jordan released), park support-training at turn 0:
-P = 0, R = 1, T = 1, callback due at draw 2. Resolve where-we-stand / refocus at
-turn 1 using the risk presentation: P = 6, R = 1, T = 3. Release Sam. Draw 2 is
-support-follow-up's absence presentation; hear gives P = 16, R = 0, T = 12.
-It costs 9 × 3 = 27 person-minutes, rather than the expert owner path's 4 × 4 = 16.
-The preceding resolutions cost 4 + 8, so the absence route totals 39 person-minutes.
+Catalog entries below are complete authored text units for later UI transcription;
+long explanations use separate lines, not an automatic limit increase. Text-only
+L07 can use these without art. Runtime labels removed by the redesign must not be
+carried forward from launch. Placeholder formatting is UI-only, using engine facts.
 
-For p1-bug, first resolve where-we-stand and support-training, then park p1-bug
-at turn 2; its callback is due at draw 4 after exactly one intervening event.
-Release Dev before that due draw to select p1-follow-up's absence presentation.
-For circle-back, park it after the first two substantive draws; draw n+2 delivers
-circle-back-return, with Priya speaking if Morgan was released. All three targets
-have always-enabled options, no callback chains and no zero-minute responses.
-Ending before the due draw suppresses the callback under the existing rules.
+| Key                       | Copy                                                                                     |
+| ------------------------- | ---------------------------------------------------------------------------------------- |
+| product-title             | This Could've Been an Email                                                              |
+| objective                 | Agree on a cuisine for lunch.                                                            |
+| premise                   | Six adults. One lunch. Apparently this needs a meeting.                                  |
+| start                     | Start                                                                                    |
+| loading                   | Booking the room…                                                                        |
+| load-failed               | The room did not load. Lunch is not being delayed for a dramatic entrance.               |
+| retry                     | Retry                                                                                    |
+| meeting                   | The lunch meeting                                                                        |
+| instructions-action       | Choose a suggestion, then help the room agree. Time moves when you answer.               |
+| instructions-cost         | Everyone stays. Extra colleagues make later discussion more expensive.                   |
+| instructions-chance       | Some choices can turn out differently. Their descriptions explain the possible setback.  |
+| keyboard                  | Enter: show choices or continue. 1–3: choose a response.                                 |
+| show-choices              | Show choices                                                                             |
+| continue                  | Continue                                                                                 |
+| call-it                   | Call it                                                                                  |
+| call-it-description       | End the discussion without agreement.                                                    |
+| roster                    | In the room                                                                              |
+| room-speaker              | The room                                                                                 |
+| room-accessible           | In the lunch meeting: {roster}.                                                          |
+| progress                  | Agreement progress                                                                       |
+| minutes                   | Minutes discussed                                                                        |
+| booking                   | Booking ends at minute                                                                   |
+| remaining                 | Minutes remaining                                                                        |
+| cost                      | Discussion cost                                                                          |
+| cost-explanation          | Salary time spent discussing lunch, not the price of food.                               |
+| considering-empty         | No cuisine suggested yet                                                                 |
+| considering               | Considering: {cuisine}                                                                   |
+| headcount                 | Adults present                                                                           |
+| peak-headcount            | Most adults present                                                                      |
+| postponed                 | Topics postponed                                                                         |
+| results                   | Results                                                                                  |
+| score                     | Score                                                                                    |
+| outcome-component         | Agreement                                                                                |
+| efficiency-component      | Cost efficiency                                                                          |
+| decisions-component       | Choices                                                                                  |
+| choices-explanation       | Choices rewards the expected tradeoff when you chose, before any uncertain outcome.      |
+| actual-explanation        | Agreement and cost reflect what actually happened. A setback need not mean a bad choice. |
+| success-result            | Agreed: {agreedCuisine}                                                                  |
+| success-summary           | Everyone present agreed on {agreedCuisine}.                                              |
+| failure-result            | No agreement                                                                             |
+| failure-nomination        | Suggested: {cuisine}. Not agreed.                                                        |
+| failure-no-nomination     | No cuisine was nominated.                                                                |
+| ended-decision            | Agreed: {agreedCuisine}                                                                  |
+| ended-called-early        | Discussion ended early. No agreement.                                                    |
+| ended-time-expired        | Booking expired. No agreement.                                                           |
+| ended-cancelled           | Meeting cancelled. No agreement.                                                         |
+| fallback-decision-heading | Agreed: {agreedCuisine}                                                                  |
+| fallback-failure-heading  | No agreement                                                                             |
+| moment                    | Meeting moment                                                                           |
+| replay                    | Play again                                                                               |
+| current-collection        | Lunch collection                                                                         |
+| legacy-collection         | Launch meeting collection                                                                |
+| legacy-explanation        | Awards from the original launch meeting. They do not fill the lunch collection.          |
+| collection-count          | {unlocked} of 12 lunch titles                                                            |
+| locked-title              | Not yet earned                                                                           |
+| newly-earned              | New title earned: {title}                                                                |
+| share                     | Share result                                                                             |
+| download                  | Download image                                                                           |
+| copy-text                 | Copy text                                                                                |
+| copied                    | Text copied                                                                              |
+| clipboard-fallback        | Copy the text below. The clipboard has declined the invitation.                          |
+| save-image                | Press and hold the image to save it.                                                     |
+| share-unavailable         | File sharing is unavailable here. You can save the image or copy the text.               |
+| share-failed              | Sharing did not finish. You can still save the image or copy the text.                   |
+| share-success             | We agreed on {agreedCuisine} in This Could've Been an Email.                             |
+| share-early               | No lunch agreement. I ended the discussion in This Could've Been an Email.               |
+| share-expired             | No lunch agreement. The room booking expired in This Could've Been an Email.             |
+| share-cancelled           | No lunch agreement. I cancelled the meeting in This Could've Been an Email.              |
+| share-nomination          | Suggested: {cuisine}. Not agreed.                                                        |
+| share-score               | Score: {score}/1000                                                                      |
+| share-time                | Discussion: {minute} minutes                                                             |
+| share-cost                | Salary cost: {cost}                                                                      |
+| share-peak                | Peak attendance: {headcount} adults                                                      |
+| share-seed                | Seed: {seed}                                                                             |
+| share-revision            | Rules/content: {revision}                                                                |
+| replay-caveat             | Replay needs the same revision, seed and actions. Seeds may differ in difficulty.        |
+| error                     | The meeting hit a problem. Start a new meeting to try again.                             |
+| error-restart             | Start a new meeting                                                                      |
 
-For release during dialogue, draw support-training with Sam present, then release
-Sam: the delivered line stays; hear/owner now return sam-absent, while park remains
-available and schedules the same target. The same requirement pattern protects
-Dev's engineering options and Morgan's marketing options. Selecting an absence
-variant never reintroduces an unavailable expert response.
+Results show earned heading + cuisine result + ending-specific epilogue, score
+components, actual time/cost/peak headcount, factual moment and collections.
+Share/card composition uses the ending's share line, score/time/cost/peak and
+optional failure nomination. A successful card always includes success-result
+and share-success; neither is replaced by the collectible name. Failure card
+always includes failure-result, never success text. Cancellation uses
+failure-no-nomination. Share cancellation by the operating system is not an error.
+No fake probability, invented preference votes, food price or equal-difficulty claim.
 
-### Constructed variant coverage for later transcription tests
+The room-accessible template expands the roster in catalog order with comma-space
+separators. Maximum roster text is Priya, Dev, Sam, Morgan, Gary, Jordan, Alex, Pat,
+in catalog order.
+For bounded copy checks use minute=69, headcount=8, score=1000, unlocked=12,
+title=Played It Right, Lost Anyway, cost=$9,200 and a 16-character seed.
+69 conservatively allows a full last response past the original 60-minute booking;
+personMinutes ≤552 at eight adults, so the display bound is $9,200.
+Use literal revision lunch-l02-draft-2 for draft examples. Future longer revision
+labels need their own copy check; never truncate cuisine identity.
 
-Each scenario starts before its family has been seen. For substantive families,
-the first-two guard permits their draw immediately; for other families first
-resolve two different substantive events without ending. Candidate lookup, not
-seed guessing, can establish eligibility in task 07 tests.
+## Fourth-wall commentary
 
-| Variant                | Constructed pre-draw condition                                                       |
-| ---------------------- | ------------------------------------------------------------------------------------ |
-| hdmi / 1               | Release Dev; draw hdmi after the first two substantive events.                       |
-| tv-no-signal / 1       | Release Morgan; draw tv-no-signal after the first two.                               |
-| circle-back / 1        | Release Morgan; draw circle-back after the first two.                                |
-| where-we-stand / 1     | Park support-training first; draw where-we-stand at turn 1 with R = 1.               |
-| support-training / 1   | Release Sam before the first draw; support remains eligible.                         |
-| failing-tests / 1      | Release Dev before the first draw; failing-tests remains eligible.                   |
-| press-date / 1         | Release Morgan before the first draw; press-date remains eligible.                   |
-| p1-bug / 1             | Release Dev; p1-bug remains a substantive candidate, including in the first two.     |
-| legal / 1              | Release Morgan; legal is eligible after the first two and joins Legal on any choice. |
-| aligned / 1            | Release Dev; draw aligned after the first two.                                       |
-| circle-back-return / 1 | Park circle-back, release Morgan and reach its due turn without ending.              |
-| support-follow-up / 1  | Park support-training, release Sam and reach its due turn without ending.            |
-| p1-follow-up / 1       | Park p1-bug, release Dev and reach its due turn without ending.                      |
+Nonnumeric only; no pizza/printer price assumptions. Eligibility predicates below
+are exact comparisons on post-resolution authoritative state. Lowest priority
+number wins among eligible, unseen IDs. Apply the approved global cadence first:
+first after third resolution, at least three resolutions between, maximum three
+per run, no duplicate ID. Secondary text only; no effects, turns, RNG or timers.
+Success commentary uses the actual agreement. Other commentary avoids agreement
+claims and remains true after success/expiry if its predicate still matches.
 
-For the new conditional responses, keep Morgan present and join Legal before
-press-date: legal is enabled. Before Legal joins or after Legal is released,
-that response is disabled with legal-absent; owner and email retain their existing
-requirements and effects. Drawing press-date while Morgan is absent still uses
-the unchanged press-absent set.
+| ID                   | Priority | Predicate                                     | Line                                                                                |
+| -------------------- | -------- | --------------------------------------------- | ----------------------------------------------------------------------------------- |
+| agreement-commentary | 10       | ending=decision and agreedCuisine non-null    | {agreedCuisine} is agreed. You may now close the meeting about having lunch.        |
+| nearly-there         | 20       | phase=running and progress ≥80                | A decision is getting close. Resist the urge to schedule its announcement.          |
+| full-room            | 30       | present.length=8                              | Every available chair is occupied. Lunch has achieved excellent attendance.         |
+| topic-returned       | 40       | resolvedCallbackCount ≥1                      | A postponed topic has returned. The notes were not a witness protection scheme.     |
+| expensive-discussion | 50       | personMinutes ≥180                            | You are spending salaries on the discussion. The food has not submitted an invoice. |
+| postponed-again      | 60       | parkedCount ≥2                                | More than one topic has been postponed. The email is beginning to write itself.     |
+| still-considering    | 70       | phase=running and progress ≤30 and minute ≥15 | Lunch is still under discussion. This is the part the title warned you about.       |
 
-Join the VP before room-booked: vp is enabled and keeps 60. Before the VP joins
-or after the VP is released, it is disabled with vp-absent; hear and timebox stay
-enabled. Release either arrival during its later pending event to verify the
-delivered presentation remains fixed while the conditional choice is disabled.
+No fallback commentary: if none qualifies, show none. Do not count reading time
+or claim any person spoke for a measured duration. Commentary predicates do not
+add new event Condition fields; they are the approved commentary metadata.
 
-The four booking boundary cases for committed task 07b tests are: at minute 44,
-hear keeps 60 and remains running at 49; timebox sets 45 and expires at 45; at
-minute 46, timebox expires at 47 after the full response; at minute 44 with the
-VP present, vp keeps 60 and remains running at 45. Filler explicitly acknowledges +2
-minutes and eventually expires an exhausted run, without adding a forced turn cap.
+## Constructed walkthroughs and reachability
 
-## Approval and handoff
+These are hand-constructed legal draws/branches, not engine executions, observed
+humour, seeded replay evidence or balance statistics. Positive tickets make the
+shown draws possible; first-two and negative guards still apply. H billed is
+before resolution, H after includes joins. P clamps independently on every row.
+CB due numbers refer to draw turn, not minutes or number of Continue taps.
+No walkthrough releases anyone. Later L05 tests must use engine evaluation.
 
-**Harry approved this table on October 12, 2026:** “Table is approved. Wrap up
-this task before I get Claude to review.” No content revisions were requested.
-Task 06b's authorship, local verification and D18 approval criteria are complete.
-The subsequent [Claude review](task-06b-review-20261012T190907-6e3d.md) and Harry's
-instruction to “Review, address and implement Claude's review” authorize the
-specified review revisions: Legal's press clearance, the VP's room intervention,
-the intentional reservation trap and the clarity/handoff fixes. This records the
-current authorization for those revisions separately from the initial approval.
+### Success with a callback, no rare gifts
 
-The next blueprint task is **07a**, the content validator and index.
-Task 07b then transcribes this table and binds the live draw/candidate wrappers.
-No task 07 implementation belongs in this task. Statistical balance, release
-device evidence and final UI copy outside this table remain with their scheduled
-tasks; the existing design remains the source for roster and collectible titles.
+Italian nominated; six stay throughout. Soup is parked at turn 5, due at 7 after
+one intervening draw. The returning tangent gets its last word and closes.
 
-For task 08a, report the reservation trap as an intentional diagnostic. Greedy and
-Reckless accept :45 with or without the VP because of utility and the tie-break;
-Random may choose either deadline. Do not assume every Lookahead choice is fixed:
-the design's next-step term becomes zero when a choice ends the run, so imminent
-expiry can change its comparison. Confirm that policy with the actual task 09
-implementation rather than changing the scoring formula or these response IDs.
+| Turn | Family            | Response | Outcome    | H billed | P after | T after | pm total |
+| ---- | ----------------- | -------- | ---------- | -------- | ------- | ------- | -------- |
+| 0    | nominate-cuisine  | italian  | nominated  | 6        | 8       | 2       | 12       |
+| 1    | menu-needs        | hear     | checked    | 6        | 26      | 8       | 48       |
+| 2    | projector         | park     | skipped    | 6        | 26      | 9       | 54       |
+| 3    | portion-plan      | owner    | individual | 6        | 44      | 13      | 78       |
+| 4    | spice-question    | hear     | checked    | 6        | 64      | 20      | 120      |
+| 5    | soup-debate       | park     | promised   | 6        | 64      | 21      | 126      |
+| 6    | chair-arrangement | refocus  | seated     | 6        | 67      | 22      | 132      |
+| 7    | soup-return       | refocus  | closed     | 6        | 71      | 23      | 138      |
+| 8    | lunch-window      | timebox  | bounded    | 6        | 82      | 26      | 156      |
+| 9    | quick-agreement   | hear     | heard      | 6        | 100     | 33      | 198      |
 
-## Task 12a — V4 feedback handoff
+Result: decision, nominatedCuisine=italian, agreedCuisine=italian, bookingEnd=60,
+resolvedCallbackCount=1, parkedCount=2, peakHeadcount=6. Display “Agreed: Italian”
+and the Italian success epilogue. Slots 3/5/8 qualify. First moment is big screen at
+minute 9, ahead of the later soup postponement. Commentary follows cadence;
+it must not obscure the final cuisine result.
 
-The text-only loop and automated meeting-loop checks are implemented. Harry
-agreed on October 12, 2026 to play and arrange two uncoached testers. Actual goal
-comprehension, issue classification and confusing-line observations are pending
-in [the V4 record](task-12a-playtest.md). No human findings or event-content
-revisions are claimed yet. Record reported findings here before task 10 tuning;
-retain the existing approval process for any resulting event-design changes.
+### Failure with an arrival and shortened booking
+
+Thai is a nomination throughout, never an agreement. Pat's doorway family is
+eligible after minute 15; it is separated from room-booked by a common event.
+
+| Turn | Family           | Response | Outcome    | H billed | P after | T after | pm total |
+| ---- | ---------------- | -------- | ---------- | -------- | ------- | ------- | -------- |
+| 0    | nominate-cuisine | thai     | nominated  | 6        | 8       | 2       | 12       |
+| 1    | portion-plan     | email    | sent       | 6        | 15      | 4       | 24       |
+| 2    | introductions    | hear     | introduced | 6        | 17      | 12      | 72       |
+| 3    | soup-debate      | hear     | theory     | 6        | 19      | 21      | 126      |
+| 4    | pat-arrives      | hear     | joined     | 6        | 27      | 29      | 174      |
+| 5    | projector        | hear     | searched   | 7        | 29      | 36      | 223      |
+| 6    | room-booked      | timebox  | shortened  | 7        | 29      | 37      | 230      |
+| 7    | lunch-history    | hear     | history    | 7        | 32      | 46      | 293      |
+
+Result: time-expired at bookingEnd=45; agreedCuisine=null, P=32, H/peak=7.
+Bill all nine final minutes, not only time remaining. Display “No agreement” and
+“Suggested: Thai. Not agreed.” Share-expired must not become share-success.
+First moment is Pat joined at minute 29. The nomination never selects an epilogue.
+
+### Invitations, higher subsequent cost and a second presentation
+
+Mexican nomination; explicitly choose helpful branch of the Alex invitation.
+Both invite outcomes admit Alex; this route does not assume favourable branches
+are guaranteed. Invitation to Pat is legal before Pat's spontaneous time gate.
+
+| Turn | Family            | Response | Outcome    | H billed | P after | T after | pm total |
+| ---- | ----------------- | -------- | ---------- | -------- | ------- | ------- | -------- |
+| 0    | nominate-cuisine  | mexican  | nominated  | 6        | 8       | 2       | 12       |
+| 1    | menu-needs        | invite   | helpful    | 6        | 24      | 6       | 36       |
+| 2    | portion-plan      | owner    | individual | 7        | 42      | 10      | 64       |
+| 3    | quick-agreement   | invite   | briefed    | 7        | 54      | 14      | 92       |
+| 4    | lunch-window      | pat      | protected  | 8        | 70      | 17      | 116      |
+| 5    | projector         | timebox  | shared     | 8        | 73      | 19      | 132      |
+| 6    | spice-question    | hear     | checked    | 8        | 93      | 26      | 188      |
+| 7    | chair-arrangement | refocus  | seated     | 8        | 96      | 27      | 196      |
+| 8    | lunch-committee   | owner    | summary    | 8        | 100     | 30      | 220      |
+
+Result: decision, Agreed: Mexican, H/peak=8. Slots 3/6 qualify. lunch-window uses
+variant-1 at draw 4 and the same response set. alex-arrives/pat-arrives are now
+ineligible; invitations are disabled with alex-present/pat-present in hypothetical
+pending presentations. Initial arrival minutes are charged to six then seven;
+later responses cost eight. First moment is Alex joined at minute 6.
+
+### Every callback due at n+2
+
+Each row below is a separate constructed fresh route. Ending by Call it at the
+intervening event suppresses its due callback; acknowledgement never draws twice.
+
+| Parent / target               | Ordered resolutions                                                                                      | Due draw | Final P | T   | pm  |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------- | -------- | ------- | --- | --- |
+| menu-needs / menu-return      | nominate-cuisine/thai; menu-needs/park; introductions/timebox; menu-return/hear                          | 3        | 27      | 11  | 66  |
+| soup-debate / soup-return     | nominate-cuisine/thai; portion-plan/email; soup-debate/park; introductions/timebox; soup-return/refocus  | 4        | 20      | 8   | 48  |
+| spice-question / spice-return | nominate-cuisine/thai; portion-plan/email; spice-question/park; introductions/timebox; spice-return/hear | 4        | 34      | 13  | 78  |
+
+For each callback with an Alex response, repeat with Alex already present by
+invitation or doorway arrival before parking the parent. Its owner option enables;
+without Alex it disables and hear/timebox stay enabled. Callback openings still
+refer to postponement. No callback has a presence/minute draw condition or sequel.
+
+### Both branches and deterministic alternatives
+
+| Scenario                | Constructed decision state                            | Branch results                                          | Deterministic alternative |
+| ----------------------- | ----------------------------------------------------- | ------------------------------------------------------- | ------------------------- |
+| menu-needs/invite       | After nomination: P8, T2, pm12, H6; Alex absent       | helpful: P24,T6,pm36,H7; more-questions: P12,T9,pm54,H7 | hear: P26,T8,pm48,H6      |
+| quick-agreement/refocus | After nomination: P8,T2,pm12,H6; Pat absent           | momentum: P31,T5,pm30; objections: P2,T9,pm54           | hear: P28,T9,pm54         |
+| spice-question/timebox  | After nomination + portion-plan/email: P15,T4,pm24,H6 | clear: P37,T7,pm42; unclear: P11,T10,pm60               | hear: P35,T11,pm66        |
+
+The two quick-agreement branches have identical pre-roll q. At that state their
+expected utility is 5.88; hear is 11.6 and invite is 7.2, so refocus q=0 on either
+branch. Menu invite U=4.96 versus hear=10.8 and park=−1.2; q=77/150 before either
+branch. Spice timebox U=128/15 versus hear=58/5 and park=−6/5; q=73/96 before
+either branch. These exact arithmetic checks illustrate the approved formula,
+not a tuning endorsement or numerical player preview.
+
+### Coverage and boundary witnesses for later engine tests
+
+| Group                  | Constructed witness / expected relationship                                                                                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| All base presentations | Resolve nomination, then a common substantive before non-substantive families; leave requested family unseen, respect prior-negative guard and any family condition. Six starters always present. |
+| lunch-window/base      | Before Pat arrives, unseen lunch-window; pat response disabled.                                                                                                                                   |
+| lunch-window/variant-1 | Invite Pat through quick-agreement first, leave lunch-window unseen; pat response enabled.                                                                                                        |
+| Alex invitation states | menu-needs/invite before Alex joins; after doorway arrival it disables. Test both branches before joining; both join once.                                                                        |
+| Pat invitation states  | quick-agreement/invite before Pat joins; after doorway arrival it disables. Invitation has no minMinute gate.                                                                                     |
+| Alex doorway           | Alex absent after first two draws; every response joins. After menu invitation family is ineligible.                                                                                              |
+| Pat doorway            | Pat absent and T≥15 after first two; T14 ineligible, T15 eligible. Every response joins. Invitation suppresses family.                                                                            |
+| Present-dependent help | menu-return/owner and spice-return/owner absent/present Alex; lunch-window/pat and room-booked/vp absent/present Pat.                                                                             |
+| Nomination equality    | Each of Italian/Mexican/Thai gives P8,T2,pm12,H6, q=null. Only cuisine identity differs.                                                                                                          |
+| Cancel                 | Call it before first resolution: cancelled, P0,T0,pm0, both cuisines null; no nomination or agreement result.                                                                                     |
+| Early end              | Nominate then Call it: called-early, P8,T2,pm12, nominated cuisine only; no callback delivery afterward.                                                                                          |
+| Booking                | At T44, room-booked/timebox finishes T45 and expires; T46→47 also expires. hear at T44 keeps 60 and finishes T49. Pat/vp at T44 keeps 60 and finishes T45. All have ΔP0.                          |
+| Completing join        | Fixture P92 with nominated cuisine, Alex absent: alex-arrives/timebox adds 8, bills old H, records agreement including Alex before expiry.                                                        |
+| Deadline precedence    | Fixture P82,T59,H6, nominated cuisine: portion-plan/owner finishes P100,T63,pm+24, decision; no prorating. P81 gives P99 and expiry instead.                                                      |
+| Branch clamping        | At P0 quick-agreement/objections loses 0 effective P; at P95 momentum gains 5. Compute each branch utility separately; never clamp average effect.                                                |
+| Filler                 | Eligible pool exhausted and queue empty: filler/ack +2 minutes, ΔP0, no join/schedule/booking. Repeats until expiry. At most 17+3+ceil(60/2)=50 resolutions.                                      |
+
+Fixture witnesses deliberately name hypothetical valid decision states to test
+rules, not claim a natural seed reaches them. Constructed complete routes above
+use draft rows; seeded reachability/coverage are L05/L08/L10/L11 work.
+
+Title witnesses: the ten-turn success qualifies slots 3/5/8. Insert lunch-history/
+hear and introductions/hear before its later substantive choices to reach agreement
+at T50, pm300, qualifying slot 4. For high score choose nomination, menu-needs/hear,
+menu-read/ack, small-concession/ack, portion-plan/owner, spice-question/hear:
+P100,T21,pm126, all scored q=1, O400/E260/D300=960, qualifying slots 1/2.
+The two gifts are rare but positive-weight; no frequency claim. The invitation
+success qualifies slot 6. For slot 7, resolve nomination/thai, portion-plan/email, projector/park,
+lunch-committee/park, soup-debate/park, menu-needs/park, soup-return/refocus,
+menu-return/timebox. The callbacks are due at draws 6 and 7; final P29,T12,pm72,
+parkedCount=4. This witnesses slot 7 without a callback collision. Choose menu-needs/hear
+after nomination, then Call it: scored q=1, no agreement, so slots 9/10 qualify.
+The failure witnesses slot 11; pre-resolution cancel witnesses slot 12. Every
+slot has a legal construction; none establishes balanced rarity or human enjoyment.
+
+## Review decisions and editorial follow-ups
+
+[Claude's L02 review](L02-review.md) identified two content decisions for the
+final D18 handoff. They remain open; this correction changes no effect, weight,
+technique, availability condition, arrival/callback relationship or title predicate.
+
+- **D1 — uncertain choices are currently dominated by hear.** At the documented
+  decision states, menu-needs/invite U=4.96 versus hear=10.8;
+  quick-agreement/refocus U=5.88 versus hear=11.6 (q=0);
+  spice-question/timebox U=128/15 versus hear=58/5. Claude also found the reliable
+  option ahead at checked headcounts/clamped states. These are draft numbers,
+  not an approved intention that gambles should always be traps. Before final
+  D18 approval Harry must knowingly accept that draft tradeoff or request L12
+  tuning to make at least one uncertain choice competitive, with before/after
+  reports and the unchanged formula/targets. L02b must not resolve this by editing
+  weights/effects. No claim of exhaustive dominance across every state is made.
+- **D2 — expert-dependent paths expand from one each to two each.** Pat retains
+  room-booked/vp at P0 and additionally enables lunch-window/pat at P16. Alex
+  enables menu-return/owner and spice-return/owner; those benefits require a
+  previously deferred meal/spice question. Inviting Alex does not guarantee a
+  future useful callback. The approved lunch plan opens expert benefits to
+  content review, but this expansion still needs explicit consideration in
+  Harry's D18 approval. L02b must preserve the draft paths and flag the decision.
+- **D3 — room-booking trap remains intentional.** No mechanical correction is
+  requested: hear buys the original hour with discussion time; timebox accepts
+  45 cheaply; vp keeps 60 at P0 and loses the ASCII tie-break to timebox.
+
+The five factual defects are corrected: soup-return no longer assumes the mug
+story was heard; Alex's recap no longer assumes a cable event occurred; postponed
+moments use a colon template that fits all topic names; projector choices/topics
+describe the menu screen; room-booked uses wording true before or after minute 45.
+The checker expands every authored cuisine/name/topic substitution, rather than
+only one longest topic. Commentary ID agreement-commentary is distinct from the
+lunch-agreed title ID. Draft revision 2 records these corrections.
+
+Specific L02b follow-ups from Claude's optional writing assessment: vary the
+repeated action/tradeoff and fact/wry-follow-up rhythm while retaining clarity;
+reduce Gary's use as other speakers' punchline; distinguish Priya's voice from
+the narrator and give Morgan more of the confident-summary habit. Focused edits
+here remove the unexplained “minuted” wording, Pat's unfulfilled preference
+promise, two flat arrival endings and three identical title-flavour openings.
+They do not constitute the scheduled full writing review. Inspect remaining
+repetition across every row in L02b and record keep/change reasons there.
+L09 must specifically probe whether the Alex invitation's description predicts
+longer discussion and higher subsequent cost, before the outcome is shown.
+
+## L02 checks, issues and handoff
+
+Document-check results are recorded in the [implementation plan](implementation-plan.md).
+The reproducible checker is [lunch-content-checks.py](lunch-content-checks.py).
+It reads documentation only; it does not validate or bind a runtime pack.
+Formatting and reference checks accompany it. Full rendered 320 px fitting,
+engine fixtures, replay and statistical tuning remain at their scheduled tasks.
+
+Outstanding review issues: L02b must assess every opening, label, description,
+outcome, catalog and constructed run for voice, clarity, humour, repetition and
+honest tradeoffs. Initial weights/effects are unapproved hypotheses; this draft
+makes no policy-band, 9–12 median-turn or technique-share claim. Preserve the
+intentional room-booking tradeoff: hear pays more now to keep 60; timebox keeps
+less time cheaply; vp ties timebox utility and timebox wins the existing ASCII
+tie-break. Do not retune that behavior in an editorial pass. Dietary copy describes
+finding suitable options, not medical/dietary safety certification.
+
+Handoff to L02b: all 21 headings are review groups; each presentation and each
+family/response/outcome address is in scope, plus every catalog key and template.
+Use [the dedicated review brief](lunch-writing-review.md), record coverage and
+before/after reasons in its scheduled report, preserve mechanical columns, and
+flag design issues separately. The AI writing review has not been performed here.
+After that review Harry gives final D18 approval. No content transcription,
+gameplay, L02b report, human acceptance or runtime activation belongs to L02.
+Original task 12a's V4 remains pending in its separate historical record.

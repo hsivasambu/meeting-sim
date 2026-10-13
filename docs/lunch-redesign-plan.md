@@ -319,9 +319,9 @@ independently of any risk counter.
 
 ## Next task and implementation boundary
 
-**Next content task: L02.** L01 records the accepted contracts; delivery status
-is owned by the implementation plan. Author the complete draft, then run
-**L02b: adult workplace
+**L02 → L02b → final D18 approval.** The [complete L02 draft](content-table.md)
+is authored; current status is owned by the implementation plan. L01 recorded
+Harry’s approval and reconciled the normative rules. Next run **L02b: adult workplace
 comedy and writing review**, using the [review brief](lunch-writing-review.md),
 before Harry approves the final table for L05/L06/L07. The first engine code
 chunk is L03; it remains an additive fixture-tested capability before L08.

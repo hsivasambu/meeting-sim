@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → filler.
+// Approved docs/content-table-launch.md → filler.
 export const filler = {
   id: 'filler',
   kind: 'noise',

@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → hdmi.
+// Approved docs/content-table-launch.md → hdmi.
 export const hdmi = {
   id: 'hdmi',
   kind: 'noise',

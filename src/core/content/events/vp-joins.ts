@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → vp-joins.
+// Approved docs/content-table-launch.md → vp-joins.
 export const vpJoins = {
   id: 'vp-joins',
   kind: 'escalation',

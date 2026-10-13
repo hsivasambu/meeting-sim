@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → press-date.
+// Approved docs/content-table-launch.md → press-date.
 export const pressDate = {
   id: 'press-date',
   kind: 'substantive',
