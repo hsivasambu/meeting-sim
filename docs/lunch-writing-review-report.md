@@ -7,8 +7,10 @@ editorial pass, not an independent second reviewer or human humour study.
 Status: **Editorial review complete; Harry's final D18 content approval pending.**
 Input: `lunch-l02-draft-2` at commit `55d037e40b215c3286fe873500de67466dbb5f7c`.
 Output: **`lunch-l02b-reviewed-2`** (includes the review addendum below), the [complete revised table](content-table.md).
-This report identifies the output by that authored revision; it does not invent
-a delivery commit hash. Followed [the review brief](lunch-writing-review.md),
+The complete output is pinned at content commit
+`7efc2d19a65e5519063f2be653b2f02e438f326f` in
+[draft PR #18](https://github.com/hsivasambu/meeting-sim/pull/18); later delivery
+notes do not change its table. Followed [the review brief](lunch-writing-review.md),
 CLAUDE.md, the implementation plan, design, tech spec, approved redesign and
 accepted ADRs 0001–0008. ADRs 0005–0008 remain accepted without repeat approval.
 

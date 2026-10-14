@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L02b editorial review and Claude follow-ups complete; revision lunch-l02b-reviewed-2 awaits delivery checks and Harry's final D18 content approval.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Original 12a V4 evidence remains pending.
+Current: **L02b editorial review and Claude follow-ups delivered in draft PR #18 with passing local/hosted checks; revision lunch-l02b-reviewed-2 awaits Harry's final D18 content approval. Next task: L03.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Original 12a V4 evidence remains pending.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -196,7 +196,20 @@ Document audit with --review-base passes all nine checks, including 312 copy
 cells, 394 substitutions, 114 references in 24 documents, exact coverage and full
 57-edit reconstruction; formatting and `git diff --check` pass.
 
-Delivery: commit, PR stacked on #17 and hosted quality run pending.
+Delivery R1: **addressed**. Complete content revision `lunch-l02b-reviewed-2` is
+pinned at `7efc2d19a65e5519063f2be653b2f02e438f326f` in
+[draft PR #18](https://github.com/hsivasambu/meeting-sim/pull/18), stacked on #17's
+`docs/task-l02-lunch-content` at `55d037e40b215c3286fe873500de67466dbb5f7c`.
+The [hosted Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38491925365)
+**passes** for that PR head: `pnpm check`, build/size and all browser checks.
+Downloaded artifacts independently confirm 347 unit passes (zero failures/errors),
+30 E2E passes (zero unexpected/flaky/skipped), coverage above the unchanged gates,
+and 2,000 Greedy + 2,000 Random invariant/replay passes. GitHub tested the synthetic
+merge revision `b3384bffa88b3771dde3654680cd5ea3358d505a`, with
+`workingTreeDirty=false` and the exact same content/constants hash as local.
+The Vercel preview status passes. These delivery notes receive another hosted run
+on the final PR head; the authored table remains byte-identical to the pinned
+content commit. No merge, D18 approval or later-task completion is inferred.
 Final D18 content approval (including D1/D2) is still pending; ADRs 0005–0008 stay
 accepted. **Next task: L03 — engine outcome capability.** No implementation work
 is included here. L05/L06/L07 require D18 approval and other listed dependencies.

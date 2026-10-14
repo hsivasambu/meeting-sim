@@ -9,7 +9,7 @@ arrival/callback relationship, title predicate or formula is changed.
 
 | Finding                                       | Resolution                                                                                                                                                                                                                                                                                    |
 | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| R1 — commit, stacked PR and hosted evidence   | Delivery in progress; exact commit, PR and quality-run evidence will be recorded below before completion.                                                                                                                                                                                     |
+| R1 — commit, stacked PR and hosted evidence   | Addressed: content pinned to 7efc2d19a65e5519063f2be653b2f02e438f326f, draft PR #18 stacked on #17, hosted quality run 38491925365 passes; verified artifacts and evidence below.                                                                                                             |
 | Copy 1 — Sam's repeated contrast              | Keep the spice-return opening; rewrite spice-question/hear, menu-return/timebox and spice-return/owner/timebox with concrete actions and different payoffs.                                                                                                                                   |
 | Copy 2 — projector choices indistinguishable  | timebox reads on the laptop; park now sets the menu aside and returns to the cuisine without reading it this time. Label, description and outcome distinguish the no-progress postponement. No claim that earlier events never checked a menu. Topic remains big screen; mechanics unchanged. |
 | Copy 3 — Pat asked no question                | Pat now asks Where have we got to? All three arrival responses, the saved questions and existing topic make sense together.                                                                                                                                                                   |
@@ -26,7 +26,16 @@ arrival/callback relationship, title predicate or formula is changed.
 Local Node 24 `pnpm check`, build/size and all 30 E2E checks pass. The expanded
 document audit, formatting and whitespace checks pass. These were run for this
 follow-up, separately from Claude's evidence. The implementation plan records
-exact results; commit, stacked PR and hosted-run evidence are pending delivery.
+exact results. Revision `lunch-l02b-reviewed-2` is pinned at content commit
+`7efc2d19a65e5519063f2be653b2f02e438f326f` in
+[draft PR #18](https://github.com/hsivasambu/meeting-sim/pull/18), stacked on #17.
+[Hosted quality run 38491925365](https://github.com/hsivasambu/meeting-sim/actions/runs/38491925365)
+passes for that head. Downloaded reports confirm 347 unit passes, 30 E2E passes
+with no unexpected/flaky/skipped cases, coverage above unchanged gates, and clean
+simulation replay with the same content/constants hash as local. GitHub tests
+merge revision `b3384bffa88b3771dde3654680cd5ea3358d505a`; the content commit above
+pins the D18 review table. Delivery notes receive final-head CI without changing
+that table. R1 is resolved; the PR remains unmerged and D18 remains pending.
 
 ## Remaining handoff
 

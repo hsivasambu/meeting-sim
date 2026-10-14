@@ -3,7 +3,7 @@
 Run from repository root: python docs/lunch-content-checks.py
 Reproduce L02b audit: append --review-base 55d037e40b215c3286fe873500de67466dbb5f7c
 Checks markdown catalogs, substituted copy, relationship references and hand sums.
-Engine validation, rendered layout, editorial review and balance remain later gates.
+Engine validation, rendered layout, human playtesting and balance remain later gates.
 """
 
 from collections import defaultdict
