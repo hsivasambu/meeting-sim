@@ -773,16 +773,20 @@ slot has a legal construction; none establishes balanced rarity or human enjoyme
 final D18 handoff. They remain open; this correction changes no effect, weight,
 technique, availability condition, arrival/callback relationship or title predicate.
 
-- **D1 — uncertain choices are currently dominated by hear.** At the documented
+- **D1 — uncertain choices are dominated at the documented early states.** At those
   decision states, menu-needs/invite U=4.96 versus hear=10.8;
   quick-agreement/refocus U=5.88 versus hear=11.6 (q=0);
-  spice-question/timebox U=128/15 versus hear=58/5. Claude also found the reliable
-  option ahead at checked headcounts/clamped states. These are draft numbers,
-  not an approved intention that gambles should always be traps. Before final
-  D18 approval Harry must knowingly accept that draft tradeoff or request L12
-  tuning to make at least one uncertain choice competitive, with before/after
-  reports and the unchanged formula/targets. L02b must not resolve this by editing
-  weights/effects. No claim of exhaustive dominance across every state is made.
+  spice-question/timebox U=128/15 versus hear=58/5. The review's universal claim
+  that Greedy never takes a gamble is false at some valid clamped boundaries:
+  at P94,H6,Alex absent, menu-needs/invite U=−26/25 beats hear and park (both −6/5),
+  so invite has q=1. At P99,H7,Pat present, quick-agreement/refocus U=−206/25
+  beats hear (−44/5); the Pat invitation is disabled, so refocus has q=1.
+  These document-state witnesses are not seeded frequency results. Before final
+  D18 approval Harry must consider whether uncertainty is competitive at enough
+  useful stages, or request L12 tuning with before/after reports and unchanged
+  formulas/targets. Do not approve an “always traps” premise these numbers refute.
+  L02b must not settle this by editing weights/effects; L11/L12 measure policy
+  selection across actual runs. The three early-state utilities/q above stay valid.
 - **D2 — expert-dependent paths expand from one each to two each.** Pat retains
   room-booked/vp at P0 and additionally enables lunch-window/pat at P16. Alex
   enables menu-return/owner and spice-return/owner; those benefits require a

@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L02 draft authored; review corrections and delivery checks in progress. L02b and final D18 approval remain pending.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Original 12a V4 evidence remains pending.
+Current: **L02 draft and review corrections delivered with local/hosted checks; next is L02b, then Harry's final D18 approval.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Original 12a V4 evidence remains pending.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -118,7 +118,7 @@ human playtest pass is claimed.
 
 ### L02 — complete lunch content draft (October 13, 2026)
 
-Status: **draft authored; review corrections and PR/CI delivery pending. L02b and final D18 approval pending.**
+Status: **draft authored, review findings addressed and delivered in PR #17 with passing local/hosted checks. L02b and final D18 approval remain pending.**
 Dependency L01 is complete and ADRs 0005–0008 are accepted. This task does not
 reopen their rules/formulas or approve draft tuning. The active
 [content table](content-table.md) is revision `lunch-l02-draft-2`: 17 base families
@@ -179,13 +179,13 @@ was premature. The correction below documents the new source path before
 repointing the launch tests and provenance comments, with assertions intact.
 **Stop at L02. Next: L02b, using [the writing-review brief](lunch-writing-review.md).**
 
-### L02 review correction — delivery in progress
+### L02 review correction — delivered
 
 Harry instructed “Address all issues” in [Claude's review](L02-review.md).
 The [resolution record](L02-review-resolution.md) maps every finding to its fix
 or explicit L02b/D18/L09 follow-up. Fixed all five factual copy defects, separated
 commentary/title IDs, clarified Alex's possible longer discussion, and made D1
-(dominated uncertain choices) and D2 (two expert-dependent paths each) explicit
+(uncertain choices weak at the documented early states) and D2 (two expert-dependent paths each) explicit
 D18 decisions. Effects/weights/conditions/formulas remain unchanged. The corrected
 draft is lunch-l02-draft-2; no full L02b review or D18 approval is claimed.
 
@@ -224,12 +224,18 @@ No active gate, ignore rule or acceptance threshold changed.
 B2 delivery: L01's ratification and prior L00 planning inputs are committed as
 c03e961 on docs/task-l01-lunch-contracts in [draft PR #16](https://github.com/hsivasambu/meeting-sim/pull/16),
 stacked on still-open [12a PR #15](https://github.com/hsivasambu/meeting-sim/pull/15).
-L01's isolated [hosted quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38486889654) passes; downloaded reports verify 347 unit passes, 30 E2E passes, unchanged core coverage and clean committed simulation replay. L02 uses a separate dependent docs
-branch/PR; its hosted evidence remains pending until recorded. This explicit stack
+L01's isolated [hosted quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38486889654) passes; downloaded reports verify 347 unit passes, 30 E2E passes, unchanged core coverage and clean committed simulation replay. L02 is committed as d2b4d88 on docs/task-l02-lunch-content in [draft PR #17](https://github.com/hsivasambu/meeting-sim/pull/17), targeting the separate L01 branch. Its [hosted Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38487242892) passes. Downloaded reports verify 347 unit passes, 30 E2E passes (zero unexpected/flaky/skipped), unchanged coverage, and clean simulation matching local metrics/hash. Vercel previews for both PRs pass. This explicit stack
 preserves the current 12a implementation baseline without merging or accepting V4.
-Delivery is not complete until hosted checks pass. No L00 proposal-era revision
+The L01 and L02 content heads both have passing hosted evidence; the documentation follow-up receives the same hosted checks before closing this turn. No L00 proposal-era revision
 was reconstructed or historical approval invented; its accepted planning package
 is an input to L01's contract-ratification PR, not mixed with L02.
+
+D1 precision: the review's “Greedy never takes a gamble” assertion is not
+universal. Branchwise clamping gives menu-needs/invite q=1 at P94,H6,Alex absent
+(U=−26/25 versus hear/park −6/5), and quick-agreement/refocus q=1 at P99,H7,Pat
+present (U=−206/25 versus hear −44/5, invitation disabled). The document audit
+verifies both exact counterexamples. No weights/effects changed; D18 still needs
+to consider competitiveness through ordinary progression, with L11/L12 evidence.
 
 Remaining content work: L02b's full editorial coverage/change log, Harry's final
 D18 decisions/approval, later L09 human evidence and scheduled transcription/tuning.

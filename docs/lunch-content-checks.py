@@ -261,6 +261,21 @@ assert expected == {'menu-needs': (Fraction(124, 25), Fraction(77, 150)),
                     'quick-agreement': (Fraction(147, 25), Fraction(0)),
                     'spice-question': (Fraction(128, 15), Fraction(73, 96))}
 
+# Audit the review handoff's counterexamples to universal dominance, branch by branch.
+def clamped_document_utility(event, response, progress, headcount):
+    b = responses[event, response]
+    weighted = sum(int(r['Weight']) * (
+        min(100, max(0, progress + int(r['P']))) - progress
+        - Fraction(1, 5) * headcount * int(r['Min'])) for r in b)
+    return weighted / sum(int(r['Weight']) for r in b)
+
+assert clamped_document_utility('menu-needs', 'invite', 94, 6) == Fraction(-26, 25)
+assert clamped_document_utility('menu-needs', 'hear', 94, 6) == Fraction(-6, 5)
+assert clamped_document_utility('menu-needs', 'park', 94, 6) == Fraction(-6, 5)
+assert clamped_document_utility('quick-agreement', 'refocus', 99, 7) == Fraction(-206, 25)
+assert clamped_document_utility('quick-agreement', 'hear', 99, 7) == Fraction(-44, 5)
+assert responses['quick-agreement', 'invite'][0]['Requires'] == 'absent: vp'
+
 # Relative references and table formatting in all L02/authority documents.
 def heading_id(line):
     text = re.sub(r'[`*_]', '', line.lstrip('# ').strip()).lower()
@@ -308,3 +323,4 @@ print(f'PASS: {len(lengths)} copy cells, {rendered_count} complete catalog subst
 print('PASS: 3 complete walkthrough running sums, 3 callback mini-routes, 3 exact expected-utility/quality examples')
 print(f'PASS: table structure in {len(paths)} documents, {links} relative file/heading references, accepted ADR statuses')
 print('PASS: launch test/provenance source paths and exact CLAUDE/spec mirror')
+print('PASS: two clamped-state counterexamples; no universal gamble-dominance claim')
