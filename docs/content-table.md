@@ -1,7 +1,7 @@
 # Lunch meeting — complete content draft
 
-Task **L02** · October 13, 2026 · Revision **lunch-l02-draft-2**.
-**Authored draft, not D18 approved. L02b writing review is next.**
+Tasks **L02/L02b** · October 13, 2026 · Revision **lunch-l02b-reviewed-2**.
+**Complete draft; L02b AI writing review performed. Harry's D18 approval pending.**
 
 Sources: [design](design-doc-v2.md), [technical spec](tech-spec.md),
 [approved redesign](lunch-redesign-plan.md), accepted ADRs
@@ -10,7 +10,7 @@ Sources: [design](design-doc-v2.md), [technical spec](tech-spec.md),
 [0007](adr/0007-lunch-score-and-policies.md),
 [0008](adr/0008-lunch-presentation-and-unlocks.md).
 Rules/formulas are accepted; these words, initial effects and weights need
-[L02b](lunch-writing-review.md) and Harry's final D18 approval.
+Harry's final D18 approval after the [L02b review](lunch-writing-review-report.md).
 The illustrative 80/20 is not tuning. No runtime content is implemented here.
 
 The [preserved launch table](content-table-launch.md) is the historical approved
@@ -70,7 +70,7 @@ later responses never swap cuisines. Failed runs keep agreedCuisine null.
 ## Attendees and voice guide
 
 Stable IDs preserve asset identity; roles are plain name-card descriptions.
-These are voice intentions for L02b, not human humour findings.
+These are the reviewed voice intentions, not human humour findings.
 
 | ID     | Name   | Role                            | Starts present | Voice / comic friction                                                                          |
 | ------ | ------ | ------------------------------- | -------------- | ----------------------------------------------------------------------------------------------- |
@@ -158,11 +158,11 @@ does not imply a settled issue mysteriously became unsafe.
 | ------------ | ------------ | ------- | --------------------------------------------------------------- | ---------------- |
 | base         | —            | priya   | Six adults. One lunch. Which cuisine should we try to agree on? | nominate-cuisine |
 
-| Response | Label           | Description                                                                         | Technique | Requires | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom     | Outcome line                                                                           |
-| -------- | --------------- | ----------------------------------------------------------------------------------- | --------- | -------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | ------- | -------------------------------------------------------------------------------------- |
-| italian  | Suggest Italian | Start with Italian. A clear suggestion starts discussion; it does not settle lunch. | refocus   | —        | —          | nominated | 1      | 2   | 8   | —   | —    | —   | italian | Italian is on the board. Gary asks whether this is the final version of the board.     |
-| mexican  | Suggest Mexican | Start with Mexican. A clear suggestion starts discussion; it does not settle lunch. | refocus   | —        | —          | nominated | 1      | 2   | 8   | —   | —    | —   | mexican | Mexican is the suggestion. Nobody has agreed to lunch merely by spelling it correctly. |
-| thai     | Suggest Thai    | Start with Thai. A clear suggestion starts discussion; it does not settle lunch.    | refocus   | —        | —          | nominated | 1      | 2   | 8   | —   | —    | —   | thai    | Thai is nominated. Priya underlines it once, before anyone can request a logo.         |
+| Response | Label           | Description                                                                   | Technique | Requires | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom     | Outcome line                                                                           |
+| -------- | --------------- | ----------------------------------------------------------------------------- | --------- | -------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | ------- | -------------------------------------------------------------------------------------- |
+| italian  | Suggest Italian | Start with Italian. We still need to hear what everyone can eat.              | refocus   | —        | —          | nominated | 1      | 2   | 8   | —   | —    | —   | italian | Italian is on the board. Priya leaves space underneath for objections.                 |
+| mexican  | Suggest Mexican | Put Mexican forward. Expect opinions before anyone gets lunch.                | refocus   | —        | —          | nominated | 1      | 2   | 8   | —   | —    | —   | mexican | Mexican goes on the board under Suggestion. Priya is careful about the heading.        |
+| thai     | Suggest Thai    | Suggest Thai. Choosing a cuisine is the start; getting agreement is the work. | refocus   | —        | —          | nominated | 1      | 2   | 8   | —   | —    | —   | thai    | Thai is nominated. Priya puts the marker down before this becomes a branding exercise. |
 
 ### menu-needs
 
@@ -170,25 +170,25 @@ does not imply a settled issue mysteriously became unsafe.
 | ------------ | ------------ | ------- | ------------------------------------------------------------------------------------- | ------------ |
 | base         | —            | sam     | Can we find a proper vegetarian meal? I'd like lunch, rather than a decorative salad. | menu-needs   |
 
-| Response | Label                  | Description                                                                                | Technique | Requires      | Reason key   | Outcome        | Weight | Min | P   | CB          | Join  | End | Nom | Outcome line                                                                            |
-| -------- | ---------------------- | ------------------------------------------------------------------------------------------ | --------- | ------------- | ------------ | -------------- | ------ | --- | --- | ----------- | ----- | --- | --- | --------------------------------------------------------------------------------------- |
-| hear     | Check the meal options | Find a proper meal for everyone. Reliable reassurance, with a longer discussion.           | hear      | —             | —            | checked        | 1      | 6   | 18  | —           | —     | —   | —   | There are proper meal options. Sam can stop defending the radical idea of eating lunch. |
-| invite   | Ask Alex to join       | Bring in a menu reader. More future cost; an unclear menu note may mean longer discussion. | owner     | absent: legal | alex-present | helpful        | 3      | 4   | 16  | —           | legal | —   | —   | Alex joins with useful menu details. For once, additional paperwork earns its chair.    |
-| invite   | Ask Alex to join       | Bring in a menu reader. More future cost; an unclear menu note may mean longer discussion. | owner     | absent: legal | alex-present | more-questions | 2      | 7   | 4   | —           | legal | —   | —   | Alex joins and finds an unclear menu note. We spend longer checking it, not guessing.   |
-| park     | Return to meals later  | Keep moving now. Sam plans to return to the meal question.                                 | park      | —             | —            | deferred       | 1      | 1   | 0   | menu-return | —     | —   | —   | Sam writes down the meal question. Postponing it has not made a salad more filling.     |
+| Response | Label                  | Description                                                                              | Technique | Requires      | Reason key   | Outcome        | Weight | Min | P   | CB          | Join  | End | Nom | Outcome line                                                                            |
+| -------- | ---------------------- | ---------------------------------------------------------------------------------------- | --------- | ------------- | ------------ | -------------- | ------ | --- | --- | ----------- | ----- | --- | --- | --------------------------------------------------------------------------------------- |
+| hear     | Check the meal options | Take time to check for a proper meal. A solid answer helps the room move forward.        | hear      | —             | —            | checked        | 1      | 6   | 18  | —           | —     | —   | —   | There are proper meal options. Sam can stop defending the radical idea of eating lunch. |
+| invite   | Ask Alex to join       | Ask Alex to help. Alex stays, raising later costs; an unclear note could slow the check. | owner     | absent: legal | alex-present | helpful        | 3      | 4   | 16  | —           | legal | —   | —   | Alex joins with useful menu details. Someone has brought information to the discussion. |
+| invite   | Ask Alex to join       | Ask Alex to help. Alex stays, raising later costs; an unclear note could slow the check. | owner     | absent: legal | alex-present | more-questions | 2      | 7   | 4   | —           | legal | —   | —   | Alex joins and finds an unclear menu note. We spend longer checking it, not guessing.   |
+| park     | Return to meals later  | Keep moving now. Sam plans to return to the meal question.                               | park      | —             | —            | deferred       | 1      | 1   | 0   | menu-return | —     | —   | —   | Sam writes down the meal question. Postponing it has not made a salad more filling.     |
 
 ### lunch-window
 
 | Presentation | Variant when | Speaker | Opening line                                                                          | Response set |
 | ------------ | ------------ | ------- | ------------------------------------------------------------------------------------- | ------------ |
-| base         | —            | priya   | We need time to eat {cuisine}, as well as time to explain why we picked it.           | lunch-window |
-| variant-1    | present: vp  | priya   | Pat is here. Can we protect a lunch break from whatever Pat just put in the calendar? | lunch-window |
+| base         | —            | priya   | Can we leave time to eat {cuisine}? I would rather not spend the break explaining it. | lunch-window |
+| variant-1    | present: vp  | priya   | Pat, can you protect the lunch break? Including from invitations marked optional.     | lunch-window |
 
 | Response | Label                    | Description                                                                        | Technique | Requires    | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                         |
 | -------- | ------------------------ | ---------------------------------------------------------------------------------- | --------- | ----------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------------ |
-| hear     | Check everyone's break   | Hear the timing constraints. Takes longer, but gives people a workable lunch plan. | hear      | —           | —          | checked   | 1      | 6   | 18  | —   | —    | —   | —   | We find a workable lunch window. Gary reserves the right to call it a working lunch. |
+| hear     | Check everyone's break   | Hear the timing constraints. Takes longer, but gives people a workable lunch plan. | hear      | —           | —          | checked   | 1      | 6   | 18  | —   | —    | —   | —   | We find a workable lunch window. Priya asks everyone to leave it as lunch.           |
 | pat      | Ask Pat to protect lunch | Ask the senior colleague to protect the break. Quick help, if Pat is already here. | owner     | present: vp | pat-absent | protected | 1      | 3   | 16  | —   | —    | —   | —   | Pat protects the lunch break from other meetings. This meeting remains an exception. |
-| timebox  | Keep lunch simple        | Limit timing talk to the main constraint. Quicker, with less detail settled.       | timebox   | —           | —          | bounded   | 1      | 3   | 11  | —   | —    | —   | —   | We keep the break plan simple. Nobody gets a separate calendar colour for chewing.   |
+| timebox  | Keep lunch simple        | Limit timing talk to the main constraint. Quicker, with less detail settled.       | timebox   | —           | —          | bounded   | 1      | 3   | 11  | —   | —    | —   | —   | We cover the main timing constraint. The rest will have to fit around eating.        |
 
 ### portion-plan
 
@@ -196,23 +196,23 @@ does not imply a settled issue mysteriously became unsafe.
 | ------------ | ------------ | ------- | --------------------------------------------------------------------------------------- | ------------ |
 | base         | —            | jordan  | Could we each choose our own meal within {cuisine}? I have made a seating chart anyway. | portion-plan |
 
-| Response | Label                 | Description                                                                              | Technique | Requires | Reason key | Outcome    | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                               |
-| -------- | --------------------- | ---------------------------------------------------------------------------------------- | --------- | -------- | ---------- | ---------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------------------ |
-| owner    | Let people pick meals | Keep the cuisine suggestion and let adults choose their dishes. Some useful sorting now. | owner     | —        | —          | individual | 1      | 4   | 18  | —   | —    | —   | —   | Personal meal choices stay personal. Jordan files the seating chart under personal loss.   |
-| hear     | Hear the sharing plan | Discuss sharing versus separate meals. Thorough, but everyone will have an example.      | hear      | —        | —          | discussed  | 1      | 7   | 20  | —   | —    | —   | —   | We settle how to choose dishes. Gary's story about a stolen chip is entered in the record. |
-| email    | Send the suggestion   | Email the suggestion and move on. Quick clarity, with meal details still to discuss.     | email     | —        | —          | sent       | 1      | 2   | 7   | —   | —    | —   | —   | The {cuisine} suggestion is emailed. Everyone nearby checks a separate inbox.              |
+| Response | Label                 | Description                                                                          | Technique | Requires | Reason key | Outcome    | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                             |
+| -------- | --------------------- | ------------------------------------------------------------------------------------ | --------- | -------- | ---------- | ---------- | ------ | --- | --- | --- | ---- | --- | --- | ---------------------------------------------------------------------------------------- |
+| owner    | Let people pick meals | Keep {cuisine} on the table and sort out how people choose their own dishes.         | owner     | —        | —          | individual | 1      | 4   | 18  | —   | —    | —   | —   | Personal meal choices stay personal. Jordan files the seating chart under personal loss. |
+| hear     | Hear the sharing plan | Discuss sharing versus separate meals. Thorough, but everyone will have an example.  | hear      | —        | —          | discussed  | 1      | 7   | 20  | —   | —    | —   | —   | We settle how to choose dishes. Jordan accepts that separate meals still count as lunch. |
+| email    | Send the suggestion   | Email the suggestion and move on. Quick clarity, with meal details still to discuss. | email     | —        | —          | sent       | 1      | 2   | 7   | —   | —    | —   | —   | The {cuisine} suggestion is emailed. Everyone nearby checks a separate inbox.            |
 
 ### quick-agreement
 
-| Presentation | Variant when | Speaker | Opening line                                                                          | Response set    |
-| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------- | --------------- |
-| base         | —            | morgan  | We have a cuisine suggestion. Shall we try agreeing to {cuisine} before it gets cold? | quick-agreement |
+| Presentation | Variant when | Speaker | Opening line                                                                     | Response set    |
+| ------------ | ------------ | ------- | -------------------------------------------------------------------------------- | --------------- |
+| base         | —            | morgan  | It sounds like we are leaning toward {cuisine}. Shall I call that broad support? | quick-agreement |
 
 | Response | Label                 | Description                                                                              | Technique | Requires   | Reason key  | Outcome    | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                               |
 | -------- | --------------------- | ---------------------------------------------------------------------------------------- | --------- | ---------- | ----------- | ---------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------------------ |
 | refocus  | Try a quick agreement | Ask for a quick yes. It may build momentum, or reopen objections and take longer.        | refocus   | —          | —           | momentum   | 3      | 3   | 23  | —   | —    | —   | —   | Several heads nod toward {cuisine}. Morgan starts a summary before the nods have finished. |
 | refocus  | Try a quick agreement | Ask for a quick yes. It may build momentum, or reopen objections and take longer.        | refocus   | —          | —           | objections | 2      | 7   | -6  | —   | —    | —   | —   | The quick ask reopens objections. Morgan's summary was more confident than the room.       |
-| hear     | Hear each concern     | Give everyone a turn on the suggestion. Slower, but concerns get a proper hearing.       | hear      | —          | —           | heard      | 1      | 7   | 20  | —   | —    | —   | —   | Each concern gets a hearing. Having a turn turns out to be one of the concerns.            |
+| hear     | Hear each concern     | Give everyone a turn on the suggestion. Slower, but concerns get a proper hearing.       | hear      | —          | —           | heard      | 1      | 7   | 20  | —   | —    | —   | —   | Morgan hears each concern, then adds a carefully placed almost to the summary.             |
 | invite   | Bring Pat up to speed | Invite Pat to hear the suggestion. Useful support, with another adult staying afterward. | owner     | absent: vp | pat-present | briefed    | 1      | 4   | 12  | —   | vp   | —   | —   | Pat joins and hears the {cuisine} suggestion. The recap now has senior attendance.         |
 
 ### projector
@@ -221,23 +221,23 @@ does not imply a settled issue mysteriously became unsafe.
 | ------------ | ------------ | ------- | ------------------------------------------------------------------------------- | ------------ |
 | base         | —            | dev     | The menu is on my laptop. The screen is waiting for a cable none of us brought. | projector    |
 
-| Response | Label                | Description                                                                            | Technique | Requires | Reason key | Outcome  | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                        |
-| -------- | -------------------- | -------------------------------------------------------------------------------------- | --------- | -------- | ---------- | -------- | ------ | --- | --- | --- | ---- | --- | --- | ----------------------------------------------------------------------------------- |
-| hear     | Find the right cable | Try the big screen. Everyone waits while Dev checks the cupboard.                      | hear      | —        | —          | searched | 1      | 7   | 2   | —   | —    | —   | —   | Dev finds four cables. The cupboard has prepared for every meeting except this one. |
-| timebox  | Use the laptop       | Read the menu together on the laptop. Less comfortable, less discussion about cables.  | timebox   | —        | —          | shared   | 1      | 2   | 3   | —   | —    | —   | —   | The laptop becomes the screen. The large screen continues to supervise.             |
-| park     | Skip the big screen  | Skip the big screen and return to the cuisine. Fast, with the menu left on the laptop. | park      | —        | —          | skipped  | 1      | 1   | 0   | —   | —    | —   | —   | Lunch survives on the laptop. Dev stops negotiating with the large screen.          |
+| Response | Label                | Description                                                                               | Technique | Requires | Reason key | Outcome  | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                             |
+| -------- | -------------------- | ----------------------------------------------------------------------------------------- | --------- | -------- | ---------- | -------- | ------ | --- | --- | --- | ---- | --- | --- | ---------------------------------------------------------------------------------------- |
+| hear     | Find the right cable | Try the big screen. Everyone waits while Dev checks the cupboard.                         | hear      | —        | —          | searched | 1      | 7   | 2   | —   | —    | —   | —   | Dev finds four cables. The cupboard has prepared for every meeting except this one.      |
+| timebox  | Use the laptop       | Read the menu together on the laptop. Less comfortable, less discussion about cables.     | timebox   | —        | —          | shared   | 1      | 2   | 3   | —   | —    | —   | —   | Dev turns the laptop around. Everyone leans in rather than mentioning the big screen.    |
+| park     | Set the menu aside   | Set the menu aside and return to {cuisine}. Fast, with no help from reading it this time. | park      | —        | —          | skipped  | 1      | 1   | 0   | —   | —    | —   | —   | Dev closes the menu. Apparently we can discuss {cuisine} without looking at the options. |
 
 ### introductions
 
-| Presentation | Variant when | Speaker | Opening line                                                                         | Response set  |
-| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------ | ------------- |
-| base         | —            | jordan  | Before lunch, could we go around and say who we are? I know, but it feels inclusive. | introductions |
+| Presentation | Variant when | Speaker | Opening line                                                                  | Response set  |
+| ------------ | ------------ | ------- | ----------------------------------------------------------------------------- | ------------- |
+| base         | —            | jordan  | Could we say our names first? I know most of you, but I would hate to assume. | introductions |
 
 | Response | Label                 | Description                                                                          | Technique | Requires | Reason key | Outcome    | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                           |
 | -------- | --------------------- | ------------------------------------------------------------------------------------ | --------- | -------- | ---------- | ---------- | ------ | --- | --- | --- | ---- | --- | --- | -------------------------------------------------------------------------------------- |
 | hear     | Make introductions    | Let everyone introduce themselves. Polite, with a long detour from choosing lunch.   | hear      | —        | —          | introduced | 1      | 8   | 2   | —   | —    | —   | —   | Everyone reads the name already printed on their card. Jordan thanks them for sharing. |
 | timebox  | Keep it to names      | Give each person a brief hello. A little courtesy without everyone's career history. | timebox   | —        | —          | brief      | 1      | 2   | 1   | —   | —    | —   | —   | Names are exchanged. Most were already in the email that brought us here.              |
-| refocus  | Return to the cuisine | Remind everyone why we are here. Quick movement, with the welcome kept informal.     | refocus   | —        | —          | returned   | 1      | 1   | 3   | —   | —    | —   | —   | Priya welcomes the people she sees every morning, then returns to {cuisine}.           |
+| refocus  | Return to the cuisine | Remind everyone why we are here. Quick movement, with the welcome kept informal.     | refocus   | —        | —          | returned   | 1      | 1   | 3   | —   | —    | —   | —   | Priya gives everyone a quick welcome and points to {cuisine}. That is why we are here. |
 
 ### soup-debate
 
@@ -259,9 +259,9 @@ does not imply a settled issue mysteriously became unsafe.
 
 | Response | Label                 | Description                                                                             | Technique | Requires | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                              |
 | -------- | --------------------- | --------------------------------------------------------------------------------------- | --------- | -------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ----------------------------------------------------------------------------------------- |
-| hear     | Hear the old story    | Let Gary explain what happened. Slow, with little help separating precedent from lunch. | hear      | —        | —          | history   | 1      | 9   | 3   | —   | —    | —   | —   | The historic problem was a missing receipt. Gary still has the envelope.                  |
+| hear     | Hear the old story    | Hear the full story. It takes time, and little of the history helps with today's lunch. | hear      | —        | —          | history   | 1      | 9   | 3   | —   | —    | —   | —   | The historic problem was a missing receipt. Gary still has the envelope.                  |
 | timebox  | Ask what matters now  | Limit the story to today's choice. Some context, without the archive.                   | timebox   | —        | —          | relevant  | 1      | 3   | 4   | —   | —    | —   | —   | We extract the relevant detail. It fits in a sentence Gary would have put in an appendix. |
-| email    | Request the old notes | Ask Gary to email the history. Quick now; the story does not help this choice.          | email     | —        | —          | requested | 1      | 1   | 0   | —   | —    | —   | —   | Gary promises an attachment. The meeting has outsourced its next nine pages.              |
+| email    | Request the old notes | Ask Gary to email the history. Quick now; the story does not help this choice.          | email     | —        | —          | requested | 1      | 1   | 0   | —   | —    | —   | —   | Gary offers to send his notes, provided everyone reads them before commenting.            |
 
 ### lunch-committee
 
@@ -269,22 +269,22 @@ does not imply a settled issue mysteriously became unsafe.
 | ------------ | ------------ | ------- | ---------------------------------------------------------------------------------------- | --------------- |
 | base         | —            | jordan  | Would a small lunch committee help? I have a larger group in mind to choose the members. | lunch-committee |
 
-| Response | Label                  | Description                                                                                | Technique | Requires | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                               |
-| -------- | ---------------------- | ------------------------------------------------------------------------------------------ | --------- | -------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------------------ |
-| hear     | Discuss a committee    | Explore who would help choose lunch. Long discussion, with little progress on the cuisine. | hear      | —        | —          | committee | 1      | 8   | 2   | —   | —    | —   | —   | The committee needs everyone here. We have discovered the meeting we are already in.       |
-| owner    | Give Priya the summary | Ask Priya to summarise the cuisine and concerns. Useful focus, with a little work now.     | owner     | —        | —          | summary   | 1      | 3   | 7   | —   | —    | —   | —   | Priya summarises {cuisine} and the remaining concerns. Jordan asks who approves summaries. |
-| park     | Postpone the committee | Put the committee aside. Quick, but it contributes nothing to choosing lunch.              | park      | —        | —          | aside     | 1      | 1   | 0   | —   | —    | —   | —   | The committee proposal is filed. It has not been assigned a committee.                     |
+| Response | Label                  | Description                                                                                | Technique | Requires | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                             |
+| -------- | ---------------------- | ------------------------------------------------------------------------------------------ | --------- | -------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ---------------------------------------------------------------------------------------- |
+| hear     | Discuss a committee    | Explore who would help choose lunch. Long discussion, with little progress on the cuisine. | hear      | —        | —          | committee | 1      | 8   | 2   | —   | —    | —   | —   | The committee needs everyone here. We have discovered the meeting we are already in.     |
+| owner    | Give Priya the summary | Ask Priya to summarise the cuisine and concerns. Useful focus, with a little work now.     | owner     | —        | —          | summary   | 1      | 3   | 7   | —   | —    | —   | —   | Priya sums up {cuisine} and the concerns. Jordan offers to circulate the summary.        |
+| park     | Postpone the committee | Put the committee aside. Quick, but it contributes nothing to choosing lunch.              | park      | —        | —          | aside     | 1      | 1   | 0   | —   | —    | —   | —   | Jordan agrees to postpone forming the committee, but keeps the proposed membership list. |
 
 ### chair-arrangement
 
-| Presentation | Variant when | Speaker | Opening line                                                                      | Response set      |
-| ------------ | ------------ | ------- | --------------------------------------------------------------------------------- | ----------------- |
-| base         | —            | morgan  | Could we move the chairs into a circle? The current shape feels quite indecisive. | chair-arrangement |
+| Presentation | Variant when | Speaker | Opening line                                                                  | Response set      |
+| ------------ | ------------ | ------- | ----------------------------------------------------------------------------- | ----------------- |
+| base         | —            | morgan  | A circle would help us reach agreement. I have seen this work at an away day. | chair-arrangement |
 
-| Response | Label                | Description                                                                             | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                           |
-| -------- | -------------------- | --------------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | -------------------------------------------------------------------------------------- |
-| hear     | Rearrange the chairs | Make the room feel collaborative. Takes time without settling a lunch preference.       | hear      | —        | —          | moved   | 1      | 6   | 1   | —   | —    | —   | —   | The chairs form a circle. The conversation had achieved this shape without assistance. |
-| refocus  | Keep the seats       | Keep everyone seated and return to lunch. Quick focus, without improving the furniture. | refocus   | —        | —          | seated  | 1      | 1   | 3   | —   | —    | —   | —   | We continue from the existing chairs. Morgan calls it an interim arrangement.          |
+| Response | Label                | Description                                                                        | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                           |
+| -------- | -------------------- | ---------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | -------------------------------------------------------------------------------------- |
+| hear     | Rearrange the chairs | Make the room feel collaborative. Takes time without settling a lunch preference.  | hear      | —        | —          | moved   | 1      | 6   | 1   | —   | —    | —   | —   | The chairs form a circle. The conversation had achieved this shape without assistance. |
+| refocus  | Keep the seats       | Stay seated and get back to lunch. A little progress without a room rearrangement. | refocus   | —        | —          | seated  | 1      | 1   | 3   | —   | —    | —   | —   | We continue from the existing chairs. Morgan calls it an interim arrangement.          |
 
 ### spice-question
 
@@ -292,35 +292,35 @@ does not imply a settled issue mysteriously became unsafe.
 | ------------ | ------------ | ------- | ------------------------------------------------------------------------------------ | -------------- |
 | base         | —            | sam     | I'd consider {cuisine}, but I'd like a mild option. Can we check rather than assume? | spice-question |
 
-| Response | Label                  | Description                                                                               | Technique | Requires | Reason key | Outcome  | Weight | Min | P   | CB           | Join | End | Nom | Outcome line                                                                         |
-| -------- | ---------------------- | ----------------------------------------------------------------------------------------- | --------- | -------- | ---------- | -------- | ------ | --- | --- | ------------ | ---- | --- | --- | ------------------------------------------------------------------------------------ |
-| hear     | Check mild options     | Read the options properly. A reliable answer takes time and respects the preference.      | hear      | —        | —          | checked  | 1      | 7   | 20  | —            | —    | —   | —   | We check the mild options. Sam wanted information, not a character assessment.       |
-| timebox  | Try a quick menu check | Look quickly for a mild option. It may reassure Sam, or an unclear note may set us back.  | timebox   | —        | —          | clear    | 2      | 3   | 22  | —            | —    | —   | —   | The quick check finds a clear mild option. Sam can stop negotiating with adjectives. |
-| timebox  | Try a quick menu check | Look quickly for a mild option. It may reassure Sam, or an unclear note may set us back.  | timebox   | —        | —          | unclear  | 1      | 6   | -4  | —            | —    | —   | —   | The menu note is unclear. Sam is less convinced, and we spend longer reading it.     |
-| park     | Check spice later      | Move on now and return to the mild option question. The preference still needs attention. | park      | —        | —          | deferred | 1      | 1   | 0   | spice-return | —    | —   | —   | Sam notes the mild option question. Calling it later has not answered it.            |
+| Response | Label                  | Description                                                                                | Technique | Requires | Reason key | Outcome  | Weight | Min | P   | CB           | Join | End | Nom | Outcome line                                                                         |
+| -------- | ---------------------- | ------------------------------------------------------------------------------------------ | --------- | -------- | ---------- | -------- | ------ | --- | --- | ------------ | ---- | --- | --- | ------------------------------------------------------------------------------------ |
+| hear     | Check mild options     | Read the options properly. A reliable answer takes time and respects the preference.       | hear      | —        | —          | checked  | 1      | 7   | 20  | —            | —    | —   | —   | We find mild options. Sam asks for the menu to stay open while everyone catches up.  |
+| timebox  | Try a quick menu check | Scan for a mild option. A clear answer helps; an unclear note may set us back and drag on. | timebox   | —        | —          | clear    | 2      | 3   | 22  | —            | —    | —   | —   | The quick check finds a clear mild option. Sam can stop negotiating with adjectives. |
+| timebox  | Try a quick menu check | Scan for a mild option. A clear answer helps; an unclear note may set us back and drag on. | timebox   | —        | —          | unclear  | 1      | 6   | -4  | —            | —    | —   | —   | The menu note is unclear. Sam is less convinced, and we spend longer reading it.     |
+| park     | Check spice later      | Move on now and return to the mild option question. The preference still needs attention.  | park      | —        | —          | deferred | 1      | 1   | 0   | spice-return | —    | —   | —   | Sam notes the mild option question. Calling it later has not answered it.            |
 
 ### alex-arrives
 
-| Presentation | Variant when | Speaker | Opening line                                                                               | Response set |
-| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------------ | ------------ |
-| base         | —            | legal   | I heard there was a menu discussion. I have the menu, which seemed a useful qualification. | alex-arrives |
+| Presentation | Variant when | Speaker | Opening line                                                                       | Response set |
+| ------------ | ------------ | ------- | ---------------------------------------------------------------------------------- | ------------ |
+| base         | —            | legal   | I brought the menu. I can check the wording, if that would help more than a recap. | alex-arrives |
 
-| Response | Label                  | Description                                                                       | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join  | End | Nom | Outcome line                                                                      |
-| -------- | ---------------------- | --------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ----- | --- | --- | --------------------------------------------------------------------------------- |
-| hear     | Give Alex the history  | Welcome Alex and explain the discussion fully. Useful context, with a long recap. | hear      | —        | —          | joined  | 1      | 8   | 10  | —   | legal | —   | —   | Alex joins and gets the full history of a cuisine we have not yet agreed on.      |
-| timebox  | Give Alex the question | Welcome Alex with the cuisine and question. A short recap; Alex stays afterward.  | timebox   | —        | —          | joined  | 1      | 3   | 8   | —   | legal | —   | —   | Alex joins and opens the {cuisine} menu. Relevant reading makes a quiet entrance. |
+| Response | Label                  | Description                                                                       | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join  | End | Nom | Outcome line                                                                               |
+| -------- | ---------------------- | --------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ----- | --- | --- | ------------------------------------------------------------------------------------------ |
+| hear     | Give Alex the history  | Welcome Alex and explain the discussion fully. Useful context, with a long recap. | hear      | —        | —          | joined  | 1      | 8   | 10  | —   | legal | —   | —   | Alex joins, waits through the full history, then asks which menu item needs checking.      |
+| timebox  | Give Alex the question | Welcome Alex with the cuisine and question. A short recap; Alex stays afterward.  | timebox   | —        | —          | joined  | 1      | 3   | 8   | —   | legal | —   | —   | Alex joins, opens the {cuisine} menu and asks for the question rather than the background. |
 
 ### pat-arrives
 
-| Presentation | Variant when | Speaker | Opening line                                                                       | Response set |
-| ------------ | ------------ | ------- | ---------------------------------------------------------------------------------- | ------------ |
-| base         | —            | vp      | Mind if I join? I saw lunch in the invitation. Tell me where we are before I help. | pat-arrives  |
+| Presentation | Variant when | Speaker | Opening line                                                                         | Response set |
+| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------ | ------------ |
+| base         | —            | vp      | I saw lunch in the invitation. Where have we got to? I may be able to simplify this. | pat-arrives  |
 
-| Response | Label                    | Description                                                                                | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                            |
-| -------- | ------------------------ | ------------------------------------------------------------------------------------------ | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | --------------------------------------------------------------------------------------- |
-| hear     | Give Pat the full recap  | Welcome Pat and recap the discussion. Adds context and another person to later costs.      | hear      | —        | —          | joined  | 1      | 8   | 8   | —   | vp   | —   | —   | Pat joins and asks for background. Our attempt to avoid a recap gets its own recap.     |
-| timebox  | Give Pat the short recap | Welcome Pat with the cuisine and main concern. Quicker, with Pat staying for the rest.     | timebox   | —        | —          | joined  | 1      | 3   | 6   | —   | vp   | —   | —   | Pat joins and hears the {cuisine} suggestion. The short version receives a long nod.    |
-| park     | Save Pat's questions     | Welcome Pat but postpone the questions. Quick now, with another adult staying in the room. | park      | —        | —          | joined  | 1      | 1   | 0   | —   | vp   | —   | —   | Pat joins and writes down a question. The room contains another person with stationery. |
+| Response | Label                    | Description                                                                                | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                              |
+| -------- | ------------------------ | ------------------------------------------------------------------------------------------ | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | ----------------------------------------------------------------------------------------- |
+| hear     | Give Pat the full recap  | Welcome Pat and recap the discussion. Adds context and another person to later costs.      | hear      | —        | —          | joined  | 1      | 8   | 8   | —   | vp   | —   | —   | Pat joins, hears the full recap and repeats the cuisine suggestion as a helpful new idea. |
+| timebox  | Give Pat the short recap | Welcome Pat with the cuisine and main concern. Quicker, with Pat staying for the rest.     | timebox   | —        | —          | joined  | 1      | 3   | 6   | —   | vp   | —   | —   | Pat joins and hears the {cuisine} suggestion. The short version receives a long nod.      |
+| park     | Save Pat's questions     | Welcome Pat but postpone the questions. Quick now, with another adult staying in the room. | park      | —        | —          | joined  | 1      | 1   | 0   | —   | vp   | —   | —   | Pat joins and saves the questions for later. Being here already counts as involvement.    |
 
 ### room-booked
 
@@ -331,8 +331,8 @@ does not imply a settled issue mysteriously became unsafe.
 | Response | Label                  | Description                                                                          | Technique | Requires    | Reason key | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                           |
 | -------- | ---------------------- | ------------------------------------------------------------------------------------ | --------- | ----------- | ---------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | -------------------------------------------------------------------------------------- |
 | hear     | Check the reservation  | Confirm the full booking. Keeps the original hour, at the cost of discussion time.   | hear      | —           | —          | confirmed | 1      | 5   | 0   | —   | —    | 60  | —   | The original hour is confirmed. The next team looks for another room to discuss rooms. |
-| timebox  | Accept the earlier end | Accept the shorter booking and keep moving. Quick now, with less time left to agree. | timebox   | —           | —          | shortened | 1      | 1   | 0   | —   | —    | 45  | —   | We accept the earlier finish. The room now has a deadline smaller than its ambitions.  |
-| vp       | Ask Pat to handle it   | Let Pat protect the booking. Quick if Pat is here; the lunch question still waits.   | owner     | present: vp | pat-absent | protected | 1      | 1   | 0   | —   | —    | 60  | —   | Pat mentions the original booking. The next team suddenly remembers another room.      |
+| timebox  | Accept the earlier end | Accept the shorter booking and keep moving. Quick now, with less time left to agree. | timebox   | —           | —          | shortened | 1      | 1   | 0   | —   | —    | 45  | —   | We accept the earlier finish. The next team stays by the door to help us remember.     |
+| vp       | Ask Pat to handle it   | Let Pat protect the booking. Quick if Pat is here; the lunch question still waits.   | owner     | present: vp | pat-absent | protected | 1      | 1   | 0   | —   | —    | 60  | —   | Pat mentions the original booking. The next team decides the hour was always ours.     |
 
 ### menu-read
 
@@ -360,11 +360,11 @@ does not imply a settled issue mysteriously became unsafe.
 | ------------ | ------------ | ------- | --------------------------------------------------------------------------------------- | ------------ |
 | base         | —            | sam     | We postponed the meal options. Can we finish that question instead of postponing lunch? | menu-return  |
 
-| Response | Label                 | Description                                                                         | Technique | Requires       | Reason key  | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                               |
-| -------- | --------------------- | ----------------------------------------------------------------------------------- | --------- | -------------- | ----------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------------------ |
-| hear     | Finish the menu check | Settle the deferred meal question. Reliable progress, with a longer check.          | hear      | —              | —           | finished  | 1      | 6   | 18  | —   | —    | —   | —   | We finish the meal check. Sam thanks everyone for establishing that lunch includes food.   |
-| owner    | Use Alex's menu notes | Ask Alex to explain the options. Efficient help if the menu reader is already here. | owner     | present: legal | alex-absent | explained | 1      | 3   | 16  | —   | —    | —   | —   | Alex explains the meal options. The deferred question finally earns a full stop.           |
-| timebox  | Read the main options | Check the main options together. Quicker, with less reassurance than a full review. | timebox   | —              | —           | read      | 1      | 3   | 10  | —   | —    | —   | —   | We read the main options. Sam gets information rather than another promise to investigate. |
+| Response | Label                 | Description                                                                         | Technique | Requires       | Reason key  | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                             |
+| -------- | --------------------- | ----------------------------------------------------------------------------------- | --------- | -------------- | ----------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ---------------------------------------------------------------------------------------- |
+| hear     | Finish the menu check | Settle the deferred meal question. Reliable progress, with a longer check.          | hear      | —              | —           | finished  | 1      | 6   | 18  | —   | —    | —   | —   | We finish the meal check. Sam thanks everyone for establishing that lunch includes food. |
+| owner    | Use Alex's menu notes | Ask Alex to explain the options. Efficient help if the menu reader is already here. | owner     | present: legal | alex-absent | explained | 1      | 3   | 16  | —   | —    | —   | —   | Alex explains the meal options. Sam asks why we could not have started with that.        |
+| timebox  | Read the main options | Check the main options together. Quicker, with less reassurance than a full review. | timebox   | —              | —           | read      | 1      | 3   | 10  | —   | —    | —   | —   | We read the main options. Sam picks out the meals that were missing from the discussion. |
 
 ### soup-return
 
@@ -372,10 +372,10 @@ does not imply a settled issue mysteriously became unsafe.
 | ------------ | ------------ | ------- | -------------------------------------------------------------------------------- | ------------ |
 | base         | —            | gary    | You promised me a last word on soup. I have reduced it to three opening remarks. | soup-return  |
 
-| Response | Label                 | Description                                                                           | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                           |
-| -------- | --------------------- | ------------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | -------------------------------------------------------------------------------------- |
-| hear     | Hear the last word    | Honour the promised discussion. Takes time and does little for choosing a cuisine.    | hear      | —        | —          | heard   | 1      | 6   | 1   | —   | —    | —   | —   | Gary finishes his soup remarks. The lunch discussion is permitted to resume.           |
-| refocus  | Close the soup debate | Acknowledge Gary and close the tangent. Quick focus, with the soup theory unresolved. | refocus   | —        | —          | closed  | 1      | 1   | 4   | —   | —    | —   | —   | Soup keeps its ambiguous status. The promise is discharged; no sequel is commissioned. |
+| Response | Label                 | Description                                                                           | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                 |
+| -------- | --------------------- | ------------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | ---------------------------------------------------------------------------- |
+| hear     | Hear the last word    | Honour the promised discussion. Takes time and does little for choosing a cuisine.    | hear      | —        | —          | heard   | 1      | 6   | 1   | —   | —    | —   | —   | Gary finishes his soup remarks. The lunch discussion is permitted to resume. |
+| refocus  | Close the soup debate | Acknowledge Gary and close the tangent. Quick focus, with the soup theory unresolved. | refocus   | —        | —          | closed  | 1      | 1   | 4   | —   | —    | —   | —   | Gary gets his acknowledgement. The soup question gets no more meeting time.  |
 
 ### spice-return
 
@@ -383,17 +383,17 @@ does not imply a settled issue mysteriously became unsafe.
 | ------------ | ------------ | ------- | ------------------------------------------------------------------------------------ | ------------ |
 | base         | —            | sam     | The mild option question is back. I still need an answer, rather than encouragement. | spice-return |
 
-| Response | Label                   | Description                                                                           | Technique | Requires       | Reason key  | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                              |
-| -------- | ----------------------- | ------------------------------------------------------------------------------------- | --------- | -------------- | ----------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ----------------------------------------------------------------------------------------- |
-| hear     | Finish the spice check  | Settle the deferred preference. Reliable reassurance takes a longer discussion.       | hear      | —              | —           | finished  | 1      | 6   | 18  | —   | —    | —   | —   | We finish checking mild options. Nobody has to defend a preference to a whiteboard.       |
-| owner    | Ask Alex for the detail | Use Alex's menu reading to answer. Efficient, if Alex is already in the room.         | owner     | present: legal | alex-absent | explained | 1      | 3   | 16  | —   | —    | —   | —   | Alex clarifies the mild options. Sam's preference is treated as information, which helps. |
-| timebox  | Check the key wording   | Read the key wording together. Quicker than the full check, with less detail settled. | timebox   | —              | —           | read      | 1      | 3   | 10  | —   | —    | —   | —   | We read the relevant wording. The conversation gets more specific and less motivational.  |
+| Response | Label                   | Description                                                                           | Technique | Requires       | Reason key  | Outcome   | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                    |
+| -------- | ----------------------- | ------------------------------------------------------------------------------------- | --------- | -------------- | ----------- | --------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------- |
+| hear     | Finish the spice check  | Settle the deferred preference. Reliable reassurance takes a longer discussion.       | hear      | —              | —           | finished  | 1      | 6   | 18  | —   | —    | —   | —   | We finish checking mild options. Sam says that was the question all along.      |
+| owner    | Ask Alex for the detail | Use Alex's menu reading to answer. Efficient, if Alex is already in the room.         | owner     | present: legal | alex-absent | explained | 1      | 3   | 16  | —   | —    | —   | —   | Alex clarifies the mild options. Sam can finally stop asking the same question. |
+| timebox  | Check the key wording   | Read the key wording together. Quicker than the full check, with less detail settled. | timebox   | —              | —           | read      | 1      | 3   | 10  | —   | —    | —   | —   | We check the key wording. Sam underlines mild and hands the menu back.          |
 
 ### filler
 
-| Presentation | Variant when | Speaker | Opening line                                                 | Response set |
-| ------------ | ------------ | ------- | ------------------------------------------------------------ | ------------ |
-| base         | —            | room    | Nobody speaks. The clock has no such professional restraint. | filler       |
+| Presentation | Variant when | Speaker | Opening line                                                                         | Response set |
+| ------------ | ------------ | ------- | ------------------------------------------------------------------------------------ | ------------ |
+| base         | —            | room    | Nobody speaks. Everyone waits for someone else to take responsibility for the pause. | filler       |
 
 | Response | Label                  | Description                                                                             | Technique | Requires | Reason key | Outcome | Weight | Min | P   | CB  | Join | End | Nom | Outcome line                                                                   |
 | -------- | ---------------------- | --------------------------------------------------------------------------------------- | --------- | -------- | ---------- | ------- | ------ | --- | --- | --- | ---- | --- | --- | ------------------------------------------------------------------------------ |
@@ -424,12 +424,12 @@ the success summary. Flavour lines below make no success claim on failure titles
 | ---- | ------------------------ | ---------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
 | 1    | inbox-zero               | Inbox Zero                   | total score ≥950                                             | A meeting so efficient someone will ask you to organise another one.                 |
 | 2    | efficient-facilitator    | Efficient Facilitator        | ending=decision and score ≥850                               | You kept lunch within sight of the people discussing it.                             |
-| 3    | lunch-agreed             | Lunch Is Settled             | ending=decision and agreedCuisine recorded                   | The board can stop auditioning headings. {agreedCuisine} survives the final draft.   |
+| 3    | lunch-agreed             | Lunch Is Settled             | ending=decision and agreedCuisine recorded                   | Everyone agreed on {agreedCuisine}. You may put the marker down.                     |
 | 4    | death-by-diligence       | Death by Diligence           | ending=decision and personMinutes ≥270                       | The discussion developed traditions. At last, one of them is eating {agreedCuisine}. |
 | 5    | table-for-six            | Table for Six                | ending=decision and final headcount=6                        | The original six agreed on {agreedCuisine}. Nobody had to book an extra chair.       |
 | 6    | reply-all-royalty        | Reply-All Royalty            | peakHeadcount=8                                              | Eight adults were involved. Lunch acquired an audience.                              |
 | 7    | parking-lot-attendant    | Parking Lot Attendant        | parkedCount ≥4                                               | Several topics were postponed. Your notes have a busier afternoon than you do.       |
-| 8    | second-helping           | Second Helping               | ending=decision and resolvedCallbackCount ≥1                 | We returned to a postponed topic and still reached {agreedCuisine}. Seconds, anyone? |
+| 8    | second-helping           | Second Helping               | ending=decision and resolvedCallbackCount ≥1                 | A postponed question came back. You dealt with it and still got to {agreedCuisine}.  |
 | 9    | played-it-right          | Played It Right, Lost Anyway | scored decision count ≥1 and avg q ≥0.85 and ending≠decision | Sensible choices, no agreement. The room declines to reward your judgement.          |
 | 10   | take-this-offline        | Let's Take This Offline      | ending=called-early                                          | You ended the discussion. The invitation for the next one is already being drafted.  |
 | 11   | calendar-criminal        | Calendar Criminal            | ending=time-expired                                          | The booking ended before the discussion did. The next team brought witnesses.        |
@@ -453,12 +453,12 @@ Exactly one epilogue by ending, no risk tiers. Success uses agreedCuisine, never
 the nomination as a substitute. A cancelled run has no resolved nomination; an
 unresolved first presentation is not an agreement or an earned lunch decision.
 
-| Key          | Ending       | Line                                                                                |
-| ------------ | ------------ | ----------------------------------------------------------------------------------- |
-| decision     | decision     | Everyone present agrees on {agreedCuisine}. Lunch may now proceed without minutes.  |
-| called-early | called-early | No agreement. The discussion ends; the lunch suggestion remains a suggestion.       |
-| time-expired | time-expired | No agreement. The next team gets the room and inherits none of our lunch expertise. |
-| cancelled    | cancelled    | No agreement. This could have been an email. There is still time to make it one.    |
+| Key          | Ending       | Line                                                                                        |
+| ------------ | ------------ | ------------------------------------------------------------------------------------------- |
+| decision     | decision     | Everyone present agrees on {agreedCuisine}. Please let the next conversation be over lunch. |
+| called-early | called-early | No agreement. The discussion ends; the lunch suggestion remains a suggestion.               |
+| time-expired | time-expired | No agreement. The next team gets the room and inherits none of our lunch expertise.         |
+| cancelled    | cancelled    | No agreement. This could have been an email. There is still time to make it one.            |
 
 Moment priority: first postponed topic in resolve-log order, else first join,
 else ending fallback. These are narrative summaries only, never rule inputs.
@@ -478,7 +478,7 @@ claim. Minute is elapsed discussion time, not wall-clock play duration.
 | Key               | Use                        | Line                                                                                |
 | ----------------- | -------------------------- | ----------------------------------------------------------------------------------- |
 | first-postponed   | first selected park        | Postponed at minute {minute}: {topic}. The notes will remember.                     |
-| first-arrival     | first join, if no park     | {attendee} joined at minute {minute}. The discussion acquired another chair.        |
+| first-arrival     | first join, if no park     | {attendee} joined at minute {minute}. The discussion now has another participant.   |
 | decision-fallback | decision, no park/join     | The room agreed on {agreedCuisine}. Nobody needed a follow-up to identify lunch.    |
 | early-fallback    | called-early, no park/join | The discussion stopped before agreement. The suggestion is still only a suggestion. |
 | expiry-fallback   | time-expired, no park/join | No cuisine was agreed before the booking ended. The next team would like its room.  |
@@ -495,86 +495,86 @@ long explanations use separate lines, not an automatic limit increase. Text-only
 L07 can use these without art. Runtime labels removed by the redesign must not be
 carried forward from launch. Placeholder formatting is UI-only, using engine facts.
 
-| Key                       | Copy                                                                                     |
-| ------------------------- | ---------------------------------------------------------------------------------------- |
-| product-title             | This Could've Been an Email                                                              |
-| objective                 | Agree on a cuisine for lunch.                                                            |
-| premise                   | Six adults. One lunch. Apparently this needs a meeting.                                  |
-| start                     | Start                                                                                    |
-| loading                   | Booking the room…                                                                        |
-| load-failed               | The room did not load. Lunch is not being delayed for a dramatic entrance.               |
-| retry                     | Retry                                                                                    |
-| meeting                   | The lunch meeting                                                                        |
-| instructions-action       | Choose a suggestion, then help the room agree. Time moves when you answer.               |
-| instructions-cost         | Everyone stays. Extra colleagues make later discussion more expensive.                   |
-| instructions-chance       | Some choices can turn out differently. Their descriptions explain the possible setback.  |
-| keyboard                  | Enter: show choices or continue. 1–3: choose a response.                                 |
-| show-choices              | Show choices                                                                             |
-| continue                  | Continue                                                                                 |
-| call-it                   | Call it                                                                                  |
-| call-it-description       | End the discussion without agreement.                                                    |
-| roster                    | In the room                                                                              |
-| room-speaker              | The room                                                                                 |
-| room-accessible           | In the lunch meeting: {roster}.                                                          |
-| progress                  | Agreement progress                                                                       |
-| minutes                   | Minutes discussed                                                                        |
-| booking                   | Booking ends at minute                                                                   |
-| remaining                 | Minutes remaining                                                                        |
-| cost                      | Discussion cost                                                                          |
-| cost-explanation          | Salary time spent discussing lunch, not the price of food.                               |
-| considering-empty         | No cuisine suggested yet                                                                 |
-| considering               | Considering: {cuisine}                                                                   |
-| headcount                 | Adults present                                                                           |
-| peak-headcount            | Most adults present                                                                      |
-| postponed                 | Topics postponed                                                                         |
-| results                   | Results                                                                                  |
-| score                     | Score                                                                                    |
-| outcome-component         | Agreement                                                                                |
-| efficiency-component      | Cost efficiency                                                                          |
-| decisions-component       | Choices                                                                                  |
-| choices-explanation       | Choices rewards the expected tradeoff when you chose, before any uncertain outcome.      |
-| actual-explanation        | Agreement and cost reflect what actually happened. A setback need not mean a bad choice. |
-| success-result            | Agreed: {agreedCuisine}                                                                  |
-| success-summary           | Everyone present agreed on {agreedCuisine}.                                              |
-| failure-result            | No agreement                                                                             |
-| failure-nomination        | Suggested: {cuisine}. Not agreed.                                                        |
-| failure-no-nomination     | No cuisine was nominated.                                                                |
-| ended-decision            | Agreed: {agreedCuisine}                                                                  |
-| ended-called-early        | Discussion ended early. No agreement.                                                    |
-| ended-time-expired        | Booking expired. No agreement.                                                           |
-| ended-cancelled           | Meeting cancelled. No agreement.                                                         |
-| fallback-decision-heading | Agreed: {agreedCuisine}                                                                  |
-| fallback-failure-heading  | No agreement                                                                             |
-| moment                    | Meeting moment                                                                           |
-| replay                    | Play again                                                                               |
-| current-collection        | Lunch collection                                                                         |
-| legacy-collection         | Launch meeting collection                                                                |
-| legacy-explanation        | Awards from the original launch meeting. They do not fill the lunch collection.          |
-| collection-count          | {unlocked} of 12 lunch titles                                                            |
-| locked-title              | Not yet earned                                                                           |
-| newly-earned              | New title earned: {title}                                                                |
-| share                     | Share result                                                                             |
-| download                  | Download image                                                                           |
-| copy-text                 | Copy text                                                                                |
-| copied                    | Text copied                                                                              |
-| clipboard-fallback        | Copy the text below. The clipboard has declined the invitation.                          |
-| save-image                | Press and hold the image to save it.                                                     |
-| share-unavailable         | File sharing is unavailable here. You can save the image or copy the text.               |
-| share-failed              | Sharing did not finish. You can still save the image or copy the text.                   |
-| share-success             | We agreed on {agreedCuisine} in This Could've Been an Email.                             |
-| share-early               | No lunch agreement. I ended the discussion in This Could've Been an Email.               |
-| share-expired             | No lunch agreement. The room booking expired in This Could've Been an Email.             |
-| share-cancelled           | No lunch agreement. I cancelled the meeting in This Could've Been an Email.              |
-| share-nomination          | Suggested: {cuisine}. Not agreed.                                                        |
-| share-score               | Score: {score}/1000                                                                      |
-| share-time                | Discussion: {minute} minutes                                                             |
-| share-cost                | Salary cost: {cost}                                                                      |
-| share-peak                | Peak attendance: {headcount} adults                                                      |
-| share-seed                | Seed: {seed}                                                                             |
-| share-revision            | Rules/content: {revision}                                                                |
-| replay-caveat             | Replay needs the same revision, seed and actions. Seeds may differ in difficulty.        |
-| error                     | The meeting hit a problem. Start a new meeting to try again.                             |
-| error-restart             | Start a new meeting                                                                      |
+| Key                       | Copy                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------ |
+| product-title             | This Could've Been an Email                                                                |
+| objective                 | Agree on a cuisine for lunch.                                                              |
+| premise                   | Six adults. One lunch. Apparently this needs a meeting.                                    |
+| start                     | Start                                                                                      |
+| loading                   | Booking the room…                                                                          |
+| load-failed               | The room did not load. Lunch is not being delayed for a dramatic entrance.                 |
+| retry                     | Retry                                                                                      |
+| meeting                   | The lunch meeting                                                                          |
+| instructions-action       | Suggest a cuisine, then help the room agree. Time moves when you choose a response.        |
+| instructions-cost         | Everyone stays. Extra colleagues make later discussion more expensive.                     |
+| instructions-chance       | Some choices can turn out differently. Their descriptions explain the possible setback.    |
+| keyboard                  | Enter: show choices or continue. 1–3: choose a response.                                   |
+| show-choices              | Show choices                                                                               |
+| continue                  | Continue                                                                                   |
+| call-it                   | Call it                                                                                    |
+| call-it-description       | End the discussion without agreement.                                                      |
+| roster                    | In the room                                                                                |
+| room-speaker              | The room                                                                                   |
+| room-accessible           | In the lunch meeting: {roster}.                                                            |
+| progress                  | Agreement progress                                                                         |
+| minutes                   | Minutes discussed                                                                          |
+| booking                   | Booking ends at minute                                                                     |
+| remaining                 | Minutes remaining                                                                          |
+| cost                      | Discussion cost                                                                            |
+| cost-explanation          | Salary time spent discussing lunch, not the price of food.                                 |
+| considering-empty         | No cuisine suggested yet                                                                   |
+| considering               | Considering: {cuisine}                                                                     |
+| headcount                 | Adults present                                                                             |
+| peak-headcount            | Most adults present                                                                        |
+| postponed                 | Topics postponed                                                                           |
+| results                   | Results                                                                                    |
+| score                     | Score                                                                                      |
+| outcome-component         | Agreement                                                                                  |
+| efficiency-component      | Cost efficiency                                                                            |
+| decisions-component       | Choices                                                                                    |
+| choices-explanation       | Choices scores the expected benefit and cost when you chose, before the outcome was known. |
+| actual-explanation        | Agreement and cost reflect what actually happened. A setback need not mean a bad choice.   |
+| success-result            | Agreed: {agreedCuisine}                                                                    |
+| success-summary           | Everyone present agreed on {agreedCuisine}.                                                |
+| failure-result            | No agreement                                                                               |
+| failure-nomination        | Suggested: {cuisine}. Not agreed.                                                          |
+| failure-no-nomination     | No cuisine was nominated.                                                                  |
+| ended-decision            | Agreed: {agreedCuisine}                                                                    |
+| ended-called-early        | Discussion ended early. No agreement.                                                      |
+| ended-time-expired        | Booking expired. No agreement.                                                             |
+| ended-cancelled           | Meeting cancelled. No agreement.                                                           |
+| fallback-decision-heading | Agreed: {agreedCuisine}                                                                    |
+| fallback-failure-heading  | No agreement                                                                               |
+| moment                    | Meeting moment                                                                             |
+| replay                    | Play again                                                                                 |
+| current-collection        | Lunch collection                                                                           |
+| legacy-collection         | Launch meeting collection                                                                  |
+| legacy-explanation        | Awards from the original launch meeting. They do not fill the lunch collection.            |
+| collection-count          | {unlocked} of 12 lunch titles                                                              |
+| locked-title              | Not yet earned                                                                             |
+| newly-earned              | New title earned: {title}                                                                  |
+| share                     | Share result                                                                               |
+| download                  | Download image                                                                             |
+| copy-text                 | Copy text                                                                                  |
+| copied                    | Text copied                                                                                |
+| clipboard-fallback        | Copy the text below. The clipboard has declined the invitation.                            |
+| save-image                | Press and hold the image to save it.                                                       |
+| share-unavailable         | File sharing is unavailable here. You can save the image or copy the text.                 |
+| share-failed              | Sharing did not finish. You can still save the image or copy the text.                     |
+| share-success             | We agreed on {agreedCuisine} in This Could've Been an Email.                               |
+| share-early               | No lunch agreement. I ended the discussion in This Could've Been an Email.                 |
+| share-expired             | No lunch agreement. The room booking expired in This Could've Been an Email.               |
+| share-cancelled           | No lunch agreement. I cancelled the meeting in This Could've Been an Email.                |
+| share-nomination          | Suggested: {cuisine}. Not agreed.                                                          |
+| share-score               | Score: {score}/1000                                                                        |
+| share-time                | Discussion: {minute} minutes                                                               |
+| share-cost                | Salary cost: {cost}                                                                        |
+| share-peak                | Peak attendance: {headcount} adults                                                        |
+| share-seed                | Seed: {seed}                                                                               |
+| share-revision            | Rules/content: {revision}                                                                  |
+| replay-caveat             | Replay needs the same revision, seed and actions. Seeds may differ in difficulty.          |
+| error                     | The meeting hit a problem. Start a new meeting to try again.                               |
+| error-restart             | Start a new meeting                                                                        |
 
 Results show earned heading + cuisine result + ending-specific epilogue, score
 components, actual time/cost/peak headcount, factual moment and collections.
@@ -592,7 +592,7 @@ For bounded copy checks use minute=69, headcount=8, score=1000, unlocked=12,
 title=Played It Right, Lost Anyway, cost=$9,200 and a 16-character seed.
 69 conservatively allows a full last response past the original 60-minute booking;
 personMinutes ≤552 at eight adults, so the display bound is $9,200.
-Use literal revision lunch-l02-draft-2 for draft examples. Future longer revision
+Use literal revision lunch-l02b-reviewed-2 for draft examples. Future longer revision
 labels need their own copy check; never truncate cuisine identity.
 
 ## Fourth-wall commentary
@@ -605,15 +605,15 @@ per run, no duplicate ID. Secondary text only; no effects, turns, RNG or timers.
 Success commentary uses the actual agreement. Other commentary avoids agreement
 claims and remains true after success/expiry if its predicate still matches.
 
-| ID                   | Priority | Predicate                                     | Line                                                                                |
-| -------------------- | -------- | --------------------------------------------- | ----------------------------------------------------------------------------------- |
-| agreement-commentary | 10       | ending=decision and agreedCuisine non-null    | {agreedCuisine} is agreed. You may now close the meeting about having lunch.        |
-| nearly-there         | 20       | phase=running and progress ≥80                | A decision is getting close. Resist the urge to schedule its announcement.          |
-| full-room            | 30       | present.length=8                              | Every available chair is occupied. Lunch has achieved excellent attendance.         |
-| topic-returned       | 40       | resolvedCallbackCount ≥1                      | A postponed topic has returned. The notes were not a witness protection scheme.     |
-| expensive-discussion | 50       | personMinutes ≥180                            | You are spending salaries on the discussion. The food has not submitted an invoice. |
-| postponed-again      | 60       | parkedCount ≥2                                | More than one topic has been postponed. The email is beginning to write itself.     |
-| still-considering    | 70       | phase=running and progress ≤30 and minute ≥15 | Lunch is still under discussion. This is the part the title warned you about.       |
+| ID                   | Priority | Predicate                                     | Line                                                                            |
+| -------------------- | -------- | --------------------------------------------- | ------------------------------------------------------------------------------- |
+| agreement-commentary | 10       | ending=decision and agreedCuisine non-null    | {agreedCuisine} is agreed. You may now close the meeting about having lunch.    |
+| nearly-there         | 20       | phase=running and progress ≥80                | A decision is getting close. Resist the urge to schedule its announcement.      |
+| full-room            | 30       | present.length=8                              | Every available chair is occupied. Lunch has achieved excellent attendance.     |
+| topic-returned       | 40       | resolvedCallbackCount ≥1                      | A postponed topic has returned. Writing it down was never going to settle it.   |
+| expensive-discussion | 50       | personMinutes ≥180                            | Salaries are paying for this discussion. So far, it has produced no food.       |
+| postponed-again      | 60       | parkedCount ≥2                                | More than one topic has been postponed. The email is beginning to write itself. |
+| still-considering    | 70       | phase=running and progress ≤30 and minute ≥15 | Lunch is still under discussion. This is the part the title warned you about.   |
 
 No fallback commentary: if none qualifies, show none. Do not count reading time
 or claim any person spoke for a measured duration. Commentary predicates do not
@@ -769,6 +769,10 @@ slot has a legal construction; none establishes balanced rarity or human enjoyme
 
 ## Review decisions and editorial follow-ups
 
+The D1–D3 entries retain the L02 review handoff. The completed
+[L02b report](lunch-writing-review-report.md) preserves these mechanical decisions
+and records the editorial follow-ups below as reviewed, with full coverage.
+
 [Claude's L02 review](L02-review.md) identified two content decisions for the
 final D18 handoff. They remain open; this correction changes no effect, weight,
 technique, availability condition, arrival/callback relationship or title predicate.
@@ -812,8 +816,8 @@ reduce Gary's use as other speakers' punchline; distinguish Priya's voice from
 the narrator and give Morgan more of the confident-summary habit. Focused edits
 here remove the unexplained “minuted” wording, Pat's unfulfilled preference
 promise, two flat arrival endings and three identical title-flavour openings.
-They do not constitute the scheduled full writing review. Inspect remaining
-repetition across every row in L02b and record keep/change reasons there.
+Those preliminary L02 edits were not the full writing review. L02b has now
+reviewed every row and recorded revisions and keep/change reasons in its report.
 L09 must specifically probe whether the Alex invitation's description predicts
 longer discussion and higher subsequent cost, before the outcome is shown.
 
@@ -825,20 +829,17 @@ It reads documentation only; it does not validate or bind a runtime pack.
 Formatting and reference checks accompany it. Full rendered 320 px fitting,
 engine fixtures, replay and statistical tuning remain at their scheduled tasks.
 
-Outstanding review issues: L02b must assess every opening, label, description,
-outcome, catalog and constructed run for voice, clarity, humour, repetition and
-honest tradeoffs. Initial weights/effects are unapproved hypotheses; this draft
-makes no policy-band, 9–12 median-turn or technique-share claim. Preserve the
-intentional room-booking tradeoff: hear pays more now to keep 60; timebox keeps
-less time cheaply; vp ties timebox utility and timebox wins the existing ASCII
-tie-break. Do not retune that behavior in an editorial pass. Dietary copy describes
-finding suitable options, not medical/dietary safety certification.
+The [L02b report](lunch-writing-review-report.md) records full editorial coverage,
+wording changes, constructed reading sequences and mechanical preservation.
+Revision 2 also addresses [Claude's L02b review](L02b-review.md); the report addendum
+and [resolution record](L02b-review-resolution.md) cover every follow-up.
+Initial weights/effects remain unapproved hypotheses; no policy-band, median-turn,
+technique-share, rendered-layout or human-comprehension claim is made here.
+D1/D2 above remain final D18 content decisions, not requests to reapprove ADRs.
+D3's intentional room-booking tradeoff is preserved. Dietary copy describes menu
+options, not medical or dietary safety certification.
 
-Handoff to L02b: all 21 headings are review groups; each presentation and each
-family/response/outcome address is in scope, plus every catalog key and template.
-Use [the dedicated review brief](lunch-writing-review.md), record coverage and
-before/after reasons in its scheduled report, preserve mechanical columns, and
-flag design issues separately. The AI writing review has not been performed here.
-After that review Harry gives final D18 approval. No content transcription,
-gameplay, L02b report, human acceptance or runtime activation belongs to L02.
+L02b handoff: Harry reviews revision lunch-l02b-reviewed-2 and its report for D18.
+L05/L06/L07 consumption remains gated on that approval and their other dependencies.
+No runtime transcription, gameplay, human acceptance or activation is included.
 Original task 12a's V4 remains pending in its separate historical record.

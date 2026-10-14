@@ -1,6 +1,7 @@
 """L02 documentation audit; does not import, transcribe or execute game content.
 
 Run from repository root: python docs/lunch-content-checks.py
+Reproduce L02b audit: append --review-base 55d037e40b215c3286fe873500de67466dbb5f7c
 Checks markdown catalogs, substituted copy, relationship references and hand sums.
 Engine validation, rendered layout, editorial review and balance remain later gates.
 """
@@ -10,6 +11,8 @@ from fractions import Fraction
 from itertools import product
 from pathlib import Path
 import re
+import argparse
+import subprocess
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE = ROOT / 'docs/content-table.md'
@@ -131,7 +134,7 @@ assert (filler['Min'], filler['P'], filler['CB'], filler['Join'], filler['End'])
 substitutions = {'cuisine': 'Mexican', 'agreedCuisine': 'Mexican', 'attendee': 'Jordan',
                  'topic': 'spice preference', 'minute': '69', 'title': 'Played It Right, Lost Anyway',
                  'score': '1000', 'headcount': '8', 'unlocked': '12', 'cost': '$9,200',
-                 'seed': '0123456789abcdef', 'revision': 'lunch-l02-draft-2',
+                 'seed': '0123456789abcdef', 'revision': re.search(r'Revision \*\*([^*]+)\*\*', TEXT).group(1),
                  'roster': ', '.join(r['Name'] for r in attendees.values())}
 lengths = []
 rendered_count = 0
@@ -286,6 +289,11 @@ paths = [SOURCE, ROOT / 'docs/content-table-launch.md', ROOT / 'docs/lunch-playt
          ROOT / 'docs/tech-spec.md', ROOT / 'docs/lunch-redesign-plan.md',
          ROOT / 'docs/lunch-writing-review.md', ROOT / 'CLAUDE.md', ROOT / 'README.md'] + list((ROOT / 'docs/adr').glob('*.md'))
 links = 0
+if (ROOT / 'docs/lunch-writing-review-report.md').exists():
+    paths.append(ROOT / 'docs/lunch-writing-review-report.md')
+for name in ['L02b-review.md', 'L02b-review-resolution.md']:
+    if (ROOT / 'docs' / name).exists():
+        paths.append(ROOT / 'docs' / name)
 paths += [ROOT / 'docs/design-doc-launch.md', ROOT / 'docs/L02-review.md',
           ROOT / 'docs/L02-review-resolution.md']
 for path in paths:
@@ -324,3 +332,65 @@ print('PASS: 3 complete walkthrough running sums, 3 callback mini-routes, 3 exac
 print(f'PASS: table structure in {len(paths)} documents, {links} relative file/heading references, accepted ADR statuses')
 print('PASS: launch test/provenance source paths and exact CLAUDE/spec mirror')
 print('PASS: two clamped-state counterexamples; no universal gamble-dominance claim')
+
+# Optional Git-backed editorial audit: replay both wording logs, then compare all
+# cells. This detects unlogged copy changes as well as any mechanical change.
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--review-base', help='Git revision of the initial L02b input')
+args = parser.parse_args()
+if args.review_base:
+    old_text = subprocess.check_output(
+        ['git', 'show', '--end-of-options', args.review_base + ':docs/content-table.md'],
+        cwd=ROOT).decode('utf-8')
+    old_rows = list(tables(old_text))
+    report_rows = list(tables((ROOT / 'docs/lunch-writing-review-report.md').read_text(encoding='utf-8')))
+    assert len(old_rows) == len(ROWS) == 287
+    copy_fields = {'Opening line', 'Label', 'Description', 'Outcome line', 'Copy',
+                   'Flavour line', 'Line', 'Name', 'Role', 'Voice / comic friction'}
+    for (section, _, before), (new_section, _, after) in zip(old_rows, ROWS):
+        assert section == new_section and list(before) == list(after)
+        assert {k: v for k, v in before.items() if k not in copy_fields} == {
+            k: v for k, v in after.items() if k not in copy_fields}, section
+
+    coverage = {r['Group']: r for _, _, r in report_rows if 'Presentations reviewed' in r}
+    assert set(coverage) == set(families)
+    for event in families:
+        assert set(coverage[event]['Presentations reviewed'].split(', ')) == {
+            r['Presentation'] for s, r in presentations if s == event}
+        assert set(coverage[event]['Every response/outcome reviewed'].split(', ')) == {
+            response + '/' + r['Outcome'] for (e, response), branches in responses.items()
+            if e == event for r in branches}
+    catalog_coverage = [r for _, _, r in report_rows if 'Every reviewed key / ID' in r]
+    for section, key, guard in [
+        ('Cuisine catalog', 'ID', 'ID'), ('Attendees and voice guide', 'ID', 'ID'),
+        ('Disabled reasons', 'Key', 'Key'), ('Title catalog', 'ID', 'Slot'),
+        ('Epilogues and factual moments', 'Key', 'Ending'),
+        ('Epilogues and factual moments', 'Event / park response', 'Event / park response'),
+        ('Epilogues and factual moments', 'Key', 'Use'),
+        ('Interface, results and share copy', 'Key', 'Key'),
+        ('Fourth-wall commentary', 'ID', 'Priority')]:
+        expected_keys = {r[key] for s, _, r in ROWS if s == section and guard in r}
+        group = section + ' (' + str(len(expected_keys)) + ')'
+        assert any(r['Group'] == group and
+                   set(r['Every reviewed key / ID'].split(', ')) == expected_keys
+                   for r in catalog_coverage), ('catalog coverage', section, guard)
+
+    reconstructed = [(s, dict(r)) for s, _, r in old_rows]
+    logs = [r for _, _, r in report_rows if 'Before' in r]
+    assert len(logs) == 57  # 45 initial edits, then 12 reviewed follow-ups.
+    for log in logs:
+        parts = log['Address'].split('/')
+        assert len(parts) in {2, 3} and log['Field'] in copy_fields
+        matched = []
+        for section, row in reconstructed:
+            identity = row.get('Response', row.get('Presentation', row.get('ID', row.get('Key'))))
+            if (section == parts[0] and identity == parts[1]
+                    and (len(parts) == 2 or row.get('Outcome') == parts[2])
+                    and row.get(log['Field']) == log['Before']):
+                matched.append(row)
+        assert matched, ('unmatched change log', log['Address'], log['Field'])
+        for row in matched:
+            row[log['Field']] = log['After']
+    assert reconstructed == [(s, r) for s, _, r in ROWS], 'unlogged table change'
+    print('PASS: L02b report covers all presentations, branches and catalog keys')
+    print('PASS: 287 rows preserve mechanics; 57 sequential wording edits reconstruct the complete table')
