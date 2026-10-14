@@ -8,6 +8,37 @@ import {
 } from './constants';
 import { EngineError } from './errors';
 import type { UtilityRules } from './types';
+export interface Fraction {
+  readonly numerator: bigint;
+  readonly denominator: bigint;
+}
+/** Exact weighted utilities and q, with no epsilon comparisons. */
+export function addFractions(a: Fraction, b: Fraction): Fraction {
+  return {
+    numerator: a.numerator * b.denominator + b.numerator * a.denominator,
+    denominator: a.denominator * b.denominator,
+  };
+}
+export function subtractFractions(a: Fraction, b: Fraction): Fraction {
+  return {
+    numerator: a.numerator * b.denominator - b.numerator * a.denominator,
+    denominator: a.denominator * b.denominator,
+  };
+}
+export function compareFractions(a: Fraction, b: Fraction): number {
+  const difference = a.numerator * b.denominator - b.numerator * a.denominator;
+  return difference < BIGINT_ZERO
+    ? -ONE
+    : difference > BIGINT_ZERO
+      ? ONE
+      : ZERO;
+}
+export function serializeFraction(value: Fraction) {
+  return {
+    numerator: value.numerator.toString(),
+    denominator: value.denominator.toString(),
+  };
+}
 /** Implements Design Doc v2 → Scoring: exact arithmetic on decimal numeric inputs. */
 export function decimalFraction(value: number) {
   if (!Number.isFinite(value)) throw new EngineError('invalid-rules');

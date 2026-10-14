@@ -20,6 +20,8 @@ import {
   PRNG_OR_FIRST,
   PRNG_OR_SECOND,
 } from './constants';
+import { EngineError } from './errors';
+import type { ResponseOutcome } from './types';
 
 /** Implements Design Doc v2 → Events and responses → Randomness and seeds. */
 export function cyrb53(seed: string): number {
@@ -63,4 +65,40 @@ export function mulberry32(seed: number): () => number {
 /** Implements Design Doc v2 → Events and responses → Randomness and seeds. */
 export function drawRng(seed: string, turn: number): () => number {
   return mulberry32(hashSeed(seed + ':draw:' + turn));
+}
+/** ADR 0006: keyed local stream; never touches draw or policy randomness. */
+export function responseRng(
+  seed: string,
+  turn: number,
+  eventId: string,
+  responseId: string,
+): () => number {
+  return mulberry32(
+    hashSeed(JSON.stringify([seed, 'response-v1', turn, eventId, responseId])),
+  );
+}
+/** ADR 0006: outcomes have already passed structural validation. */
+export function sampleOutcome(
+  outcomes: readonly ResponseOutcome[],
+  rng: () => number,
+): ResponseOutcome {
+  const sorted = [...outcomes].sort((a, b) =>
+    a.id < b.id ? -ONE : a.id > b.id ? ONE : ZERO,
+  );
+  const first = sorted[ZERO];
+  if (first === undefined) throw new EngineError('invalid-response');
+  if (sorted.length === ONE) return first;
+  const total = sorted.reduce((sum, outcome) => sum + outcome.weight, ZERO);
+  const limit = Math.floor(UINT32_RANGE / total) * total;
+  let ticket: number;
+  do {
+    ticket = Math.floor(rng() * UINT32_RANGE);
+  } while (ticket >= limit);
+  const pick = ticket % total;
+  let cumulative = ZERO;
+  for (const outcome of sorted) {
+    cumulative += outcome.weight;
+    if (pick < cumulative) return outcome;
+  }
+  throw new EngineError('invalid-response');
 }

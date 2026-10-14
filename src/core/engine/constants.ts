@@ -63,6 +63,8 @@ export const UTILITY_RULES = {
   costUnit: UTILITY_COST_PM,
 } as const;
 export const MAX_RESPONSE_MINUTES = 10;
+export const MAX_RESPONSE_OUTCOMES = 2;
+export const MAX_OUTCOME_WEIGHT = 65536;
 export const MAX_RESPONSES = 3;
 export const MIN_CONTENT_PROGRESS = -10;
 export const MAX_CONTENT_PROGRESS = 25;

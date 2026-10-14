@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L02b editorial review and Claude follow-ups delivered in draft PR #18 with passing local/hosted checks; revision lunch-l02b-reviewed-2 awaits Harry's final D18 content approval. Next task: L03.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Original 12a V4 evidence remains pending.
+Current: **L03 additive outcome capability implemented with passing local Node 24 gates; draft PR delivery and hosted evidence pending. Next task after L03 delivery: L04.** L02b revision lunch-l02b-reviewed-2 in draft PR #18 awaits Harry's final D18 content approval, required before L05/L06/L07 consumption. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Original 12a V4 evidence remains pending.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -2037,3 +2037,27 @@ It is available on testers' own devices; [the playtest record](task-12a-playtest
 also retains local preview/restart instructions. This deployment/access evidence
 is separate from the still-pending human V4 results. This evidence-only update
 reruns the same hosted gates; there is no gameplay change.
+
+## L03 — Additive outcome capability, October 13, 2026
+
+Implementation and fixtures are documented in [the L03 record](task-l03-outcomes.md).
+Dependency revision: `1f7fa8168674154ef8475789e6ff83918a0e763e`, L02b PR #18.
+The feature branch is intentionally stacked on `docs/task-l02b-lunch-writing`;
+no dependency merge or final D18 content approval is inferred.
+
+One/two-outcome schema, keyed unbiased response RNG, branchwise clamped previews,
+exact expected pre-roll quality and pure successor enumeration share existing
+validation/application/resolution primitives. Temporary generic launch defaults
+and preview overloads keep live content/UI/store/policies and six goldens unchanged.
+The public lint allowlist adds getResponseOutcomes. No live tuning or lunch switch.
+
+Local Node 24.21.0 / pnpm 10.34.6 results: `pnpm check` passed (383 tests;
+core 99.58% lines / 98.24% branches; 2,000 seeds each Greedy/Random with invariant
+and replay PASS); `pnpm build` / `pnpm size` passed (83,809 gzip JS bytes;
+0 image/font bytes); `pnpm e2e` passed 30 tests across the three required profiles.
+Simulation summary objects match the committed V3 baseline exactly; existing
+unmet win-band diagnostics remain unchanged. Protocol-bound constants change the
+source hash, not live tuning. Document/delivery checks and hosted evidence follow.
+
+Outstanding: draft PR and hosted CI verification. Next task once delivered: **L04**.
+L05/L06/L07 still require final D18 content approval; L08 owns activation/removal.

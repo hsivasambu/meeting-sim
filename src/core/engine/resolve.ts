@@ -1,20 +1,28 @@
-import { fractionNumber } from './utilityFraction';
+import {
+  fractionNumber,
+  compareFractions,
+  subtractFractions,
+  serializeFraction,
+} from './utilityFraction';
 import { matchesCondition } from './conditions';
 import { ONE, ZERO, PROGRESS_MAX, CALLBACK_DELAY } from './constants';
 import { assertRunning, EngineError } from './errors';
-import { evaluateResponse } from './value';
+import { evaluateOutcomes, expectedUtility, hasOutcomes } from './outcomes';
+import { responseRng, sampleOutcome } from './rng';
 import type {
   DecisionRecord,
   MeetingState,
   PresentedEvent,
-  Response,
   UtilityRules,
+  EngineResponse,
+  ResponseOutcome,
+  ResponseSuccessor,
 } from './types';
 function schedule(
-  state: MeetingState,
-  response: Response,
+  state: MeetingState<EngineResponse>,
+  outcome: ResponseOutcome,
 ): MeetingState['scheduled'] {
-  const callback = response.effect.callback;
+  const callback = outcome.effect.callback;
   return callback === undefined
     ? [...state.scheduled]
     : [
@@ -23,35 +31,56 @@ function schedule(
       ];
 }
 function quality(
-  state: MeetingState,
-  event: PresentedEvent,
-  response: Response,
+  state: MeetingState<EngineResponse>,
+  event: PresentedEvent<EngineResponse>,
+  response: EngineResponse,
   rules: UtilityRules,
 ): Pick<DecisionRecord, 'quality' | 'qualityFraction'> {
   const utilities = event.responses
     .filter((option) => matchesCondition(state, option.requires))
-    .map((option) => evaluateResponse(state, option, rules).utilityNumerator);
+    .map(
+      (option) => expectedUtility(evaluateOutcomes(state, option, rules)).exact,
+    );
   const first = utilities[ZERO];
   if (first === undefined) throw new EngineError('disabled-response');
-  const worst = utilities.reduce((a, b) => (a < b ? a : b), first);
-  const best = utilities.reduce((a, b) => (a > b ? a : b), first);
-  if (best === worst) return { quality: null, qualityFraction: null };
-  const numerator =
-    evaluateResponse(state, response, rules).utilityNumerator - worst;
-  const denominator = best - worst;
+  const worst = utilities.reduce(
+    (a, b) => (compareFractions(a, b) < ZERO ? a : b),
+    first,
+  );
+  const best = utilities.reduce(
+    (a, b) => (compareFractions(a, b) > ZERO ? a : b),
+    first,
+  );
+  if (compareFractions(best, worst) === ZERO)
+    return { quality: null, qualityFraction: null };
+  const chosen = expectedUtility(
+    evaluateOutcomes(state, response, rules),
+  ).exact;
+  const difference = subtractFractions(chosen, worst);
+  const range = subtractFractions(best, worst);
+  // Cancel a common denominator directly, preserving legacy serialized q bytes.
+  const exact =
+    chosen.denominator === worst.denominator &&
+    best.denominator === worst.denominator
+      ? {
+          numerator: chosen.numerator - worst.numerator,
+          denominator: best.numerator - worst.numerator,
+        }
+      : {
+          numerator: difference.numerator * range.denominator,
+          denominator: difference.denominator * range.numerator,
+        };
   return {
-    quality: fractionNumber(numerator, denominator),
-    qualityFraction: {
-      numerator: numerator.toString(),
-      denominator: denominator.toString(),
-    },
+    quality: fractionNumber(exact.numerator, exact.denominator),
+    qualityFraction: serializeFraction(exact),
   };
 }
 function resolutionLog(
-  state: MeetingState,
-  next: MeetingState,
-  event: PresentedEvent,
-  response: Response,
+  state: MeetingState<EngineResponse>,
+  next: MeetingState<EngineResponse>,
+  event: PresentedEvent<EngineResponse>,
+  response: EngineResponse,
+  outcome: ResponseOutcome,
 ): MeetingState['log'] {
   const joins = next.present.filter((id) => !state.present.includes(id));
   return [
@@ -63,7 +92,8 @@ function resolutionLog(
       eventId: event.id,
       responseId: response.id,
       technique: response.technique,
-      line: response.line,
+      line: outcome.line,
+      ...(hasOutcomes(response) ? { outcomeId: outcome.id } : {}),
     },
     ...joins.map((who) => ({
       type: 'join' as const,
@@ -73,13 +103,14 @@ function resolutionLog(
     })),
   ];
 }
-function finishResolution(
-  state: MeetingState,
-  next: MeetingState,
-  event: PresentedEvent,
-  response: Response,
-  rules: UtilityRules,
-): MeetingState {
+function finishResolution<R extends EngineResponse>(
+  state: MeetingState<R>,
+  next: MeetingState<R>,
+  event: PresentedEvent<R>,
+  response: R,
+  outcome: ResponseOutcome,
+  decisionQuality: Pick<DecisionRecord, 'quality' | 'qualityFraction'>,
+): MeetingState<R> {
   const ending =
     next.progress >= PROGRESS_MAX
       ? 'decision'
@@ -90,27 +121,26 @@ function finishResolution(
     turn: state.turn,
     eventId: event.id,
     responseId: response.id,
-    ...quality(state, event, response, rules),
+    ...decisionQuality,
   };
   return {
     ...next,
     turn: state.turn + ONE,
     current: null,
-    scheduled: schedule(state, response),
+    scheduled: schedule(state, outcome),
     parkedCount:
       state.parkedCount + (response.technique === 'park' ? ONE : ZERO),
     phase: ending === null ? 'running' : 'ended',
     ending,
     decisions: [...state.decisions, decision],
-    log: resolutionLog(state, next, event, response),
+    log: resolutionLog(state, next, event, response, outcome),
   };
 }
 /** Implements Design Doc v2 → Game state model → Resolution and attendance boundaries. */
-export function resolveWithRules(
-  state: MeetingState,
+function pendingResponse<R extends EngineResponse>(
+  state: MeetingState<R>,
   responseId: string,
-  rules: UtilityRules,
-): MeetingState {
+) {
   assertRunning(state);
   const event = state.current;
   if (event === null) throw new EngineError('missing-event');
@@ -120,6 +150,51 @@ export function resolveWithRules(
   const response = responses[ZERO];
   if (responses.length !== ONE || response === undefined)
     throw new EngineError('unknown-response');
-  const applied = evaluateResponse(state, response, rules);
-  return finishResolution(state, applied.state, event, response, rules);
+  return { event, response };
+}
+/** ADR 0006: enumeration applies the same transition without sampling or seed inspection. */
+export function getResponseOutcomesWithRules<R extends EngineResponse>(
+  state: MeetingState<R>,
+  responseId: string,
+  rules: UtilityRules,
+): readonly ResponseSuccessor<R>[] {
+  const { event, response } = pendingResponse(state, responseId);
+  const branches = evaluateOutcomes(state, response, rules);
+  const decisionQuality = quality(state, event, response, rules);
+  return branches.map((branch) => ({
+    outcomeId: branch.outcome.id,
+    probabilityFraction: serializeFraction(branch.probability),
+    state: finishResolution(
+      state,
+      branch.applied.state,
+      event,
+      response,
+      branch.outcome,
+      decisionQuality,
+    ),
+  }));
+}
+/** ADR 0006: validate and score expected choice quality before sampling once. */
+export function resolveWithRules<R extends EngineResponse>(
+  state: MeetingState<R>,
+  responseId: string,
+  rules: UtilityRules,
+): MeetingState<R> {
+  const { event, response } = pendingResponse(state, responseId);
+  const branches = evaluateOutcomes(state, response, rules);
+  const decisionQuality = quality(state, event, response, rules);
+  const outcome = sampleOutcome(
+    branches.map((branch) => branch.outcome),
+    responseRng(state.seed, state.turn, event.id, response.id),
+  );
+  const branch = branches.find((branch) => branch.outcome.id === outcome.id);
+  if (branch === undefined) throw new EngineError('invalid-response');
+  return finishResolution(
+    state,
+    branch.applied.state,
+    event,
+    response,
+    outcome,
+    decisionQuality,
+  );
 }

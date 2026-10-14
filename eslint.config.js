@@ -15,6 +15,7 @@ const api = [
   'previewResponse',
   'previewRelease',
   'getDrawCandidates',
+  'getResponseOutcomes',
   'ENGINE_LIMITS',
 ];
 const boundary = {

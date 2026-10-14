@@ -8,6 +8,13 @@ export type {
   Condition,
   Effect,
   Response,
+  EngineResponse,
+  OutcomeResponse,
+  ResponseOutcome,
+  ExactFraction,
+  OutcomePreview,
+  OutcomeResponsePreview,
+  ResponseSuccessor,
   EventVariant,
   MeetingEvent,
   PresentedEvent,
@@ -25,12 +32,16 @@ export type {
 
 import { UTILITY_RULES } from './constants';
 import { previewWithRules } from './preview';
-import { resolveWithRules } from './resolve';
+import { resolveWithRules, getResponseOutcomesWithRules } from './resolve';
 import type {
   DrawCandidate,
   MeetingState,
   Response,
   ResponsePreview,
+  EngineResponse,
+  OutcomeResponse,
+  OutcomeResponsePreview,
+  ResponseSuccessor,
 } from './types';
 /** Implements Design Doc v2 → Events and responses: the live draw distribution. */
 export function getDrawCandidates(
@@ -46,17 +57,42 @@ export { initialState, release, previewRelease, callIt } from './state';
 export type { EngineError, EngineErrorCode } from './errors';
 /** Implements Design Doc v2 → Events and responses → How a response is shown. */
 export function previewResponse(
-  state: MeetingState,
+  state: MeetingState<EngineResponse>,
   response: Response,
-): ResponsePreview {
+): ResponsePreview;
+export function previewResponse(
+  state: MeetingState<EngineResponse>,
+  response: OutcomeResponse,
+): OutcomeResponsePreview;
+export function previewResponse(
+  state: MeetingState<EngineResponse>,
+  response: EngineResponse,
+): ResponsePreview | OutcomeResponsePreview;
+export function previewResponse(
+  state: MeetingState<EngineResponse>,
+  response: EngineResponse,
+): ResponsePreview | OutcomeResponsePreview {
   return previewWithRules(state, response, {
     ...UTILITY_RULES,
     eventRules: engineRules,
   });
 }
 /** Implements Design Doc v2 → Game state model → Resolution and attendance boundaries. */
-export function resolve(state: MeetingState, responseId: string): MeetingState {
+export function resolve<R extends EngineResponse>(
+  state: MeetingState<R>,
+  responseId: string,
+): MeetingState<R> {
   return resolveWithRules(state, responseId, {
+    ...UTILITY_RULES,
+    eventRules: engineRules,
+  });
+}
+/** ADR 0006: read-only branch successors for simulation inspection. */
+export function getResponseOutcomes<R extends EngineResponse>(
+  state: MeetingState<R>,
+  responseId: string,
+): readonly ResponseSuccessor<R>[] {
+  return getResponseOutcomesWithRules(state, responseId, {
     ...UTILITY_RULES,
     eventRules: engineRules,
   });
