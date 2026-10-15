@@ -2,6 +2,10 @@
 
 October 13, 2026. Harry requested that all concerns in
 [Claude's review](L02b-review.md) be addressed before moving on.
+**Subsequent approval, October 14, 2026:** Harry approved L02b and D18 for
+**lunch-l02b-reviewed-2**. The pending-approval statements below describe the
+October 13 delivery; the [approval record](lunch-writing-review-report.md#harrys-l02b-and-d18-approval--october-14-2026) supersedes them.
+
 The revised table is **lunch-l02b-reviewed-2**. The [writing report](lunch-writing-review-report.md)
 retains the original pass and adds an affected-row editorial review and twelve
 exact before/after field changes. No effect, weight, technique, ID, condition,
