@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Current task: 12a — text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. Next blueprint task after 12a acceptance: 08b.
+Status: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Task 12a complete: text-only loop and local/hosted automated checks pass; Harry accepted V4 on October 15, 2026. The subsequently approved lunch sequence owns current work; L09 remains its separate human playtest prerequisite.
 
 ## Purpose and source of truth
 
@@ -1692,3 +1692,13 @@ It is available on testers' own devices; [the playtest record](task-12a-playtest
 also retains local preview/restart instructions. This deployment/access evidence
 is separate from the still-pending human V4 results. This evidence-only update
 reruns the same hosted gates; there is no gameplay change.
+
+## Task 12a V4 acceptance — October 15, 2026
+
+Harry explicitly instructed “accept PR#15 V4”. [The acceptance record](task-12a-v4-acceptance.md)
+closes the remaining V4 human-acceptance gate and task 12a. Earlier pending
+status statements are historical and superseded. Individual tester reports
+were not supplied and are not fabricated. L09 lunch evidence remains separate.
+No game rules, content values or automated gates change. Local document format,
+relative-link and whitespace checks pass; hosted quality checks run before merge.
+The active lunch sequence remains authoritative; this does not start old task 08b.

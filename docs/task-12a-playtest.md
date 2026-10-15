@@ -1,6 +1,8 @@
 # Task 12a — text-only V4 playtest
 
-Status: implementation and local/hosted automated gates pass; human V4 evidence pending.
+Status: **V4 accepted by Harry on October 15, 2026; task 12a complete.**
+See [the acceptance record](task-12a-v4-acceptance.md) for his exact instruction.
+Individual report rows below remain historical unsupplied data, not fabricated results.
 Harry agreed on October 12, 2026 to play and recruit two other people.
 That agreement is not a recorded playtest result.
 
