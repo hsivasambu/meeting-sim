@@ -9,3 +9,88 @@
 body {
   margin: 0;
 }
+
+main {
+  max-width: 48rem;
+  margin: auto;
+  padding: max(1rem, env(safe-area-inset-top))
+    max(1rem, env(safe-area-inset-right)) max(1rem, env(safe-area-inset-bottom))
+    max(1rem, env(safe-area-inset-left));
+}
+.panel {
+  display: grid;
+  gap: 1rem;
+}
+h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+p,
+button,
+dd,
+dt {
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+button {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #52644c;
+  border-radius: 0.3rem;
+  background: #fff;
+  color: #172118;
+  text-align: left;
+  cursor: pointer;
+}
+button:disabled {
+  color: #53604f;
+  background: #e3e8df;
+  cursor: default;
+}
+:focus-visible {
+  outline: 3px solid #185b9d;
+  outline-offset: 3px;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+dd {
+  font-weight: 700;
+}
+.roster {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.roster span {
+  display: block;
+  font-size: 0.875rem;
+}
+.dialogue,
+.release {
+  padding: 1rem;
+  border: 1px solid #52644c;
+  background: #fff;
+}
+.release {
+  margin-top: 0.5rem;
+  display: grid;
+  gap: 0.5rem;
+}
+.choices {
+  display: grid;
+  gap: 1rem;
+}
+.choices button {
+  width: 100%;
+}
+.hint {
+  color: #44513f;
+}
