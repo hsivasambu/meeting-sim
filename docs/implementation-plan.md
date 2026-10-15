@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L02b editorial review and Claude follow-ups delivered in draft PR #18 with passing local/hosted checks; revision lunch-l02b-reviewed-2 awaits Harry's final D18 content approval. Next task: L03.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Original 12a V4 evidence remains pending.
+Current: **L02b editorial review and Claude follow-ups delivered in draft PR #18 with passing local/hosted checks; revision lunch-l02b-reviewed-2 awaits Harry's final D18 content approval. Next task: L03.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -16,10 +16,9 @@ The [approved plan](lunch-redesign-plan.md) and accepted ADRs
 [0008](adr/0008-lunch-presentation-and-unlocks.md) now define the redesign.
 ADRs 0001–0004 remain unchanged historical decisions, superseded only where stated.
 
-Original **12a remains human-acceptance pending**, not complete. Harry’s aggregate
-feedback is recorded without inventing individual V4 observations. He approved
-L09 as the separate lunch prerequisite for tuning; original V4 is not being marked
-complete or treated as lunch evidence. The historical launch blueprint below is
+Original **12a V4 was accepted by Harry on October 15, 2026**. His explicit
+sign-off closes task 12a without inventing individual V4 observations. L09
+remains the separate lunch prerequisite for tuning; V4 is not lunch evidence. The historical launch blueprint below is
 retained for audit and reusable nonobsolete task scope, not as a competing sequence.
 
 ### Checks and evidence convention
@@ -338,6 +337,30 @@ to consider competitiveness through ordinary progression, with L11/L12 evidence.
 Remaining content work: L02b's full editorial coverage/change log, Harry's final
 D18 decisions/approval, later L09 human evidence and scheduled transcription/tuning.
 Stop at the L02 review-fix boundary; no runtime lunch gameplay is implemented.
+
+## Harry’s L02b and D18 approval — October 14, 2026
+
+Harry explicitly approved: “Approve L02b and D18”. This accepts the completed
+L02b review and the complete table revision `lunch-l02b-reviewed-2`, whose
+player-facing content is pinned at `7efc2d19a65e5519063f2be653b2f02e438f326f`
+in PR #18. Approval covers the authored copy/catalogs, initial effects/weights,
+conditions and relationships, including D1’s present uncertainty tradeoffs and
+D2’s two expert-dependent responses per entrant. D3’s intentional room-booking
+tradeoff remains unchanged. No values are altered by recording this approval.
+
+These are approved initial content values, not evidence of balance. L11/L12
+still measure policy selection and tune under the existing reports, targets and
+change-control rules; the illustrative 80/20 is not adopted. The L02b/D18 content
+prerequisite for L05/L06/L07 is satisfied; their other dependencies still apply.
+This approval does not merge a PR, activate lunch before L08, accept L09 human
+evidence or complete original task 12a V4. Earlier pending-approval statements
+in dated execution records describe their historical status and are superseded
+by this explicit approval.
+
+Approval-record checks **pass**: document/catalog audit (312 copy cells,
+394 substitutions, 116 references across 24 documents), targeted Prettier and
+whitespace checks for this documentation-only record. No gameplay checks are claimed
+for the in-progress L04 working tree; its engine edits are outside this action.
 
 ## Historical launch blueprint and execution evidence
 
@@ -2037,3 +2060,13 @@ It is available on testers' own devices; [the playtest record](task-12a-playtest
 also retains local preview/restart instructions. This deployment/access evidence
 is separate from the still-pending human V4 results. This evidence-only update
 reruns the same hosted gates; there is no gameplay change.
+
+## Task 12a V4 acceptance — October 15, 2026
+
+Harry explicitly instructed “accept PR#15 V4”. [The acceptance record](task-12a-v4-acceptance.md)
+closes the remaining V4 human-acceptance gate and task 12a. Earlier pending
+status statements are historical and superseded. Individual tester reports
+were not supplied and are not fabricated. L09 lunch evidence remains separate.
+No game rules, content values or automated gates change. Local document format,
+relative-link and whitespace checks pass; hosted quality checks run before merge.
+The active lunch sequence remains authoritative; this does not start old task 08b.

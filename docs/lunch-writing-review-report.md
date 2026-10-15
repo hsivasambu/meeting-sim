@@ -4,7 +4,7 @@ Date: October 13, 2026 (America/Toronto). Reviewer: Codex, GPT-6-based assistant
 no more specific model identifier is exposed in this session. This is a single AI
 editorial pass, not an independent second reviewer or human humour study.
 
-Status: **Editorial review complete; Harry's final D18 content approval pending.**
+Status: **L02b review and D18 content approved by Harry on October 14, 2026.**
 Input: `lunch-l02-draft-2` at commit `55d037e40b215c3286fe873500de67466dbb5f7c`.
 Output: **`lunch-l02b-reviewed-2`** (includes the review addendum below), the [complete revised table](content-table.md).
 The complete output is pinned at content commit
@@ -13,6 +13,25 @@ The complete output is pinned at content commit
 notes do not change its table. Followed [the review brief](lunch-writing-review.md),
 CLAUDE.md, the implementation plan, design, tech spec, approved redesign and
 accepted ADRs 0001–0008. ADRs 0005–0008 remain accepted without repeat approval.
+
+## Harry’s L02b and D18 approval — October 14, 2026
+
+Harry explicitly approved: “Approve L02b and D18”. This accepts the completed
+L02b review and the complete table revision `lunch-l02b-reviewed-2`, whose
+player-facing content is pinned at `7efc2d19a65e5519063f2be653b2f02e438f326f`
+in PR #18. Approval covers the authored copy/catalogs, initial effects/weights,
+conditions and relationships, including D1’s present uncertainty tradeoffs and
+D2’s two expert-dependent responses per entrant. D3’s intentional room-booking
+tradeoff remains unchanged. No values are altered by recording this approval.
+
+These are approved initial content values, not evidence of balance. L11/L12
+still measure policy selection and tune under the existing reports, targets and
+change-control rules; the illustrative 80/20 is not adopted. The L02b/D18 content
+prerequisite for L05/L06/L07 is satisfied; their other dependencies still apply.
+This approval does not merge a PR, activate lunch before L08, accept L09 human
+evidence or complete original task 12a V4. Earlier pending-approval statements
+in dated execution records describe their historical status and are superseded
+by this explicit approval.
 
 ## Editorial conclusion and voice notes
 
@@ -199,7 +218,8 @@ Pat's questions and the maximum eight-person roster.
 ## Separate design decisions and later evidence
 
 No new mechanical blocker was discovered in this editorial pass. Preserve these
-existing content decisions for Harry's D18 consideration; they do not reopen any
+initial content decisions, now accepted by Harry’s October 14 D18 approval;
+they do not reopen any
 accepted rule or formula:
 
 - **D1 — uncertain-choice competitiveness:** the documented early-state expected
@@ -295,4 +315,4 @@ substitution. No human reaction or new engine execution is claimed by these read
 D1/D2 remain final D18 content decisions; D3 remains the intentional booking
 tradeoff. The [resolution record](L02b-review-resolution.md) tracks delivery R1
 and the documentation nits. Next implementation task is **L03**; final content
-approval remains necessary before L05/L06/L07 consume this table.
+approval was recorded on October 14; L05/L06/L07 retain their other dependencies.

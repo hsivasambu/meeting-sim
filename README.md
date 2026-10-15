@@ -2,9 +2,9 @@
 
 The current code is the text-only launch meeting baseline. The lunch redesign
 rules and plan were approved on October 13, 2026; gameplay has not switched yet.
-The complete [L02 lunch draft](docs/content-table.md) is authored. Next is
-**L02b: dedicated AI adult workplace humour/writing review**, before final D18
-content approval. See the
+Harry approved the [L02b-reviewed lunch table](docs/content-table.md) and D18
+on October 14, 2026. Its initial content is approved for the scheduled preparation
+tasks; live activation remains L08. See the
 [approved plan](docs/lunch-redesign-plan.md), [task sequence](docs/implementation-plan.md)
 and [writing review brief](docs/lunch-writing-review.md). A successful lunch run
 must record and display the actual agreed cuisine. Original task 12a V4 human
