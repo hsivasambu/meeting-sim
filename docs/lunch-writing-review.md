@@ -1,8 +1,10 @@
 # L02b — Adult workplace comedy and writing review
 
-Status: **Scheduled, not performed.** Added at Harry's request on October 13, 2026.
-Depends on the complete L02 draft content table. This is an explicit editorial
-task for an AI reviewer; it does not authorize a new chat or start a review now.
+Status: **Performed on October 13; L02b and D18 approved by Harry on October 14, 2026.**
+See the [full review report](lunch-writing-review-report.md) and revised table
+`lunch-l02b-reviewed-2`. The remaining text preserves the review brief.
+Depends on the complete L02 draft content table. This brief defines the editorial
+task for an AI reviewer; Harry's L02b instruction started the completed pass.
 Task order and completion status live in [the implementation plan](implementation-plan.md).
 
 ## Purpose and voice

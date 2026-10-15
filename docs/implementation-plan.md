@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L02 draft and review corrections delivered with local/hosted checks; next is L02b, then Harry's final D18 approval.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
+Current: **L02b editorial review and Claude follow-ups delivered in draft PR #18 with passing local/hosted checks; revision lunch-l02b-reviewed-2 was approved by Harry for L02b/D18 on October 14, 2026. Next task: L03.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -76,11 +76,12 @@ draft at `docs/content-table.md` is not a live validation input before reviewed
 transcription and L08 activation. Assertions and fixtures remain unchanged, and
 this correction receives the active Node 24 checks.
 
-**Next task: L02b — dedicated AI adult workplace humour/writing review.**
-L02's complete draft is authored; Harry’s final D18 approval follows the review.
-Use [the writing-review brief](lunch-writing-review.md) to hand off that task.
-L03 is the first code task and may start after the now-complete L01; recommended
-user-facing order is L02 → L02b so the creative direction is reviewed early.
+**Next content handoff: Harry's final D18 approval of the L02b-reviewed table.**
+The [complete review report](lunch-writing-review-report.md) covers the revised
+table and carries D1/D2 content decisions forward. L03 is the next implementation
+task; L05/L06/L07 still require D18 approval and their other dependencies.
+L02 and L02b editorial work are complete. **L03 is the next implementation task:**
+additive authored-outcome capability, preserving live launch behavior until L08.
 Do not repeat approval requests for the accepted rules or formulas.
 
 ### L00 document-only evidence
@@ -114,6 +115,103 @@ link and contract-consistency checks instead. No formatting ignore was changed.
 **L01 complete. Next task: L02. All L02-and-later tasks, including L02b, remain
 unstarted.** L01 scope is documentation only; no game test, AI writing review or
 human playtest pass is claimed.
+
+### L02b — complete editorial review (October 13, 2026)
+
+This first-pass local record is historical; the revision-2 follow-up below owns
+current delivery status.
+
+Status: **AI editorial work complete locally; final D18 approval pending.**
+Reviewed input `lunch-l02-draft-2` at `55d037e40b215c3286fe873500de67466dbb5f7c`;
+output is [the complete table](content-table.md), revision
+`lunch-l02b-reviewed-1`, on `docs/task-l02b-lunch-writing`.
+The [review report](lunch-writing-review-report.md) records all 21 event groups,
+22 presentations, 54 choices, 57 outcomes and every catalog/copy key, voice notes,
+45 before/after field revisions with reasons, retained-line rationales and
+constructed success/failure/callback/arrival/both-branch sequence reads.
+
+Revisions reduce Gary cameos, personified equipment and repeated narrator endings;
+clarify Priya, Morgan, Alex and Pat; remove unsupported calendar/recap claims;
+preserve honest uncertain-choice warnings and actual cuisine on success. D1's
+uncertainty competitiveness and D2's expert paths remain D18 content decisions;
+D3's intentional booking tradeoff remains unchanged. ADRs 0005–0008 are accepted,
+not awaiting repeat approval. No human humour/comprehension, 320 px rendered fit,
+seeded lunch replay, balance, hosted CI or original V4 acceptance is claimed.
+
+Actual local documentation checks:
+
+- `python docs/lunch-content-checks.py`: **pass**. 17 base families, three callbacks,
+  filler, 22 presentations, 54 choices, 57 outcomes; 312 copy cells and 392 complete
+  substitutions; all twelve titles and seven commentary rows; three full-route
+  hand sums, three callback routes, exact utility/q checks and both clamped-state
+  counterexamples; 105 relative file/heading references across 22 documents. The
+  helper now substitutes the actual authored revision and checks this report; no
+  validation rule or threshold is relaxed.
+- Input/output mechanical comparison: **pass**, all 287 table rows in the same
+  order with identical non-copy cells, including effects, weights, techniques,
+  conditions, speakers, relationships and title/commentary predicates.
+- Supplemental parsed report coverage/change-log audit: **pass**, all 21 groups,
+  every presentation/response/outcome and catalog key accounted for. Exactly 45
+  before/after field revisions cover all 47 changed copy cells (two descriptions
+  each occur on both outcome branches); every log entry matches the input/output.
+- `node node_modules/prettier/bin/prettier.cjs --check` on the four changed Markdown
+  files: **pass**. `git diff --check`: **pass**. No formatting ignore changed.
+
+The pnpm launcher attempted to prepare its external cache and failed with EPERM;
+use the installed formatter directly, as in L02. No dependency/cache/CI change is
+required. This is documentation-only; active launch test/provenance inputs remain
+the unchanged archived tables, so gameplay gates are not rerun or claimed here.
+
+**Stop at L02b. Next content action: Harry's D18 review/approval of the complete
+revised table, including D1/D2. Next implementation task: L03 in its own PR.**
+L05/L06/L07 consumption remains gated by that approval and other dependencies.
+L09's uncoached human observations and original 12a V4 remain pending.
+
+### L02b review follow-up — revision 2 and delivery
+
+Harry asked to address all concerns in [Claude's L02b review](L02b-review.md).
+The [resolution record](L02b-review-resolution.md) maps R1, copy items 1–7 and all
+three documentation nits. Revision `lunch-l02b-reviewed-2` incorporates twelve
+additional field revisions, with an affected-row writing review in the report's
+addendum. The original 45-entry log remains intact; replaying it and the addendum
+reconstructs the final table. All mechanics, relationships and predicates remain
+unchanged from the L02 input.
+
+The formerly one-off report coverage/change-log audit is now reproducible:
+`python docs/lunch-content-checks.py --review-base 55d037e40b215c3286fe873500de67466dbb5f7c`.
+The checker verifies exact catalog coverage, all presentations/branches, all 287
+rows' non-copy cells, and all 57 sequential wording revisions. It also checks
+both review documents and the actual revision's substituted copy limits.
+
+Local checks on Node 24.21.0 / pnpm 10.34.6: **pass** — `pnpm check`
+(typecheck, lint/format, 36 files / 347 tests, core engine 99.64% lines / 98.66%
+branches, 2,000 Greedy + 2,000 Random invariant/replay checks); `pnpm build` and
+`pnpm size` (82,877/122,880 JS gzip bytes; 0/409,600 image/font bytes);
+`pnpm e2e` (30/30 across the three browser profiles). These are unchanged launch
+checks, not lunch gameplay/balance evidence. The local simulation records the
+uncommitted working tree honestly and retains content/constants hash
+`6cf33638c5d4cc1be09ef338e79f3a8e17b485e52c772023247b56c201596e0a`.
+Document audit with --review-base passes all nine checks, including 312 copy
+cells, 394 substitutions, 114 references in 24 documents, exact coverage and full
+57-edit reconstruction; formatting and `git diff --check` pass.
+
+Delivery R1: **addressed**. Complete content revision `lunch-l02b-reviewed-2` is
+pinned at `7efc2d19a65e5519063f2be653b2f02e438f326f` in
+[draft PR #18](https://github.com/hsivasambu/meeting-sim/pull/18), stacked on #17's
+`docs/task-l02-lunch-content` at `55d037e40b215c3286fe873500de67466dbb5f7c`.
+The [hosted Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38491925365)
+**passes** for that PR head: `pnpm check`, build/size and all browser checks.
+Downloaded artifacts independently confirm 347 unit passes (zero failures/errors),
+30 E2E passes (zero unexpected/flaky/skipped), coverage above the unchanged gates,
+and 2,000 Greedy + 2,000 Random invariant/replay passes. GitHub tested the synthetic
+merge revision `b3384bffa88b3771dde3654680cd5ea3358d505a`, with
+`workingTreeDirty=false` and the exact same content/constants hash as local.
+The Vercel preview status passes. These delivery notes receive another hosted run
+on the final PR head; the authored table remains byte-identical to the pinned
+content commit. No merge, D18 approval or later-task completion is inferred.
+Final D18 content approval (including D1/D2) is still pending; ADRs 0005–0008 stay
+accepted. **Next task: L03 — engine outcome capability.** No implementation work
+is included here. L05/L06/L07 require D18 approval and other listed dependencies.
 
 ### L02 — complete lunch content draft (October 13, 2026)
 
@@ -239,6 +337,30 @@ to consider competitiveness through ordinary progression, with L11/L12 evidence.
 Remaining content work: L02b's full editorial coverage/change log, Harry's final
 D18 decisions/approval, later L09 human evidence and scheduled transcription/tuning.
 Stop at the L02 review-fix boundary; no runtime lunch gameplay is implemented.
+
+## Harry’s L02b and D18 approval — October 14, 2026
+
+Harry explicitly approved: “Approve L02b and D18”. This accepts the completed
+L02b review and the complete table revision `lunch-l02b-reviewed-2`, whose
+player-facing content is pinned at `7efc2d19a65e5519063f2be653b2f02e438f326f`
+in PR #18. Approval covers the authored copy/catalogs, initial effects/weights,
+conditions and relationships, including D1’s present uncertainty tradeoffs and
+D2’s two expert-dependent responses per entrant. D3’s intentional room-booking
+tradeoff remains unchanged. No values are altered by recording this approval.
+
+These are approved initial content values, not evidence of balance. L11/L12
+still measure policy selection and tune under the existing reports, targets and
+change-control rules; the illustrative 80/20 is not adopted. The L02b/D18 content
+prerequisite for L05/L06/L07 is satisfied; their other dependencies still apply.
+This approval does not merge a PR, activate lunch before L08, accept L09 human
+evidence or complete original task 12a V4. Earlier pending-approval statements
+in dated execution records describe their historical status and are superseded
+by this explicit approval.
+
+Approval-record checks **pass**: document/catalog audit (312 copy cells,
+394 substitutions, 116 references across 24 documents), targeted Prettier and
+whitespace checks for this documentation-only record. No gameplay checks are claimed
+for the in-progress L04 working tree; its engine edits are outside this action.
 
 ## Historical launch blueprint and execution evidence
 
