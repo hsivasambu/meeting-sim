@@ -118,3 +118,13 @@ The final documentation receipt receives the same hosted gates.
 
 **L04 complete and delivered. Next task: L05.** Dependencies remain unmerged;
 this is a stacked draft, with no lunch activation or later-task implementation.
+
+## Dependency integration — October 15, 2026
+
+Harry explicitly accepted PR #15 V4; PRs #15–19 are now merged after fresh
+hosted checks for each integrated head. D18 approval is committed. The earlier
+blocked-stack statements above record October 14 status and are superseded.
+PR #20 remains draft for review, now based on main. Engine files are unchanged
+from verified revision `8635d03`; only acceptance/integration documentation
+changes. The new head receives the full hosted workflow. L09 lunch evidence
+remains separate; next implementation task is L05, not started here.

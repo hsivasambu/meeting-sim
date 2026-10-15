@@ -1,7 +1,7 @@
 # Lunch meeting — complete content draft
 
 Tasks **L02/L02b** · October 13, 2026 · Revision **lunch-l02b-reviewed-2**.
-**Complete draft; L02b AI writing review performed. Harry's D18 approval pending.**
+**L02b and D18 approved by Harry on October 14, 2026.**
 
 Sources: [design](design-doc-v2.md), [technical spec](tech-spec.md),
 [approved redesign](lunch-redesign-plan.md), accepted ADRs
@@ -9,14 +9,33 @@ Sources: [design](design-doc-v2.md), [technical spec](tech-spec.md),
 [0006](adr/0006-lunch-response-outcomes.md),
 [0007](adr/0007-lunch-score-and-policies.md),
 [0008](adr/0008-lunch-presentation-and-unlocks.md).
-Rules/formulas are accepted; these words, initial effects and weights need
-Harry's final D18 approval after the [L02b review](lunch-writing-review-report.md).
+Rules/formulas are accepted. Harry approved this complete table, including initial
+effects and weights, after the [L02b review](lunch-writing-review-report.md).
 The illustrative 80/20 is not tuning. No runtime content is implemented here.
 
 The [preserved launch table](content-table-launch.md) is the historical approved
 source for unchanged launch behavior during L03–L07. Its old approval does not
-approve this lunch draft. Original [12a V4](task-12a-playtest.md) remains pending;
+supply this lunch approval; Harry’s October 14 approval above does. Original [12a V4](task-12a-playtest.md) was accepted by Harry on October 15, 2026;
 the separate [L09 record](lunch-playtest.md) contains no observed evidence yet.
+
+## Harry’s L02b and D18 approval — October 14, 2026
+
+Harry explicitly approved: “Approve L02b and D18”. This accepts the completed
+L02b review and the complete table revision `lunch-l02b-reviewed-2`, whose
+player-facing content is pinned at `7efc2d19a65e5519063f2be653b2f02e438f326f`
+in PR #18. Approval covers the authored copy/catalogs, initial effects/weights,
+conditions and relationships, including D1’s present uncertainty tradeoffs and
+D2’s two expert-dependent responses per entrant. D3’s intentional room-booking
+tradeoff remains unchanged. No values are altered by recording this approval.
+
+These are approved initial content values, not evidence of balance. L11/L12
+still measure policy selection and tune under the existing reports, targets and
+change-control rules; the illustrative 80/20 is not adopted. The L02b/D18 content
+prerequisite for L05/L06/L07 is satisfied; their other dependencies still apply.
+This approval does not merge a PR, activate lunch before L08, accept L09 human
+evidence or complete original task 12a V4. Earlier pending-approval statements
+in dated execution records describe their historical status and are superseded
+by this explicit approval.
 
 ## Transcription and review conventions
 
@@ -774,7 +793,8 @@ The D1–D3 entries retain the L02 review handoff. The completed
 and records the editorial follow-ups below as reviewed, with full coverage.
 
 [Claude's L02 review](L02-review.md) identified two content decisions for the
-final D18 handoff. They remain open; this correction changes no effect, weight,
+final D18 handoff. Harry accepted the current content choices on October 14;
+recording approval changes no effect, weight,
 technique, availability condition, arrival/callback relationship or title predicate.
 
 - **D1 — uncertain choices are dominated at the documented early states.** At those
@@ -785,10 +805,10 @@ technique, availability condition, arrival/callback relationship or title predic
   at P94,H6,Alex absent, menu-needs/invite U=−26/25 beats hear and park (both −6/5),
   so invite has q=1. At P99,H7,Pat present, quick-agreement/refocus U=−206/25
   beats hear (−44/5); the Pat invitation is disabled, so refocus has q=1.
-  These document-state witnesses are not seeded frequency results. Before final
-  D18 approval Harry must consider whether uncertainty is competitive at enough
-  useful stages, or request L12 tuning with before/after reports and unchanged
-  formulas/targets. Do not approve an “always traps” premise these numbers refute.
+  These document-state witnesses are not seeded frequency results. D18 approves
+  these initial tradeoffs; L11/L12 still assess competitiveness at useful stages
+  and any L12 tuning needs before/after reports and unchanged formulas/targets.
+  The “always traps” premise remains false.
   L02b must not settle this by editing weights/effects; L11/L12 measure policy
   selection across actual runs. The three early-state utilities/q above stay valid.
 - **D2 — expert-dependent paths expand from one each to two each.** Pat retains
@@ -796,8 +816,8 @@ technique, availability condition, arrival/callback relationship or title predic
   enables menu-return/owner and spice-return/owner; those benefits require a
   previously deferred meal/spice question. Inviting Alex does not guarantee a
   future useful callback. The approved lunch plan opens expert benefits to
-  content review, but this expansion still needs explicit consideration in
-  Harry's D18 approval. L02b must preserve the draft paths and flag the decision.
+  content review; Harry’s D18 approval accepts this expansion as authored.
+  The two paths per entrant and Alex’s conditional benefit remain unchanged.
 - **D3 — room-booking trap remains intentional.** No mechanical correction is
   requested: hear buys the original hour with discussion time; timebox accepts
   45 cheaply; vp keeps 60 at P0 and loses the ASCII tie-break to timebox.
@@ -833,13 +853,14 @@ The [L02b report](lunch-writing-review-report.md) records full editorial coverag
 wording changes, constructed reading sequences and mechanical preservation.
 Revision 2 also addresses [Claude's L02b review](L02b-review.md); the report addendum
 and [resolution record](L02b-review-resolution.md) cover every follow-up.
-Initial weights/effects remain unapproved hypotheses; no policy-band, median-turn,
+Initial weights/effects are approved starting values with unverified balance;
+no policy-band, median-turn,
 technique-share, rendered-layout or human-comprehension claim is made here.
-D1/D2 above remain final D18 content decisions, not requests to reapprove ADRs.
+D1/D2 above are accepted in this D18 approval; ADRs 0005–0008 remain accepted.
 D3's intentional room-booking tradeoff is preserved. Dietary copy describes menu
 options, not medical or dietary safety certification.
 
-L02b handoff: Harry reviews revision lunch-l02b-reviewed-2 and its report for D18.
-L05/L06/L07 consumption remains gated on that approval and their other dependencies.
+L02b/D18 handoff: Harry approved revision lunch-l02b-reviewed-2 and its review.
+L05/L06/L07’s content-approval prerequisite is satisfied; other dependencies apply.
 No runtime transcription, gameplay, human acceptance or activation is included.
 Original task 12a's V4 remains pending in its separate historical record.
