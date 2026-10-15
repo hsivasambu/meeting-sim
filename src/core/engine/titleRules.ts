@@ -1,4 +1,6 @@
 import {
+  INITIAL_ATTENDEES,
+  ONE,
   TITLE_SCORE_INBOX,
   TITLE_SCORE_EFFICIENT,
   TITLE_RISK_SHIP,
@@ -10,11 +12,19 @@ import {
 } from './constants';
 import { qualityAtLeast } from './score';
 import { assertEnded } from './errors';
-import type { MeetingState, ScoreBreakdown, TitleId } from './types';
+import type {
+  EngineState,
+  MeetingState,
+  LunchState,
+  LunchTitleId,
+  ScoreBreakdown,
+  TitleId,
+} from './types';
+import { validateLunchState } from './lunchValidation';
 
 type TitleRule = readonly [
   TitleId,
-  (state: MeetingState, breakdown: ScoreBreakdown) => boolean,
+  (state: EngineState, breakdown: ScoreBreakdown) => boolean,
 ];
 
 // The design's display priority also gives callers a stable order for all unlocks.
@@ -37,7 +47,8 @@ const titleRules: readonly TitleRule[] = [
   ],
   [
     'ship-it-and-pray',
-    (s) => s.ending === 'decision' && s.risks >= TITLE_RISK_SHIP,
+    (s) =>
+      s.ending === 'decision' && 'risks' in s && s.risks >= TITLE_RISK_SHIP,
   ],
   [
     'death-by-diligence',
@@ -54,6 +65,7 @@ const titleRules: readonly TitleRule[] = [
   [
     'gary-free-zone',
     (s) =>
+      'releasedAttendeeIds' in s &&
       s.releasedAttendeeIds.includes('gary') &&
       !s.spokenAttendeeIds.includes('gary'),
   ],
@@ -68,4 +80,27 @@ export function earnedTitles(
   return titleRules.flatMap(([id, eligible]) =>
     eligible(state, breakdown) ? [id] : [],
   );
+}
+
+/** ADR 0008: reuse retained predicates and priority; replace only slots 3/5/8. */
+export function earnedLunchTitles(
+  state: LunchState,
+  breakdown: ScoreBreakdown,
+): LunchTitleId[] {
+  assertEnded(state);
+  validateLunchState(state);
+  return titleRules.flatMap<LunchTitleId>(([id, eligible]) => {
+    if (id === 'ship-it-and-pray')
+      return state.ending === 'decision' ? ['lunch-agreed'] : [];
+    if (id === 'skeleton-crew')
+      return state.ending === 'decision' &&
+        state.present.length === INITIAL_ATTENDEES.length
+        ? ['table-for-six']
+        : [];
+    if (id === 'gary-free-zone')
+      return state.ending === 'decision' && state.resolvedCallbackCount >= ONE
+        ? ['second-helping']
+        : [];
+    return eligible(state, breakdown) ? [id] : [];
+  });
 }

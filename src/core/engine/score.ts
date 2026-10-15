@@ -14,11 +14,12 @@ import {
   DISPLAY_HOURLY_RATE,
   MINUTES_PER_HOUR,
 } from './constants';
-import type { MeetingState, ScoreBreakdown } from './types';
+import type { EngineState, ScoreBreakdown } from './types';
 import { decimalFraction } from './utilityFraction';
 import { assertEnded } from './errors';
+import { validateLunchState } from './lunchValidation';
 
-function qualityFraction(state: MeetingState) {
+function qualityFraction(state: EngineState) {
   let numerator = BIGINT_ZERO,
     denominator = BIGINT_ONE,
     count = BIGINT_ZERO;
@@ -36,10 +37,7 @@ function qualityFraction(state: MeetingState) {
 }
 
 /** Implements Design Doc v2 → Titles: compare unrounded average quality exactly. */
-export function qualityAtLeast(
-  state: MeetingState,
-  threshold: number,
-): boolean {
+export function qualityAtLeast(state: EngineState, threshold: number): boolean {
   const average = qualityFraction(state),
     minimum = decimalFraction(threshold);
   return (
@@ -48,7 +46,7 @@ export function qualityAtLeast(
   );
 }
 
-function decisionScore(state: MeetingState): number {
+function decisionScore(state: EngineState): number {
   const average = qualityFraction(state),
     maximum = decimalFraction(DECISIONS_MAX);
   const numerator = average.numerator * maximum.numerator;
@@ -59,11 +57,15 @@ function decisionScore(state: MeetingState): number {
 }
 
 /** Implements Design Doc v2 → Scoring: round each component before summing. */
-export function score(state: MeetingState): ScoreBreakdown {
+export function score(state: EngineState): ScoreBreakdown {
   assertEnded(state);
+  if ('nominatedCuisine' in state) validateLunchState(state);
   const outcome = Math.round(
     state.progress >= PROGRESS_MAX
-      ? OUTCOME_MAX - Math.min(RISK_PENALTY * state.risks, RISK_PENALTY_CAP)
+      ? OUTCOME_MAX -
+          ('risks' in state
+            ? Math.min(RISK_PENALTY * state.risks, RISK_PENALTY_CAP)
+            : ZERO)
       : FAIL_MULTIPLIER * state.progress,
   );
   const costRange = COST_REF_PM - COST_FLOOR_PM;

@@ -9,17 +9,18 @@ import { ONE, ZERO, PROGRESS_MAX, CALLBACK_DELAY } from './constants';
 import { assertRunning, EngineError } from './errors';
 import { evaluateOutcomes, expectedUtility, hasOutcomes } from './outcomes';
 import { responseRng, sampleOutcome } from './rng';
+import { validateLunchState } from './lunchValidation';
 import type {
   DecisionRecord,
+  EngineState,
   MeetingState,
   PresentedEvent,
   UtilityRules,
   EngineResponse,
   ResponseOutcome,
-  ResponseSuccessor,
 } from './types';
 function schedule(
-  state: MeetingState<EngineResponse>,
+  state: EngineState,
   outcome: ResponseOutcome,
 ): MeetingState['scheduled'] {
   const callback = outcome.effect.callback;
@@ -31,7 +32,7 @@ function schedule(
       ];
 }
 function quality(
-  state: MeetingState<EngineResponse>,
+  state: EngineState,
   event: PresentedEvent<EngineResponse>,
   response: EngineResponse,
   rules: UtilityRules,
@@ -76,8 +77,8 @@ function quality(
   };
 }
 function resolutionLog(
-  state: MeetingState<EngineResponse>,
-  next: MeetingState<EngineResponse>,
+  state: EngineState,
+  next: EngineState,
   event: PresentedEvent<EngineResponse>,
   response: EngineResponse,
   outcome: ResponseOutcome,
@@ -103,14 +104,14 @@ function resolutionLog(
     })),
   ];
 }
-function finishResolution<R extends EngineResponse>(
-  state: MeetingState<R>,
-  next: MeetingState<R>,
-  event: PresentedEvent<R>,
-  response: R,
+function finishResolution<S extends EngineState>(
+  state: S,
+  next: S,
+  event: PresentedEvent<EngineResponse>,
+  response: EngineResponse,
   outcome: ResponseOutcome,
   decisionQuality: Pick<DecisionRecord, 'quality' | 'qualityFraction'>,
-): MeetingState<R> {
+): S {
   const ending =
     next.progress >= PROGRESS_MAX
       ? 'decision'
@@ -125,6 +126,14 @@ function finishResolution<R extends EngineResponse>(
   };
   return {
     ...next,
+    ...('nominatedCuisine' in next
+      ? {
+          agreedCuisine: ending === 'decision' ? next.nominatedCuisine : null,
+          resolvedCallbackCount:
+            next.resolvedCallbackCount +
+            (event.kind === 'callback' ? ONE : ZERO),
+        }
+      : {}),
     turn: state.turn + ONE,
     current: null,
     scheduled: schedule(state, outcome),
@@ -137,11 +146,9 @@ function finishResolution<R extends EngineResponse>(
   };
 }
 /** Implements Design Doc v2 → Game state model → Resolution and attendance boundaries. */
-function pendingResponse<R extends EngineResponse>(
-  state: MeetingState<R>,
-  responseId: string,
-) {
+function pendingResponse<S extends EngineState>(state: S, responseId: string) {
   assertRunning(state);
+  if ('nominatedCuisine' in state) validateLunchState(state);
   const event = state.current;
   if (event === null) throw new EngineError('missing-event');
   const responses = event.responses.filter(
@@ -153,11 +160,11 @@ function pendingResponse<R extends EngineResponse>(
   return { event, response };
 }
 /** ADR 0006: enumeration applies the same transition without sampling or seed inspection. */
-export function getResponseOutcomesWithRules<R extends EngineResponse>(
-  state: MeetingState<R>,
+export function getResponseOutcomesWithRules<S extends EngineState>(
+  state: S,
   responseId: string,
   rules: UtilityRules,
-): readonly ResponseSuccessor<R>[] {
+) {
   const { event, response } = pendingResponse(state, responseId);
   const branches = evaluateOutcomes(state, response, rules);
   const decisionQuality = quality(state, event, response, rules);
@@ -175,11 +182,11 @@ export function getResponseOutcomesWithRules<R extends EngineResponse>(
   }));
 }
 /** ADR 0006: validate and score expected choice quality before sampling once. */
-export function resolveWithRules<R extends EngineResponse>(
-  state: MeetingState<R>,
+export function resolveWithRules<S extends EngineState>(
+  state: S,
   responseId: string,
   rules: UtilityRules,
-): MeetingState<R> {
+): S {
   const { event, response } = pendingResponse(state, responseId);
   const branches = evaluateOutcomes(state, response, rules);
   const decisionQuality = quality(state, event, response, rules);

@@ -8,15 +8,9 @@ import {
   REDUCED_BOOKING_END,
 } from './constants';
 import { EngineError } from './errors';
-import type {
-  AttendeeId,
-  Effect,
-  MeetingState,
-  EngineResponse,
-  Response,
-} from './types';
-export interface AppliedEffect<R extends EngineResponse = Response> {
-  readonly state: MeetingState<R>;
+import type { AttendeeId, Effect, MeetingState, EngineState } from './types';
+export interface AppliedEffect<S extends EngineState = MeetingState> {
+  readonly state: S;
   readonly progressDelta: number;
   readonly risksDelta: number;
   readonly minutesDelta: number;
@@ -36,7 +30,7 @@ function validateEffect(effect: Effect): void {
     throw new EngineError('invalid-effect');
 }
 function presentAfter(
-  state: MeetingState<EngineResponse>,
+  state: EngineState,
   effect: Effect,
   allowedJoins: readonly AttendeeId[],
 ): MeetingState['present'] {
@@ -46,18 +40,20 @@ function presentAfter(
     new Set(joins).size !== joins.length ||
     joins.some(
       (id) =>
-        state.present.includes(id) || state.releasedAttendeeIds.includes(id),
+        state.present.includes(id) ||
+        ('releasedAttendeeIds' in state &&
+          state.releasedAttendeeIds.includes(id)),
     ) ||
     state.present.length + joins.length > MAX_HEADCOUNT
   )
     throw new EngineError('invalid-join');
   return [...state.present, ...joins];
 }
-function effectState<R extends EngineResponse>(
-  state: MeetingState<R>,
+function effectState<S extends EngineState>(
+  state: S,
   effect: Effect,
   allowedJoins: readonly AttendeeId[],
-): MeetingState<R> {
+): S {
   const present = presentAfter(state, effect, allowedJoins);
   const minute = state.minute + effect.minutes;
   const personMinutes =
@@ -66,6 +62,9 @@ function effectState<R extends EngineResponse>(
     throw new EngineError('invalid-effect');
   return {
     ...state,
+    ...('nominatedCuisine' in state
+      ? { nominatedCuisine: effect.nominateCuisine ?? state.nominatedCuisine }
+      : {}),
     minute,
     personMinutes,
     present,
@@ -73,26 +72,31 @@ function effectState<R extends EngineResponse>(
       PROGRESS_MAX,
       Math.max(ZERO, state.progress + (effect.progress ?? ZERO)),
     ),
-    risks: Math.min(
-      RISKS_MAX,
-      Math.max(ZERO, state.risks + (effect.risks ?? ZERO)),
-    ),
+    ...('risks' in state
+      ? {
+          risks: Math.min(
+            RISKS_MAX,
+            Math.max(ZERO, state.risks + (effect.risks ?? ZERO)),
+          ),
+        }
+      : {}),
     bookingEnd: effect.bookingEnd ?? state.bookingEnd,
     peakHeadcount: Math.max(state.peakHeadcount, present.length),
   };
 }
 /** Implements Design Doc v2 → Game state model → Resolution and attendance boundaries. */
-export function applyEffect<R extends EngineResponse>(
-  state: MeetingState<R>,
+export function applyEffect<S extends EngineState>(
+  state: S,
   effect: Effect,
   allowedJoins: readonly AttendeeId[] = [],
-): AppliedEffect<R> {
+): AppliedEffect<S> {
   validateEffect(effect);
   const next = effectState(state, effect, allowedJoins);
   return {
     state: next,
     progressDelta: next.progress - state.progress,
-    risksDelta: next.risks - state.risks,
+    risksDelta:
+      'risks' in next && 'risks' in state ? next.risks - state.risks : ZERO,
     minutesDelta: next.minute - state.minute,
     personMinutesDelta: next.personMinutes - state.personMinutes,
   };

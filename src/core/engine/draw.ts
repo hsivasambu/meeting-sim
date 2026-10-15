@@ -1,3 +1,4 @@
+import { validateLunchState, validateNomination } from './lunchValidation';
 import { matchesCondition } from './conditions';
 import {
   FIRST_SUBSTANTIVE_DRAWS,
@@ -9,22 +10,29 @@ import { assertRunning, EngineError } from './errors';
 import { drawRng } from './rng';
 import type {
   ContentPack,
+  EngineResponse,
+  EngineState,
+  EventRules,
+  LunchEventRules,
+  LunchState,
+  MeetingState,
   DrawCandidate,
   MeetingEvent,
-  MeetingState,
   PresentedEvent,
   Rarity,
 } from './types';
 import { selectWeightedEvent, weightedEvents } from './weighted';
 
-function uncommonNegative(event: MeetingEvent | PresentedEvent): boolean {
+function uncommonNegative(
+  event: MeetingEvent<EngineResponse> | PresentedEvent<EngineResponse>,
+): boolean {
   return event.rarity === 'uncommon' && event.negative === true;
 }
 
 function presentEvent(
-  state: MeetingState,
-  event: MeetingEvent,
-): PresentedEvent {
+  state: EngineState,
+  event: MeetingEvent<EngineResponse>,
+): PresentedEvent<EngineResponse> {
   const variant = event.variants?.find((entry) =>
     matchesCondition(state, entry.when),
   );
@@ -40,9 +48,9 @@ function presentEvent(
 }
 
 function dueCallback(
-  content: ContentPack,
-  state: MeetingState,
-): MeetingEvent | undefined {
+  content: ContentPack<EngineResponse, EventRules | LunchEventRules>,
+  state: EngineState,
+): MeetingEvent<EngineResponse> | undefined {
   const ids = new Set<string>();
   const turns = new Set<number>();
   for (const entry of state.scheduled) {
@@ -87,11 +95,33 @@ function dueCallback(
 }
 
 function poolFor(
-  content: ContentPack,
-  state: MeetingState,
+  content: ContentPack<EngineResponse, EventRules | LunchEventRules>,
+  state: EngineState,
 ):
-  | { readonly forced: MeetingEvent }
-  | { readonly events: readonly MeetingEvent[] } {
+  | { readonly forced: MeetingEvent<EngineResponse> }
+  | { readonly events: readonly MeetingEvent<EngineResponse>[] } {
+  if ('nominatedCuisine' in state) {
+    validateLunchState(state);
+    if (!('nominationEventId' in content.eventRules))
+      throw new EngineError('invalid-rules');
+    if (state.turn === ZERO) {
+      const nominationId = content.eventRules.nominationEventId;
+      const nominations = content.events.filter(
+        (event) => event.id === nominationId,
+      );
+      const nomination = nominations[ZERO];
+      if (
+        nominations.length !== ONE ||
+        nomination === undefined ||
+        nomination.kind !== 'substantive' ||
+        nomination.rarity !== 'common' ||
+        !matchesCondition(state, nomination.when)
+      )
+        throw new EngineError('invalid-pool');
+      validateNomination(presentEvent(state, nomination));
+      return { forced: nomination };
+    }
+  }
   const callback = dueCallback(content, state);
   if (callback !== undefined) return { forced: callback };
   const firstTwo = state.substantiveDrawCount < FIRST_SUBSTANTIVE_DRAWS;
@@ -100,7 +130,16 @@ function poolFor(
       event.kind !== 'callback' &&
       !state.seenEventIds.includes(event.id) &&
       matchesCondition(state, event.when) &&
-      (!firstTwo || event.kind === 'substantive') &&
+      (!firstTwo ||
+        (event.kind === 'substantive' &&
+          (!('nominatedCuisine' in state) || event.rarity === 'common'))) &&
+      (!('nominatedCuisine' in state) ||
+        !('nominationEventId' in content.eventRules) ||
+        event.id !== content.eventRules.nominationEventId) &&
+      (!('nominatedCuisine' in state) ||
+        !state.present.some(
+          (id) => id === content.eventRules.arrivalAttendees[event.id],
+        )) &&
       (!state.previousDrawWasUncommonNegative || !uncommonNegative(event)),
   );
   if (eligible.length > ZERO) return { events: eligible };
@@ -112,8 +151,18 @@ function poolFor(
 export function getDrawCandidatesWith(
   content: ContentPack,
   state: MeetingState,
+  rarityWeights?: Readonly<Record<Rarity, number>>,
+): readonly DrawCandidate[];
+export function getDrawCandidatesWith(
+  content: ContentPack<EngineResponse, EventRules | LunchEventRules>,
+  state: EngineState,
+  rarityWeights?: Readonly<Record<Rarity, number>>,
+): readonly DrawCandidate<EngineResponse>[];
+export function getDrawCandidatesWith(
+  content: ContentPack<EngineResponse, EventRules | LunchEventRules>,
+  state: EngineState,
   rarityWeights: Readonly<Record<Rarity, number>> = RARITY_WEIGHTS,
-): readonly DrawCandidate[] {
+): readonly DrawCandidate<EngineResponse>[] {
   if (state.phase === 'ended') return [];
   if (state.current !== null)
     return [{ event: state.current, probability: ONE }];
@@ -131,8 +180,18 @@ export function getDrawCandidatesWith(
 export function drawEventWith(
   content: ContentPack,
   state: MeetingState,
+  rarityWeights?: Readonly<Record<Rarity, number>>,
+): MeetingState;
+export function drawEventWith(
+  content: ContentPack<EngineResponse, EventRules | LunchEventRules>,
+  state: LunchState,
+  rarityWeights?: Readonly<Record<Rarity, number>>,
+): LunchState;
+export function drawEventWith<S extends EngineState>(
+  content: ContentPack<EngineResponse, EventRules | LunchEventRules>,
+  state: S,
   rarityWeights: Readonly<Record<Rarity, number>> = RARITY_WEIGHTS,
-): MeetingState {
+): S {
   assertRunning(state);
   if (state.current !== null) return { ...state };
   const pool = poolFor(content, state);

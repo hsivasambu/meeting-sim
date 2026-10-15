@@ -84,8 +84,17 @@ export function utilityFraction(
   )
     throw new EngineError('invalid-rules');
   const cost = decimalFraction(rules.costWeight),
-    risk = decimalFraction(rules.riskWeight),
     unit = decimalFraction(rules.costUnit);
+  if (rules.profile === 'lunch') {
+    const denominator = cost.denominator * unit.numerator;
+    return {
+      numerator:
+        BigInt(progress) * denominator -
+        cost.numerator * unit.denominator * BigInt(personMinutes),
+      denominator,
+    };
+  }
+  const risk = decimalFraction(rules.riskWeight);
   const denominator = cost.denominator * unit.numerator * risk.denominator;
   const numerator =
     BigInt(progress) * denominator -

@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L03 complete and delivered in draft PR #19 with passing local/hosted Node 24 gates. Next task: L04.** Harry approved L02b/D18 on October 14, 2026; L05/L06/L07 retain their other dependencies. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
+Current: **L04 complete and delivered in draft PR #20 with passing local/hosted Node 24 gates. Next task: L05.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18; L05/L06/L07’s content prerequisite is satisfied, with their other dependencies unchanged. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -2076,6 +2076,42 @@ No dependency/task PR has been merged here. This final documentation receipt
 receives its own hosted run; it changes no implementation or checks.
 L05/L06/L07 still require final D18 content approval; L08 owns activation/removal.
 
+## L04 — Lunch rules and scoring, October 14, 2026
+
+L04 implementation and evidence are in [the L04 record](task-l04-rules.md).
+The fixture-injected lunch profile shares draw/effect/resolution/score/title
+primitives with launch; no public activation or live content/tuning change.
+Nomination, permanent 6–8 attendance, per-response arrival permissions, n+2
+callbacks, cuisine agreement before expiry and risk-free scoring are covered.
+The three replacement titles reuse retained predicates and priority.
+
+Local Node 24.21.0 / pnpm 10.34.6: `pnpm check` passes, **420 tests / 40 files**,
+core **824/835 lines (98.68%) / 872/897 branches (97.21%)**; launch simulation
+summaries/hash unchanged, invariant and replay checks pass for 2,000 seeds each
+Greedy/Random. Build/size pass (**84,675 gzip JS bytes**, zero images/fonts);
+E2E **30 passed** across all three profiles. Seven added lunch goldens preserve
+all six launch goldens. An exhausted 17-family/three-callback witness ends on
+turn 40 through filler; generated seed/action tests stay within 50 resolutions.
+
+Dependencies remain unmerged: the stack starts at draft #15 with pending V4
+human evidence; L03 #19 requires dependency integration and gate reruns before
+merge. Concurrent D18 approval documentation is preserved separately. L04
+starts from #19 head `77348a8f96ebde741d34d945494961ed5662e4c3` and will be
+delivered as its own stacked draft PR. Hosted verification follows creation.
+The existing untracked L03 review note was preserved byte-for-byte outside the
+format scan for local gates; it is not included in L04.
+
+**L04 complete locally. Next task: L05**, subject to its listed dependencies.
+L08 removes the temporary profile/overloads/helpers alongside the existing L03
+migration contracts. No later task, human evidence or live activation is claimed.
+
+L04 delivery: [draft PR #20](https://github.com/hsivasambu/meeting-sim/pull/20)
+targets L03. Implementation `61c706c` passes [hosted Node 24 quality checks](https://github.com/hsivasambu/meeting-sim/actions/runs/38671197043).
+Downloaded reports confirm 420 unit passes, 30 browser passes (no skips/flakes/errors),
+core 824/835 lines and 872/897 branches, clean simulation replay and unchanged
+V3 summaries/hash. Build/size and Vercel preview pass. The final documentation
+receipt receives the same checks. **L04 complete and delivered; next task L05.**
+
 ## Task 12a V4 acceptance — October 15, 2026
 
 Harry explicitly instructed “accept PR#15 V4”. [The acceptance record](task-12a-v4-acceptance.md)
@@ -2109,3 +2145,18 @@ Approval-record checks **pass**: document/catalog audit (312 copy cells,
 394 substitutions, 116 references across 24 documents), targeted Prettier and
 whitespace checks for this documentation-only record. No gameplay checks are claimed
 for the in-progress L04 working tree; its engine edits are outside this action.
+
+## Accepted stack integration — October 15, 2026
+
+Harry explicitly accepted PR #15 V4. PRs **#15, #16, #17, #18 and #19 are now
+merged into main**, each after fresh hosted quality checks on its integrated head.
+D18 approval is committed in #18. Original individual tester reports remain
+unsupplied; acceptance is recorded without inventing observations. L09 remains
+the separate lunch playtest requirement.
+
+L04 **#20 remains a separate draft for review**, now targeting main. Its engine
+files are byte-identical to verified revision `8635d03`; integration carries only
+accepted documentation forward and receives fresh hosted gates. No gameplay,
+content mechanics, scoring formulas or test thresholds changed during integration.
+**Next implementation task remains L05** after its listed prerequisites; none
+was started in this acceptance/merge action.

@@ -16,7 +16,7 @@ import { evaluateResponse } from './value';
 import { addFractions, fractionNumber } from './utilityFraction';
 import type {
   EngineResponse,
-  MeetingState,
+  EngineState,
   OutcomeResponse,
   ResponseOutcome,
   UtilityRules,
@@ -74,8 +74,8 @@ export function responseOutcomes(
   );
 }
 /** Every branch uses the same validation, clamping and full-duration billing. No sampling. */
-export function evaluateOutcomes<R extends EngineResponse>(
-  state: MeetingState<R>,
+export function evaluateOutcomes<S extends EngineState>(
+  state: S,
   response: EngineResponse,
   rules: UtilityRules,
 ) {

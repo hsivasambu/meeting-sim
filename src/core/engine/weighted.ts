@@ -1,5 +1,5 @@
 import { DEFAULT_EVENT_WEIGHT, ONE, ZERO } from './constants';
-import type { MeetingEvent, Rarity } from './types';
+import type { MeetingEvent, Rarity, EngineResponse } from './types';
 
 function validateRarityWeights(
   weights: Readonly<Record<Rarity, number>>,
@@ -11,8 +11,8 @@ function validateRarityWeights(
 }
 
 /** Implements Design Doc v2 → Events and responses → Draw rules: unique-ID integer-weight selection. */
-export function weightedEvents(
-  events: readonly MeetingEvent[],
+export function weightedEvents<R extends EngineResponse>(
+  events: readonly MeetingEvent<R>[],
   rarityWeights: Readonly<Record<Rarity, number>>,
 ) {
   validateRarityWeights(rarityWeights);
@@ -37,11 +37,11 @@ export function weightedEvents(
 }
 
 /** Implements the exact one-ticket weighted selection shared with draw distributions. */
-export function selectWeightedEvent(
-  events: readonly MeetingEvent[],
+export function selectWeightedEvent<R extends EngineResponse>(
+  events: readonly MeetingEvent<R>[],
   rng: () => number,
   rarityWeights: Readonly<Record<Rarity, number>>,
-): MeetingEvent {
+): MeetingEvent<R> {
   const { candidates, total } = weightedEvents(events, rarityWeights);
   const random = rng();
   if (!Number.isFinite(random) || random < ZERO || random >= ONE)

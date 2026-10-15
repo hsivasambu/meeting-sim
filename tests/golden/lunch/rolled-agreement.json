@@ -1,0 +1,58 @@
+{
+  "actions": ["fixture-numeric:lottery"],
+  "state": {
+    "seed": "lunch-roll-1",
+    "turn": 3,
+    "minute": 60,
+    "bookingEnd": 60,
+    "progress": 100,
+    "personMinutes": 6,
+    "present": ["priya", "dev", "sam", "morgan", "gary", "jordan"],
+    "peakHeadcount": 6,
+    "seenEventIds": [],
+    "spokenAttendeeIds": [],
+    "parkedCount": 0,
+    "substantiveDrawCount": 2,
+    "previousDrawWasUncommonNegative": false,
+    "scheduled": [],
+    "decisions": [
+      {
+        "turn": 2,
+        "eventId": "fixture-numeric",
+        "responseId": "lottery",
+        "quality": 0.5930232558139535,
+        "qualityFraction": {
+          "numerator": "47589120000",
+          "denominator": "80248320000"
+        }
+      }
+    ],
+    "log": [
+      {
+        "type": "resolve",
+        "turn": 2,
+        "minute": 60,
+        "eventId": "fixture-numeric",
+        "responseId": "lottery",
+        "technique": "hear",
+        "line": "Fixture advance.",
+        "outcomeId": "good"
+      }
+    ],
+    "phase": "ended",
+    "ending": "decision",
+    "current": null,
+    "nominatedCuisine": "fixture-a",
+    "agreedCuisine": "fixture-a",
+    "resolvedCallbackCount": 0,
+    "shownCommentaryIds": [],
+    "lastCommentaryTurn": null
+  },
+  "score": {
+    "outcome": 400,
+    "efficiency": 300,
+    "decisions": 178,
+    "total": 878
+  },
+  "titles": ["efficient-facilitator", "lunch-agreed", "table-for-six"]
+}

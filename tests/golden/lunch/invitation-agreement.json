@@ -1,0 +1,217 @@
+{
+  "actions": [
+    "fixture-nomination:fixture-b",
+    "fixture-discussion-two:advance",
+    "fixture-parent-c:advance",
+    "fixture-parent-b:advance",
+    "fixture-discussion:invite",
+    "fixture-parent-a:advance"
+  ],
+  "state": {
+    "seed": "lunch-invite",
+    "turn": 6,
+    "minute": 11,
+    "bookingEnd": 60,
+    "progress": 100,
+    "personMinutes": 68,
+    "present": ["priya", "dev", "sam", "morgan", "gary", "jordan", "vp"],
+    "peakHeadcount": 7,
+    "seenEventIds": [
+      "fixture-nomination",
+      "fixture-discussion-two",
+      "fixture-parent-c",
+      "fixture-parent-b",
+      "fixture-discussion",
+      "fixture-parent-a"
+    ],
+    "spokenAttendeeIds": ["priya"],
+    "parkedCount": 0,
+    "substantiveDrawCount": 3,
+    "previousDrawWasUncommonNegative": false,
+    "scheduled": [],
+    "decisions": [
+      {
+        "turn": 0,
+        "eventId": "fixture-nomination",
+        "responseId": "fixture-b",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 1,
+        "eventId": "fixture-discussion-two",
+        "responseId": "advance",
+        "quality": 1,
+        "qualityFraction": {
+          "numerator": "1428",
+          "denominator": "1428"
+        }
+      },
+      {
+        "turn": 2,
+        "eventId": "fixture-parent-c",
+        "responseId": "advance",
+        "quality": 1,
+        "qualityFraction": {
+          "numerator": "1428",
+          "denominator": "1428"
+        }
+      },
+      {
+        "turn": 3,
+        "eventId": "fixture-parent-b",
+        "responseId": "advance",
+        "quality": 1,
+        "qualityFraction": {
+          "numerator": "1428",
+          "denominator": "1428"
+        }
+      },
+      {
+        "turn": 4,
+        "eventId": "fixture-discussion",
+        "responseId": "invite",
+        "quality": 0.2526595744680851,
+        "qualityFraction": {
+          "numerator": "59097600000",
+          "denominator": "233902080000"
+        }
+      },
+      {
+        "turn": 5,
+        "eventId": "fixture-parent-a",
+        "responseId": "advance",
+        "quality": 1,
+        "qualityFraction": {
+          "numerator": "516",
+          "denominator": "516"
+        }
+      }
+    ],
+    "log": [
+      {
+        "type": "draw",
+        "turn": 0,
+        "minute": 0,
+        "eventId": "fixture-nomination",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 0,
+        "minute": 1,
+        "eventId": "fixture-nomination",
+        "responseId": "fixture-b",
+        "technique": "hear",
+        "line": "Fixture outcome.",
+        "outcomeId": "done"
+      },
+      {
+        "type": "draw",
+        "turn": 1,
+        "minute": 1,
+        "eventId": "fixture-discussion-two",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 1,
+        "minute": 3,
+        "eventId": "fixture-discussion-two",
+        "responseId": "advance",
+        "technique": "hear",
+        "line": "Fixture outcome.",
+        "outcomeId": "done"
+      },
+      {
+        "type": "draw",
+        "turn": 2,
+        "minute": 3,
+        "eventId": "fixture-parent-c",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 2,
+        "minute": 5,
+        "eventId": "fixture-parent-c",
+        "responseId": "advance",
+        "technique": "hear",
+        "line": "Fixture outcome.",
+        "outcomeId": "done"
+      },
+      {
+        "type": "draw",
+        "turn": 3,
+        "minute": 5,
+        "eventId": "fixture-parent-b",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 3,
+        "minute": 7,
+        "eventId": "fixture-parent-b",
+        "responseId": "advance",
+        "technique": "hear",
+        "line": "Fixture outcome.",
+        "outcomeId": "done"
+      },
+      {
+        "type": "draw",
+        "turn": 4,
+        "minute": 7,
+        "eventId": "fixture-discussion",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 4,
+        "minute": 9,
+        "eventId": "fixture-discussion",
+        "responseId": "invite",
+        "technique": "hear",
+        "line": "Fixture advance.",
+        "outcomeId": "good"
+      },
+      {
+        "type": "join",
+        "turn": 4,
+        "minute": 9,
+        "who": "vp"
+      },
+      {
+        "type": "draw",
+        "turn": 5,
+        "minute": 9,
+        "eventId": "fixture-parent-a",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 5,
+        "minute": 11,
+        "eventId": "fixture-parent-a",
+        "responseId": "advance",
+        "technique": "hear",
+        "line": "Fixture outcome.",
+        "outcomeId": "done"
+      }
+    ],
+    "phase": "ended",
+    "ending": "decision",
+    "current": null,
+    "nominatedCuisine": "fixture-b",
+    "agreedCuisine": "fixture-b",
+    "resolvedCallbackCount": 0,
+    "shownCommentaryIds": [],
+    "lastCommentaryTurn": null
+  },
+  "score": {
+    "outcome": 400,
+    "efficiency": 300,
+    "decisions": 255,
+    "total": 955
+  },
+  "titles": ["inbox-zero", "efficient-facilitator", "lunch-agreed"]
+}

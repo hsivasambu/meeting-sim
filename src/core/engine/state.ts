@@ -6,7 +6,14 @@ import {
   MIN_HEADCOUNT,
 } from './constants';
 import { assertRunning } from './errors';
-import type { AttendeeId, MeetingState, ReleasePreview } from './types';
+import { validateLunchState } from './lunchValidation';
+import type {
+  AttendeeId,
+  MeetingState,
+  ReleasePreview,
+  EngineState,
+  LunchState,
+} from './types';
 /** Implements Design Doc v2 → Game state model: the fixed starting meeting. */
 export function initialState(seed: string): MeetingState {
   return {
@@ -61,8 +68,9 @@ export function release(state: MeetingState, who: AttendeeId): MeetingState {
   };
 }
 /** Implements Design Doc v2 → Endings, titles and the results card → Endings. */
-export function callIt(state: MeetingState): MeetingState {
+export function callIt<S extends EngineState>(state: S): S {
   assertRunning(state);
+  if ('nominatedCuisine' in state) validateLunchState(state);
   return {
     ...state,
     phase: 'ended',
@@ -71,5 +79,36 @@ export function callIt(state: MeetingState): MeetingState {
       ...state.log,
       { type: 'call-it', turn: state.turn, minute: state.minute },
     ],
+  };
+}
+
+/** ADR 0005: temporary lunch initialization without launch risk/release fields. */
+export function initialLunchState(seed: string): LunchState {
+  const state = initialState(seed);
+  return {
+    seed: state.seed,
+    turn: state.turn,
+    minute: state.minute,
+    bookingEnd: state.bookingEnd,
+    progress: state.progress,
+    personMinutes: state.personMinutes,
+    present: state.present,
+    peakHeadcount: state.peakHeadcount,
+    seenEventIds: state.seenEventIds,
+    spokenAttendeeIds: state.spokenAttendeeIds,
+    parkedCount: state.parkedCount,
+    substantiveDrawCount: state.substantiveDrawCount,
+    previousDrawWasUncommonNegative: state.previousDrawWasUncommonNegative,
+    scheduled: state.scheduled,
+    decisions: state.decisions,
+    log: state.log,
+    phase: state.phase,
+    ending: state.ending,
+    current: null,
+    nominatedCuisine: null,
+    agreedCuisine: null,
+    resolvedCallbackCount: ZERO,
+    shownCommentaryIds: [],
+    lastCommentaryTurn: null,
   };
 }
