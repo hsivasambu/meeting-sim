@@ -7,7 +7,9 @@ timings or tester results were supplied. He approved the lunch redesign and L09
 as a separate new playtest prerequisite before tuning; this does not mark the
 three original rows below complete. See [the approved plan](lunch-redesign-plan.md).
 
-Status: implementation and local/hosted automated gates pass; human V4 evidence pending.
+Status: **V4 accepted by Harry on October 15, 2026; task 12a complete.**
+See [the acceptance record](task-12a-v4-acceptance.md). Earlier pending statements
+are historical; individual tester rows remain unsupplied, not fabricated.
 Harry agreed on October 12, 2026 to play and recruit two other people.
 That agreement is not a recorded playtest result.
 

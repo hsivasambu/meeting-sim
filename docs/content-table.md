@@ -15,7 +15,7 @@ The illustrative 80/20 is not tuning. No runtime content is implemented here.
 
 The [preserved launch table](content-table-launch.md) is the historical approved
 source for unchanged launch behavior during L03–L07. Its old approval does not
-approve this lunch draft. Original [12a V4](task-12a-playtest.md) remains pending;
+approve this lunch draft. Original [12a V4](task-12a-playtest.md) was accepted by Harry on October 15, 2026;
 the separate [L09 record](lunch-playtest.md) contains no observed evidence yet.
 
 ## Transcription and review conventions
