@@ -22,7 +22,7 @@ The room is DOM sprites + CSS. No game engine.
 
 1. Game rules live only in src/core/engine. ui/, store/, stage/ and sim/ never compute
    eligibility, effects, clamping, utility, score or titles; they call previewResponse,
-   previewRelease, getDrawCandidates, score and earnedTitles.
+   getResponseOutcomes, getDrawCandidates, score and earnedTitles.
 2. The store is the only writer of MeetingState. Only the store actions `start` and
    `continue` call drawEvent. ui/ dispatches named actions; stage/ never dispatches.
 3. Only src/core/engine/index.ts imports live content. Engine internals take a ContentPack
@@ -54,7 +54,7 @@ The room is DOM sprites + CSS. No game engine.
 - First reply on a task: the task ID, files to touch, risks to the rules.
 - Run the gates active for this task (tech spec → Testing and quality gates) before saying done; document-only tasks run consistency checks. Add tests with every behaviour change. Never deactivate an active gate.
 - Tuning PRs include the before/after `pnpm sim:ci` summary.
-- Event content is transcribed from docs/content-table.md; do not invent event design in code PRs.
+- Event content is transcribed from docs/content-table.md after its D18 approval; unchanged launch tests/provenance use docs/content-table-launch.md during L02–L07. Do not invent event design in code PRs.
 
 ## Never
 
@@ -75,6 +75,16 @@ Follow docs/implementation-plan.md. Before implementing, identify the current ta
 Update that plan after each task with completed work, actual check results, outstanding issues
 and the next task. Read docs/content-table.md when it exists; it is created in task 06b.
 Stop at the task boundary requested by Harry.
+
+## Lunch redesign handoff
+
+ADRs 0005–0008 were accepted on October 13, 2026; their rules/formulas do not
+need repeat approval. The design and tech spec define the lunch target; L03–L07
+preserve launch behavior during preparation and L08 performs the live switch.
+L02 authors the complete table; L02b performs the dedicated AI adult workplace
+humour/writing review before Harry’s D18 content approval. Successful results
+must name the actual agreed cuisine. Harry accepted original 12a V4 on October 15, 2026; individual tester reports
+remain unsupplied. L09 is the separate lunch playtest prerequisite.
 
 ## Review size preference
 

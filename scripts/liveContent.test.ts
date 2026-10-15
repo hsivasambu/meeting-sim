@@ -212,7 +212,7 @@ it('transcribes disabled reasons, epilogues, roster and titles from their approv
       })),
   );
   const design = readFileSync(
-    new URL('../docs/design-doc-v2.md', import.meta.url),
+    new URL('../docs/design-doc-launch.md', import.meta.url),
     'utf8',
   );
   expect(

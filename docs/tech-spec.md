@@ -1,8 +1,8 @@
 # This Could've Been an Email — Technical Spec
 
-Oct 8, 2026 · @Harry
+October 13, 2026 · Approved lunch contracts · @Harry
 
-Reconciled October 7, 2026 with Harry’s D01–D12 direction. Revised October 8, 2026 to apply the accepted pre-implementation architecture review (D13–D26). These decisions are the implementation baseline; numerical balance targets remain unverified until simulation.
+Reconciled October 7, 2026 with Harry’s D01–D12 direction. Revised October 8, 2026 to apply the accepted pre-implementation architecture review (D13–D26). ADRs 0005–0008 were approved by Harry on October 13, 2026 and now supersede the specifically identified launch contracts. This spec is the lunch target; L03–L07 preserve launch behavior during additive preparation and L08 performs activation. Numerical balance remains unverified until simulation.
 
 ## How to use this spec
 
@@ -17,7 +17,7 @@ This spec fixes *how* the game is built. The design doc (This Could've Been an E
 
 **Wording.** MUST and MUST NOT are hard rules; a PR that breaks one is rejected. SHOULD is the default; the assistant may depart from it only with a one-line reason in the PR.
 
-**Revision authority.** Harry explicitly authorized the D01–D12 reconciliation and accepted the October 8 architecture review (D13–D26). Neither requires a second approval. `docs/adr/0001-stack.md`, written in task 01a, is the single decision register for D01–D26; there is no separate decisions file. Later departures follow change control.
+**Revision authority.** Harry explicitly authorized the D01–D12 reconciliation and accepted the October 8 architecture review (D13–D26). Neither requires a second approval. `docs/adr/0001-stack.md`, written in task 01a, is the single decision register for D01–D26; there is no separate decisions file. Harry accepted all recommended lunch resolutions, including formula changes and explicit criterion replacements, in ADRs 0005–0008. Those decisions need no repeat approval. Final content still requires L02/L02b and D18 review; later departures follow change control.
 
 **Single source of truth (D22).** This spec is the only home for precedence, architecture rules and the gate activation schedule. The design doc owns game rules, formulas, content and copy; the implementation plan owns task order, task IDs and status. Other documents and `CLAUDE.md` link to these sections instead of restating them.
 
@@ -63,9 +63,9 @@ The code is split into five layers; runtime imports form an acyclic graph. Only 
 - `core/engine` MUST NOT import anything outside `core/`, and MUST NOT touch `window`, `document`, `Date`, `Math.random`, timers or I/O.
 - `core/content` may import other content modules and only `import type` from `core/engine/types.ts`; it MUST NOT import engine runtime values or the engine barrel. External callers use `core/engine/index.ts`; internal modules use direct imports. Enforce both folder boundaries and type-only imports so no runtime cycle exists.
 - Content injection (D13): inside `core/engine`, only `index.ts` imports `core/content`. It binds the live `ContentPack` and exports the public API with the signatures below. Every other engine module takes the pack as an explicit first argument (for example `drawEventWith(content, state)`). Rule tests and goldens use small packs from `core/engine/fixtures/`; only content-validation tests, the sim and E2E use the live pack.
-- `store` is the only browser module that calls state-changing engine functions (`initialState`, `drawEvent`, `resolve`, `release`, `callIt`). Only its `start` and `continue` actions call `drawEvent` (D17).
-- `ui` reads state through store hooks and dispatches named store actions. It may import types and pure read-only helpers from `core` (such as `previewResponse` for showing effects), never state-changing functions.
-- `stage` reads the store through selectors and MUST NOT dispatch actions. It is purely presentational; every tap and click is handled by `ui`. The design doc's "tap a face to release" is done by tapping that person's portrait in the HUD roster.
+- `store` is the only browser module that calls state-changing engine functions (`initialState`, `drawEvent`, `resolve`, `callIt`). Only its `start` and `continue` actions call `drawEvent` (D17).
+- `ui` reads state through store hooks and dispatches named store actions. It may import types and pure read-only helpers from `core` (such as `previewResponse` for availability), never state-changing functions.
+- `stage` reads the store through selectors and MUST NOT dispatch actions. It is purely presentational; every tap and click is handled by `ui`. The roster displays attendees and never offers release.
 - `sim` imports `core` directly and runs in Node only; it is never bundled into the site.
 
 ## Repository layout
@@ -103,7 +103,7 @@ meeting-sim/                   # at C:\dev\meeting-sim, outside OneDrive (D23)
 │  │  │  ├─ preview.ts        # read-only response previews
 │  │  │  ├─ responseValidation.ts # shared context validation
 │  │  │  ├─ utilityFraction.ts # exact decimal utility comparison
-│  │  │  ├─ state.ts          # initialState, release
+│  │  │  ├─ state.ts          # initialState, permanent attendance
 │  │  │  ├─ draw.ts           # drawEvent + fairness guards
 │  │  │  ├─ resolve.ts
 │  │  │  ├─ value.ts          # internal utility; not exported publicly (D24)
@@ -114,6 +114,8 @@ meeting-sim/                   # at C:\dev\meeting-sim, outside OneDrive (D23)
 │  │  └─ content/
 │  │     ├─ engineRules.ts   # approved relationship metadata, data only
 │  │     ├─ storeConfig.ts   # seed byte/hex protocol and versioned persistence key, data only
+│  │     ├─ cuisines.ts       # reviewed cuisine IDs and names
+│  │     ├─ commentary.ts     # authored conditions/templates, no functions
 │  │     ├─ attendees.ts
 │  │     ├─ events/           # one file per event, named by event id
 │  │     ├─ titles.ts         # title names and copy
@@ -125,7 +127,7 @@ meeting-sim/                   # at C:\dev\meeting-sim, outside OneDrive (D23)
 │  ├─ ui/
 │  │  ├─ App.tsx
 │  │  ├─ screens/             # TitleScreen, MeetingScreen, ResultsScreen
-│  │  ├─ components/          # DialogueBox, ChoiceButton, Hud, Roster, ParkingLot, TitleGrid
+│  │  ├─ components/          # DialogueBox, ChoiceButton, Hud, Roster, TitleGrid
 │  │  └─ share/               # renderCard.ts (canvas image), shareText.ts
 │  ├─ stage/
 │  │  ├─ RoomStage.tsx        # DOM sprite room implementing RoomView (D16)
@@ -134,7 +136,7 @@ meeting-sim/                   # at C:\dev\meeting-sim, outside OneDrive (D23)
 │  ├─ main.tsx
 │  └─ index.css                # Tailwind entry + pixel-art CSS
 ├─ sim/
-│  ├─ policies/                # lookahead, greedy, reckless, timebox, fastest, park, random
+│  ├─ policies/                # lookahead, greedy, optimistic, timebox, fastest, park, random
 │  ├─ run.ts                   # CLI entry
 │  └─ report.ts                # CSV + pass/fail against the acceptance targets
 ├─ tests/
@@ -155,249 +157,244 @@ meeting-sim/                   # at C:\dev\meeting-sim, outside OneDrive (D23)
 
 ## Engine contracts
 
-The engine is a set of pure functions over one plain, serialisable state object. Given the same seed and the same choices, it MUST produce a byte-identical final state on every machine.
+The following is the approved lunch target under ADRs 0005–0008. L03–L07 may
+prepare additive capabilities while the launch binding and its tests remain
+unchanged; L08 switches the public binding and removes all temporary legacy
+contracts. This transition is not permission to ship hidden risk/release rules.
 
-**State shape (locked; fields may be added, not renamed)**
+**Content source during preparation.** Once L02 replaces `docs/content-table.md`
+with the unapproved lunch draft, the unchanged launch transcription tests and
+launch content provenance comments use `docs/content-table-launch.md` through
+L03–L07. This is the preserved D18-approved launch table, not a second runtime
+pack. Keep all launch assertions and fixtures intact.
+The launch roster/title assertions also read the preserved
+`docs/design-doc-launch.md`, because L01 replaces the normative design document
+with the lunch target. Preserve those assertions and the original design text.
+Lunch transcription uses
+`docs/content-table.md` only after L02b and Harry's final D18 approval; L08
+switches the live tests/provenance to that reviewed lunch source. A document
+change that affects an active test input must run the active Node 24 checks,
+even when it changes no gameplay data. Harry's instruction to address the L02
+review authorizes this source-path correction; no rule/formula changes result.
 
-```typescript
-interface MeetingState {
-  readonly seed: string;                 // any string; the store creates 16 hex chars per run (D24)
-  readonly turn: number;
-  readonly minute: number;               // T
-  readonly bookingEnd: number;           // 60, or 45 after 'room-booked'
-  readonly progress: number;             // P, clamped 0–100
-  readonly risks: number;                // R, clamped 0–5
-  readonly personMinutes: number;        // integer; cost is derived from it
-  readonly present: readonly AttendeeId[];
-  readonly releasedAttendeeIds: readonly AttendeeId[]; // authoritative no-reentry history
-  readonly peakHeadcount: number;
-  readonly seenEventIds: readonly string[]; // base-family and callback IDs marked on draw
-  readonly spokenAttendeeIds: readonly AttendeeId[];
-  readonly parkedCount: number;             // park actions, independent of risks
-  readonly substantiveDrawCount: number;
-  readonly previousDrawWasUncommonNegative: boolean;
-  readonly scheduled: readonly { eventId: string; dueTurn: number }[];
-  readonly current: PresentedEvent | null; // materialized at draw (D14)
-  readonly decisions: readonly DecisionRecord[];  // feeds the Decisions score and the "moment"
-  readonly log: readonly LogEntry[];
-  readonly phase: 'running' | 'ended';
-  readonly ending: 'decision' | 'called-early' | 'time-expired' | 'cancelled' | null;
-}
-```
+**State shape (locked)**
 
-**Supporting types (locked; D14)**
+MeetingState remains plain serializable immutable data. Preserve these field
+names/types: seed string; turn/minute/personMinutes/peakHeadcount/parkedCount/
+substantiveDrawCount numbers; bookingEnd 45 or 60; progress number; present attendee
+IDs; seenEventIds and spokenAttendeeIds arrays; previousDrawWasUncommonNegative
+boolean; scheduled eventId/dueTurn array; current PresentedEvent or null;
+decisions array; narrative log array; phase running/ended; ending decision/
+called-early/time-expired/cancelled or null. Remove risks and releasedAttendeeIds.
+Add nominatedCuisine and agreedCuisine (CuisineId or null), resolvedCallbackCount,
+shownCommentaryIds (readonly strings) and lastCommentaryTurn (number or null).
+These counters, not the narrative log, are authoritative for rules/title selection.
 
-```typescript
-// What the player sees. Materialized at draw from the base event or its first matching
-// variant; never carries `variants` or the family `when`.
-interface PresentedEvent {
-  readonly id: string;                   // family ID, callback ID or 'filler'
-  readonly kind: EventKind;
-  readonly rarity: Rarity;
-  readonly negative: boolean;
-  readonly speaker: AttendeeId | 'room';
-  readonly line: string;
-  readonly responses: readonly Response[];
-}
+Initial state has turn/minute/progress/personMinutes/parkedCount/
+resolvedCallbackCount/substantiveDrawCount zero; bookingEnd 60; the six starting
+attendees; peakHeadcount six; both cuisine fields/current/ending/lastCommentaryTurn
+null; empty history/queue/decisions/log/commentary IDs; running phase and false
+previousDrawWasUncommonNegative. Seed accepts any string. Nomination resolves
+before any other event; turn>0 requires a nominated cuisine. Agreement requires
+P=100 and sets agreedCuisine equal to the nomination. agreedCuisine is non-null
+exactly when ending=decision. Validation rejects P=100 with no nomination.
 
-type LogEntry =                          // narrative only (D15)
-  | { readonly type: 'draw'; readonly turn: number; readonly minute: number; readonly eventId: string; readonly speaker: AttendeeId | 'room' }
-  | { readonly type: 'resolve'; readonly turn: number; readonly minute: number; readonly eventId: string; readonly responseId: string; readonly technique: Technique; readonly line: string }
-  | { readonly type: 'release'; readonly turn: number; readonly minute: number; readonly who: AttendeeId }
-  | { readonly type: 'join'; readonly turn: number; readonly minute: number; readonly who: AttendeeId }
-  | { readonly type: 'call-it'; readonly turn: number; readonly minute: number };
+**Content and supporting contracts (locked)**
 
-interface DecisionRecord {               // scoring data only
-  readonly turn: number;
-  readonly eventId: string;
-  readonly responseId: string;
-  readonly quality: number | null;       // display approximation; null = unscored
-  readonly qualityFraction: { readonly numerator: string; readonly denominator: string } | null; // authoritative exact q
-}
+- AttendeeId retains priya/dev/sam/morgan/gary/jordan/vp/legal; six starters are
+  unchanged. CuisineId values come from the reviewed plain-data catalog; all
+  references must be members. No dynamic cuisine generation.
+- Condition retains inclusive minMinute/maxMinute and all-present/all-absent ID
+  arrays. Remove minRisks/maxRisks. No new cuisine condition is needed initially;
+  authored cuisine placeholders suffice. Variants use first matching authored
+  order; family when controls draw eligibility, not presentation selection.
+- Effect has required integer minutes; optional progress, joins, bookingEnd,
+  callback {eventId, afterTurns: 2}, nominateCuisine. No risks or removal effects.
+  Only the nomination family may set nominateCuisine. Its three deterministic
+  choices reference different cuisines but have equal other effects and finish
+  below P=100. No other effect changes that nomination.
+- Response retains id, label, technique, requires and disabledReasonKey; adds
+  description and outcomes. Remove the old single effect/line. Each outcome is
+  {id, weight, effect, line}; one or two entries, distinct ASCII kebab-case IDs,
+  positive safe-integer weights, total ≤65,536. One outcome means deterministic.
+  Each branch is a complete effect; no common effect is added twice. No nested
+  outcomes, conditional effectCases, functions or branch conditions.
+- Technique retains hear/timebox/park/owner/email/refocus/ack as internal tags,
+  not compulsory player labels. A selected park increments parkedCount once;
+  resolving any callback increments resolvedCallbackCount once.
+- MeetingEvent retains id/kind/rarity/speaker/line/weight/negative/when/variants/
+  responses. PresentedEvent retains the materialized id/kind/rarity/negative/
+  speaker/line/responses only, never variants or family conditions. Draw fixes
+  speaker and content; nothing reselects it outside drawEvent.
+- EventRules carries nominationEventId, approved event/response/attendee arrival
+  permissions, designated arrival-family speaker IDs, callbackTargets and
+  bookingEventIds. Store each arrival permission as {eventId,responseId,attendeeId}
+  to avoid ambiguous compound-key parsing. Arrival speaker exceptions apply only
+  to their designated spontaneous family, not unrelated invitation speakers.
+- ContentPack contains eventRules, cuisines, 17 events, three callbacks and filler,
+  plus authored commentary metadata. Only index.ts imports the live pack; fixture
+  packs inject their own IDs and metadata. Catalogs/text stay plain data.
+- DecisionRecord keeps turn/eventId/responseId and numeric quality plus exact
+  qualityFraction (decimal-string numerator/denominator) or null. Fractions are
+  authoritative; BigInt is calculation-only and never stored. No epsilon ties.
+- LogEntry retains draw/resolve/join/call-it variants, removes release, and adds
+  outcomeId and optional commentaryId to resolve. Resolve line is the sampled
+  branch's authored outcome. Logs serve outcomes, factual moments and replay
+  traces, never score/title eligibility. Seed is also in state/replay metadata.
+- ScoreBreakdown stays outcome/efficiency/decisions/total. TitleId replaces
+  ship-it-and-pray, skeleton-crew, gary-free-zone with lunch-agreed, table-for-six,
+  second-helping. A separate legacy title ID catalog recognizes all twelve old
+  IDs for archival display; it is not accepted by lunch earnedTitles.
 
-type ResponsePreview =
-  | { readonly enabled: false; readonly responseId: string; readonly reasonKey: string }
-  | { readonly enabled: true; readonly responseId: string; readonly effect: Effect;
-      readonly progressDelta: number; readonly risksDelta: number;   // effective, after clamping
-      readonly minutesDelta: number; readonly personMinutesDelta: number;
-      readonly utility: number };
+**Read-only preview contracts**
 
-interface DrawCandidate { readonly event: PresentedEvent; readonly probability: number }
+Disabled ResponsePreview stays {enabled:false,responseId,reasonKey}, with a
+nonempty authored disabledReasonKey for every conditional response. Enabled
+preview carries responseId, outcomes (outcomeId, complete effect, exact
+probabilityFraction, clamped progressDelta, minutesDelta, personMinutesDelta,
+branch utility and utilityFraction), and top-level expectedUtilityFraction,
+utility, progressDelta/minutesDelta/personMinutesDelta as numeric expectations.
+Remove single effect and risksDelta. Weight each branch after clamping/billing;
+never apply an average effect and clamp later. Numeric values serve reports;
+exact fractions drive rankings/q. UI displays descriptions and availability,
+not numerical preview values or odds, including accessibility labels/tooltips.
 
-type ReleasePreview =
-  | { readonly enabled: true }
-  | { readonly enabled: false; readonly reasonKey: 'release-owner' | 'release-absent' | 'release-minimum' };
+DrawCandidate remains a materialized event and normalized probability; a pending
+state returns that event with probability 1, ended returns empty, otherwise return
+exactly the forced/guarded/weighted/filler distribution without RNG consumption.
+ResponseSuccessor contains outcomeId, exact probabilityFraction and a fully
+resolved successor MeetingState. getResponseOutcomes requires a running pending
+response and returns every branch via the same transition evaluator as resolve,
+including pre-roll q, counters, queue, commentary and endings, without sampling.
+It must not mutate the input or reveal which branch the run seed will select.
+Generic response previews may omit pending context only for numeric fixture effects;
+nomination/joins/booking/callbacks and successor enumeration require pending context.
 
-interface ScoreBreakdown {
-  readonly outcome: number; readonly efficiency: number;
-  readonly decisions: number; readonly total: number;
-}
-
-type TitleId =
-  | 'inbox-zero' | 'efficient-facilitator' | 'ship-it-and-pray' | 'death-by-diligence'
-  | 'skeleton-crew' | 'reply-all-royalty' | 'parking-lot-attendant' | 'gary-free-zone'
-  | 'played-it-right' | 'take-this-offline' | 'calendar-criminal' | 'could-have-been-an-email';
-
-interface EventRules {
-  readonly arrivalAttendees: Readonly<Record<string, AttendeeId>>;
-  readonly callbackTargets: Readonly<Record<string, string>>;
-  readonly bookingEventIds: readonly string[];
-}
-
-interface ContentPack {                  // fields may be added when an engine rule needs them
-  readonly eventRules: EventRules;             // content-owned relationship metadata
-  readonly events: readonly MeetingEvent[];     // the 17 base families
-  readonly callbacks: readonly MeetingEvent[];  // scheduled-only targets
-  readonly filler: MeetingEvent;
-}
-```
-
-**Result precision and lifecycle.** Resolution stores exact utility-difference numerator/denominator integers as decimal strings in `qualityFraction` (null for ties). Numeric `quality` is for display; scoring and unrounded title comparisons consume the fraction, never the approximation. BigInt is calculation-only and state remains JSON-serialisable. `score` and `earnedTitles` reject running meetings or a null ending with `EngineError("not-ended")`.
-
-**Counters and log (D15).** The counters `releasedAttendeeIds`, `parkedCount`, `peakHeadcount`, `spokenAttendeeIds`, `seenEventIds`, `substantiveDrawCount` and `previousDrawWasUncommonNegative` are authoritative for every rule and title. `log` is narrative only: the results moment, the outcome line and sim traces. No rule reads the log. `decisions` is scoring data only.
-
-**Public API (`core/engine/index.ts`)**
+**Public API (index only; locked)**
 
 ```typescript
 initialState(seed: string): MeetingState
-drawEvent(state: MeetingState): MeetingState          // sets `current`
+drawEvent(state: MeetingState): MeetingState
 resolve(state: MeetingState, responseId: string): MeetingState
-release(state: MeetingState, who: AttendeeId): MeetingState
-previewRelease(state: MeetingState, who: AttendeeId): ReleasePreview
 callIt(state: MeetingState): MeetingState
-score(state: MeetingState): ScoreBreakdown            // { outcome, efficiency, decisions, total }
+score(state: MeetingState): ScoreBreakdown
 earnedTitles(state: MeetingState, score: ScoreBreakdown): TitleId[]
-displayCost(personMinutes: number): number            // dollars at the display rate
-formatCost(personMinutes: number): string             // whole dollars, e.g. "$2,200"
+displayCost(personMinutes: number): number
+formatCost(personMinutes: number): string
 previewResponse(state: MeetingState, response: Response): ResponsePreview
-getDrawCandidates(state: MeetingState): readonly DrawCandidate[] // no RNG consumption
+getDrawCandidates(state: MeetingState): readonly DrawCandidate[]
+getResponseOutcomes(state: MeetingState, responseId: string): readonly ResponseSuccessor[]
 ```
 
-`value` is internal to the engine (`value.ts`); callers read utility from an enabled `previewResponse` (D24). `formatCost` is the only cost formatter used by the HUD, results card, share card and share text.
+Remove release, previewRelease and ReleasePreview from the target API and lint
+allowlist. value stays internal. ENGINE_LIMITS stays frozen/readonly, backed by
+constants: progressMax=100, minHeadcount=6, maxHeadcount=8, decisionOwner=priya,
+initialBookingEnd=60, reducedBookingEnd=45, scoreMax=1000 and fillerMinutes=2;
+remove risksMax. Policies use engine evaluation/successors instead of computing
+effects, eligibility, score or title rules themselves.
 
-`previewRelease` is a pure read-only check approved in [ADR 0004](adr/0004-store-integration-proposal.md).
-It requires a running meeting and otherwise throws the existing `EngineError('ended')`.
-It and `release` share the existing ordered owner → absent → minimum predicates,
-using canonical constants. Refusals retain the existing equivalent-snapshot behavior.
-The HUD reads the preview before offering confirm or reason and refreshes it from
-current state; UI/store never derive release eligibility. Reason copy lives in
-`content/copy.ts` in a separate `releaseReasons` catalog: `release-owner` = “Priya
-must stay to own the launch decision.”; `release-absent` = “This attendee has already
-left the room.”; `release-minimum` = “One other attendee must stay with Priya.”
-The existing response-disabled reason catalog/audit remains separate.
+**Purity, money and scoring**
 
-The public index also exports frozen, readonly `ENGINE_LIMITS`, backed by
-`constants.ts`: `progressMax`, `risksMax`, `minHeadcount`, `maxHeadcount`,
-`decisionOwner`, `initialBookingEnd`, `reducedBookingEnd`, `scoreMax` (the sum of
-the three component maxima), and `fillerMinutes`. Simulation assertions consume
-these limits rather than repeating game constants. This read-only observation
-API is approved in [ADR 0003](adr/0003-simulation-observation.md); it grants no
-engine-internal imports or alternate rule implementation.
-
-**Purity and immutability**
-
-- Every state-changing function returns a new state and MUST NOT mutate its input; read-only helpers return their documented values. Refused releases and already-pending draws return an equivalent new snapshot. Tests deep-freeze inputs to prove it.
-- State holds only plain data: no classes, `Map`, `Set`, `Date` or functions, so it can be logged, snapshotted and compared as JSON.
-- All clamping happens in one helper, `applyEffect`, never inline.
-
-**Money without floating-point drift**
-
-- Cost is stored as integer person-minutes (headcount × minutes). Dollars are derived only for display: `displayCost(pm) = pm × 1000 / 60`.
-- Score constants use the same unit: the $6,000 reference meeting is 360 person-minutes and the $1,500 floor is 90. The utility term ΔC/$100 becomes Δpm / 6.
-- Changing the display rate MUST NOT change any score; a test asserts this.
-- `formatCost` rounds `displayCost` to whole dollars with thousands separators (D24).
+Return new states; never mutate inputs, including read-only helpers and pending
+redraw. Tests deep-freeze inputs. No classes/Map/Set/Date/functions in state.
+applyEffect is the single clamp/billing implementation. Bill full minutes at the
+headcount immediately before resolution; dollars are display-only pm×1000/60.
+formatCost alone formats whole dollars with thousands separators. Rate changes
+cannot alter score. Implement the design's approved 400/300/300 formulas using
+OUTCOME_MAX, FAIL_MULTIPLIER, EFFICIENCY_MAX, COST_REF_PM, COST_FLOOR_PM,
+DECISIONS_MAX and W_COST; remove risk coefficients. Compare decimal coefficients
+and outcome weights as exact rationals, score q before sampling, use null for
+unscored/equal-valued choices, zero mean with none, round components then sum.
+Title predicates stay in titleRules.ts and player copy in content. Formula changes
+beyond the already approved ADR 0007 require Harry's approval.
 
 **Randomness and determinism**
 
-- The only source of fresh randomness is `crypto.getRandomValues`, called once in the store to create the run seed. `Math.random` is banned everywhere (lint rule).
-- Implement cyrb53 with hash seed 0 over JavaScript UTF-16 code units, take its low 32 bits with `>>> 0`, and initialize mulberry32 with that value. Both live in `rng.ts` without dependencies; commit fixed string/hash/PRNG test vectors. Numeric seeds must not depend on platform encoding or locale.
-- The draw stream for turn *n* is seeded from `` `${seed}:draw:${n}` ``, so the draw on one turn never depends on how many numbers earlier turns used.
-- The Node-only Random policy stream uses SHA-256 of UTF-8 `` `${seed}:policy:random:${turn}:${counter}` ``, starting counter at 0, taking the first big-endian unsigned 32-bit ticket. Reject tickets at or above `2^32 - (2^32 % enabledCount)`, incrementing the counter, then select `ticket % enabledCount` in authored enabled-response order. Policy streams never consume the engine draw RNG. Harry approved this convention in the task 08a review resolution on October 12, 2026.
-- Weighted selection uses positive integer rarity weights 65/28/7 × event weight (default 1); these are per-candidate relative weights. Selection is exact: sort eligible candidates by ASCII ID, let W be the sum of their weights, take r = floor(rng() × W) with one call to the turn's stream, and pick the first candidate whose cumulative weight exceeds r. Follow the design’s draw rules exactly, including ASCII ID ordering, first two substantive draws, negative-event filtering and scheduled-only callbacks. Add a pure read-only candidate-distribution helper to the public engine exports for Lookahead; it returns candidates/probabilities without consuming or revealing the draw RNG.
-- If no event is eligible after the first two substantive draws, a filler event ("Awkward silence." +2 min, repeatable) is drawn so a run can never stall. An impossible first-two substantive pool is a content error; valid content must provide two unrestricted common substantive families with absence variants.
+The only fresh entropy is one store crypto.getRandomValues call for the run seed
+(16 lowercase hex characters from eight bytes). Math.random is banned. Hash with
+original cyrb53 seed 0 over JS UTF-16 code units, low uint32 via >>>0; use existing
+mulberry32 wrapping behavior. Retain fixed hash/PRNG vectors and no dependencies.
 
-**Turn order and endings**
+Draw turn n uses `${seed}:draw:${n}`. Sort random candidates by ASCII ID, weights
+65/28/7 by rarity × positive event weight (default 1); with W total, take one
+floor(rng()*W) ticket and the first cumulative weight exceeding it. Forced draws
+and pending redraws do not consume a random choice.
 
-1. `drawEvent` → player picks → `resolve` applies the effect, logs the decision, and advances `turn`.
-2. After each `resolve`: P ≥ 100 ends with `decision`; otherwise `minute ≥ bookingEnd` ends with `time-expired`.
-3. `callIt` ends with `cancelled` if no event has resolved yet, otherwise `called-early`.
-4. `release` costs no time. Refuse Priya, an absent attendee, or any release from headcount two; return unchanged gameplay values. Successful releases record turn and minute. All attendance is unique, capped at eight; `legal`/`vp-joins` are the only joins, and released people never rejoin.
-5. Use the design’s full-duration, pre-resolution-headcount billing and full-effect deadline rules. Apply progress/risks, then joins/booking change, advance turn, and check decision before expiry. Pending dialogue stays fixed after a release; re-evaluate response requirements and costs. An invalid/disabled response is an `EngineError`.
-6. `turn` is the number of resolved events. Scheduling at turn n records dueTurn=n+2 before advancing. Only three designated base parents may schedule one unique common callback each; no chains, repeats, conditions or collisions. Due callbacks run before random draws, but never after an ending. Content validation proves these restrictions; unexpected collisions throw `EngineError`.
-7. Mark families seen and speakers heard on draw, not resolution. Repeated `drawEvent` with `current` set returns an equivalent snapshot and never consumes another random choice. Store screen and beat state are separate from engine phase (see Meeting turn flow; D17). All one-response events wait for explicit acknowledgement.
+An uncertain response uses a separate stream hashed from
+`JSON.stringify([seed, 'response-v1', turn, current.id, response.id])`.
+Sort outcomes by ASCII ID; W is sum of weights and L=floor(2^32/W)*W. Convert each
+stream output to floor(r*2^32), reject tickets ≥L, select ticket%W by cumulative
+weights. Deterministic responses consume no outcome ticket. Rejection affects
+only this local stream. Validate action and requirements before sampling; sample
+once per valid resolution. Repeating from identical immutable input is identical.
+Preview and branch enumeration never sample. Test rejection and Unicode seeds.
 
-**Content/evaluation contract**
+ADR 0003 Random policy RNG remains Node-only SHA-256 over UTF-8
+`${seed}:policy:random:${turn}:${counter}`, counter initially zero. First big-endian
+uint32 ticket; reject ≥2^32-(2^32%enabledCount), increment counter and retry; choose
+modulo enabledCount in authored response order. Policy RNG never consumes engine
+RNG. Lookahead enumerates probabilities, never seeded future resolve/draw. Replay
+requires rules/content/policy revision, seed and ordered actions; old launch runs
+need their old revision. No cross-version seed-equivalence claim.
 
-Use the design document's expanded serializable schema: optional positive `weight`, explicit `negative`, `speaker: AttendeeId | 'room'`, ordered absent-speaker `variants`, `Condition.maxRisks` and optional `bookingEnd: 45 | 60`. Conditional `effectCases` are removed (D24): risk- or minute-dependent options are draw-time variants, because risks and minutes cannot change between draw and resolution; presence-dependent options use `requires`. Base IDs are family IDs; variants never add draws. Remove `leaves` from MVP effects; release is the sole removal action. All expert-best responses require that expert, including the base variant, so release during dialogue cannot retain expert benefits.
+**Draw and resolution order**
 
-Implement the pure read-only `previewResponse` and `getDrawCandidates` contracts defined under Supporting types and export their types through the engine index. UI and policies use them rather than duplicate rules. `applyEffect` is the single clamp implementation used by preview and resolution. Preview must not log, advance turns, schedule callbacks or mutate state. Decision-quality evaluation (the internal `value`) compares effective/clamped deltas of enabled responses immediately before resolution; one/equal-valued choices are unscored. Calling the internal `value` on a disabled response is a programmer error. Store null quality for unscored records; average q and D are zero when none are scored.
-
-**Task 04 precision and response metadata.** Utility uses the approved formula unchanged. Convert finite numeric tuning coefficients from their shortest decimal representation to exact rational coefficients, and compare common-denominator integer utility numerators for equality and decision quality. Convert to numbers only for public utility/quality results; no BigInt enters MeetingState or ResponsePreview. There is no broad epsilon that turns genuinely different utilities into ties. Tests cover the reported current public profile, multi-response decimal ties, and genuinely close alternatives.
-
-Response adds optional `disabledReasonKey: string`, required and nonempty whenever `requires` is present. Return that authored key for a disabled preview; UI/content own its text. Missing authored metadata is a programmer/content error. Shared responseValidation runs in the evaluator for both preview and resolution. Generic effect-only previews may have no current event; joins, booking changes and callbacks require pending context. Resolution additionally requires running phase and a unique current response ID. Call it retains the delivered current event for narrative inspection; ended meetings cannot take further actions and task 06 candidate lookup must return an empty list.
-
-EventRules are plain content-owned relationship metadata. Only engine/index imports the live metadata and forwards it through the internal evaluation profile; fixture profiles inject their own metadata, including renamed IDs. ContentPack carries eventRules for future pool lookup/validation. Generic numeric fixture profiles may omit it only when they have no context-dependent effect. Validate that pack metadata refers to its actual families/targets, conditional responses have authored reason keys, and callback relationships are legal in task 07a. This adds no live dialogue or event design before the reviewed content table.
-
-**Scoring module**
-
-- `score.ts` implements the design doc formulas exactly, reading every constant from `constants.ts` under the design doc's names: `OUTCOME_MAX`, `RISK_PENALTY` (60), `RISK_PENALTY_CAP` (200), `FAIL_MULTIPLIER` (1.8), `EFFICIENCY_MAX`, `COST_REF_PM` (360), `COST_FLOOR_PM` (90), `DECISIONS_MAX`, `W_COST` (1.2), `W_RISK` (12).
-- Each component is rounded to an integer, then summed. The six worked examples in the design doc are unit tests and MUST pass exactly.
-- Title predicates live in `core/engine/titleRules.ts`; title names and copy live in `core/content/titles.ts` (D24).
+1. Ended state cannot act; pending draw returns equivalent snapshot. Otherwise
+   force nomination at turn zero; then due callback; then guarded unseen random
+   pool; then filler if eligible. Mark family seen and speaker heard on draw.
+2. The first two draws are substantive: nomination then common substantive pool.
+   Content provides at least two unrestricted common substantive lunch families
+   besides nomination. Broken first-two pool throws, never silently uses filler.
+   Never draw adjacent uncommon negative events. Callback is common/non-negative.
+3. Resolve validates the current response, computes q over enabled expected
+   utilities, selects one branch, bills/applies full progress/nomination effects,
+   then joins and booking, counters and callback queue, then advances turn.
+   Each parent schedules at most one unique target for pre-advance n+2; no
+   collisions/chains/repeats/conditional callbacks. Invalid relationships throw.
+4. P=100 with nomination records agreedCuisine and decision, before checking
+   minute≥bookingEnd for time-expired. Joins on a completing response share that
+   agreement. No progress reset, refund, partial duration or deadline extension.
+   Clear resolved current; record sampled outcome and optional commentary ID.
+5. callIt retains delivered current for narrative use and ends cancelled if no
+   resolution, otherwise called-early. No callback or event runs after ending.
+   All one-response events await acknowledgement; no UI timer advances time.
+6. Attendance is unique 6–8 and never decreases. Every invitation branch joins
+   the same absent person; requires and family guards prevent duplicates. A
+   spontaneous family joins on all choices and is unavailable after invitation.
+   A player may choose another enabled response when an invitation is unavailable.
+7. Commentary is chosen deterministically from authored eligible IDs/fixed
+   priority. First eligibility after third resolution; at least three resolutions
+   between emissions; maximum three, no repeat ID per run. Update authoritative
+   shownCommentaryIds/lastCommentaryTurn, emit narrative ID; no effects/RNG/timers.
 
 **Content validation**
 
-`validateContent()` runs as a Vitest test on every CI run and fails the build if any rule breaks:
+validateContent remains pure, returns path-addressed issues, and runs in Vitest.
+All complete packs (including frozen fixture packs) receive structural checks;
+explicit synthetic profiles may vary counts/ranges to isolate engine rules. Live
+playable packs additionally enforce authored limits and reviewed relationships.
+Partial numeric fixtures are not complete packs. No profile bypasses structural
+safety or coverage thresholds. L03–L07 preserve old live validation; L08 retires
+obsolete launch profiles with explicit replacements, not blanket snapshot updates.
 
-**Validation scope (approved by Harry, October 12, 2026).** Synthetic engine-rule
-packs and playable content packs are distinct. All packs receive structural
-checks: unique IDs, valid references/conditions, finite integer effects,
-attendance/booking/callback safety, legal fallback responses, speaker safety,
-first-two availability and selectable variants. Synthetic packs deliberately use
-renamed relationships, additional choices and extreme effects to isolate rules;
-they are explicitly validated with `profile: 'synthetic'`. Playable packs use the
-default profile and additionally receive the authored response-count, copy-length,
-effect-range, expert-work and exact MVP relationship checks below. Frozen D21
-fixtures remain unchanged. This distinction does not change engine rules or
-coverage thresholds.
+Validate unique IDs/references/file stems, finite integer effects and inclusive
+conditions; first-match variant reachability and at least one reachable
+presentation/fallback; presence-safe speakers except room/designated door speaker;
+all outcome branches and arrival/callback/booking/nomination permissions. Playable
+packs have 17 base families, three unique common unconditional callbacks and one
+repeatable +2-minute filler. Each event has 1–3 responses, one/two outcomes each;
+all branches take 1–10 minutes, progress −10…+25. Filler cannot schedule or join.
+Only approved room-booking family can set 45/60, explicitly on every branch.
+Callbacks never schedule callbacks. No effects remove people. No risks fields.
 
-The validator is pure and receives a `ContentPack`; it returns path-addressed
-issues rather than performing I/O. Its optional catalog supplies event file stems,
-attendee/job-title and collectible-title entries, disabled-reason copy, and
-moment/epilogue lines for validation when those artifacts exist. CI content tests
-supply those catalogs as task 07b/15 implement them. File identity is checked from
-the supplied stems, not filesystem access inside core. Variant reachability uses
-first-match authored order, so constructed witnesses also test overlapping
-variant precedence. A fallback has no requirements (or only requires the
-unreleasable decision owner). For expert requirements, inspect only the base
-presentation of a Dev/Sam/Morgan family with a speaker-absence variant: a
-positive-progress hear/owner response that does not appear unchanged in that
-absence set must require at least one attendee other than Priya. That attendee
-may be someone other than the speaker (for example Legal on press-date).
-Unchanged shared tangent responses and Priya's absence responses are not expert
-work. Arrivals and collective gifts are exempt. This corrects task 07a's broad
-speaker heuristic to preserve the approved content table, as authorized by Harry's
-request to address the supplied review and merge the task.
-
-CI explicitly validates fixturePack, goldenPack, mixedGoldenPack, both complete
-drawRuns packs and validationPack under their stated profiles; deliberately
-broken variants in contentValidation tests assert rejection. Partial inline
-packs in engine-rule tests are scoped inputs, not complete validated packs. Base copy
-may be covered entirely by variants; every authored variant must be selectable,
-and every event must have at least one reachable presentation.
-
-Task 07a adds the content index for existing relationship metadata; it does not
-fabricate a live event pack. Task 07b exports the complete live `ContentPack`,
-supplies its catalog and binds the public draw wrappers. Title priority/rounding
-already have task 05 tests; epilogue/moment selection and their constructed
-reachability checks land with their task 07b/15 data and consumers.
-
-- Event IDs are unique within the event namespace and match file names; attendee/title IDs are unique within their own namespaces; response IDs are unique within each presentation. Reusing `legal` as an attendee and event ID, or `park` in different events, is valid. Every callback and attendee reference exists.
-- Each event has 1–3 responses; effects stay in range (minutes 0–10, progress −10 to +25, risks −1 to +1).
-- Player-facing text fits the mobile layout: event/response/moment/epilogue lines ≤ 90 Unicode code points, response labels ≤ 24, collectible titles ≤ 28. Job titles have a separate ≤48 limit and wrap to up to three lines on phones. Required labels/disabled reasons are authored in content, never generated ad hoc in UI.
-- No effect removes attendees. Only the two arrival families join their designated attendee; every response joins exactly that person. Enforce unique joins and no re-entry.
-- Validate every variant, zero minutes only for email, at least one always-enabled response per presentation, expert requirements, guaranteed first-two substantive availability, and the three explicit callback-parent pairs. Each parent must have a reachable scheduling response. Callback responses take at least one minute. Only `room-booked` may set `bookingEnd`; all its effect paths explicitly keep 60 or set 45.
-- Speakers must be present at draw through eligibility or variants, except the room narrator and the designated VP/Legal arrival speaker. An expert's absence must never remove a substantive family entirely. Variants must remain disjoint or have tested first-match precedence.
-- Collectible title priority/fallback, moment order, threshold rounding and risk-tier epilogues follow the design. Every title and variant has a constructed reachability test; these are separate from statistical event coverage.
+Required catalogs include filenames, attendees/roles, cuisines, titles, used/authored
+disabled reasons, outcomes/epilogues/moments/commentary and their substitutions.
+Event/outcome/description/moment/epilogue lines ≤90 Unicode code points, label ≤24,
+title ≤28, role ≤48. No ad hoc UI strings. Validate weights and consistent joins
+across invitation branches, always-enabled alternatives, nomination equality,
+title/variant reachability, truthful ending placeholders and commentary predicates.
+Document/table transcription and L02b editorial review are required in addition
+to automated validation; an automated pass cannot prove humour or understanding.
 
 ## Presentation
 
@@ -407,16 +404,16 @@ A DOM sprite stage draws the room and nothing else (D16). React draws every word
 
 - Logical resolution 320×240 (4:3). The room is one flattened PNG; the eight characters are absolutely positioned elements drawn from the sprite atlas with `background-position`.
 - The stage scales by an integer factor with `image-rendering: pixelated`, so pixels stay crisp.
-- Idles use CSS `steps()`. Reactions (`nod`, `sigh`, `enter`, `leave`), the parking-lot pulse and the celebration are CSS keyframe classes. With `prefers-reduced-motion`, idles stop and reactions become instant state changes.
+- Idles use CSS `steps()`. Reactions (`nod`, `sigh`, `enter`) and the celebration are CSS keyframe classes. With `prefers-reduced-motion`, idles stop and reactions become instant state changes.
 - The stage container has `role="img"` and an `aria-label` that names who is in the room; sprite elements are `aria-hidden`.
-- `stage/RoomStage.tsx` implements the typed `RoomView` vocabulary (`showAttendees`, `react(id, 'nod' | 'sigh' | 'leave' | 'enter')`, `pulseParkingLot`, `celebrate`). Nothing outside `stage/` touches sprite elements or animation classes.
-- Reactions come only from the pure function `reactionsFor(prev, next)` in `stage/reactions.ts`. Default mapping: a join → `enter`; a release → `leave`; progress up → the speaker nods; risks up → the room sighs; `parkedCount` up → parking-lot pulse; ending `decision` → celebrate. Adjust the mapping only in this function.
+- `stage/RoomStage.tsx` implements the typed `RoomView` vocabulary (`showAttendees`, `react(id, 'nod' | 'sigh' | 'enter')`, `celebrate`). Nothing outside `stage/` touches sprite elements or animation classes.
+- Reactions come only from the pure function `reactionsFor(prev, next)` in `stage/reactions.ts`. Default mapping: a join → `enter`; progress up → the speaker nods; progress down → the speaker sighs; ending `decision` with agreedCuisine → celebrate. No departure animation or risk/parking board. Adjust the mapping only in this function.
 - No text is drawn in the stage.
 
 **React overlay**
 
 - Screens: Title → Meeting → Results. There is no router; a store-owned `screen: title | meeting | results` picks the screen; it does not extend or reuse the engine’s `running | ended` phase.
-- Meeting screen: HUD (progress, clock, cost, open risks), roster of portraits (tap to release), dialogue box, 1–3 choice buttons, and a Call it button.
+- Meeting screen: HUD (progress, clock, cost), current nominated cuisine, passive roster, dialogue box, 1–3 choice buttons and Call it. Buttons show authored action/description and disabled reason, never numerical deltas, odds or utility in visible or accessibility text.
 - Dialogue types out at 40 characters a second; a tap completes it. With `prefers-reduced-motion` it appears instantly and nothing shakes.
 - Meters animate over 400 ms; the cost counter ticks up to its new value.
 
@@ -427,7 +424,7 @@ A DOM sprite stage draws the room and nothing else (D16). React draws every word
 
 **Meeting turn flow (D17)**
 
-The store holds `screen: 'title' | 'meeting' | 'results'`, `beat: 'speaking' | 'choosing' | 'outcome'` (Meeting screen only), `game: MeetingState | null`, `unlockedTitles: readonly TitleId[]`, `assetsReady: boolean`, `assetStatus: 'loading' | 'ready' | 'failed'` and `breakdown: ScoreBreakdown | null`. Assets initially have loading status and are not ready. Results compute breakdown using engine `score`; restart clears breakdown and preserves asset status/readiness and unlocked titles. The actions below are the complete list; `ui` dispatches only these. Loading and release-preview additions are approved in [ADR 0004](adr/0004-store-integration-proposal.md).
+The store holds `screen: 'title' | 'meeting' | 'results'`, `beat: 'speaking' | 'choosing' | 'outcome'` (Meeting screen only), `game: MeetingState | null`, `unlockedTitles: readonly TitleId[]`, `legacyUnlockedTitles: readonly LegacyTitleId[]`, `assetsReady: boolean`, `assetStatus: 'loading' | 'ready' | 'failed'` and `breakdown: ScoreBreakdown | null`. Assets initially have loading status and are not ready. Results compute breakdown using engine `score`; restart clears breakdown and preserves asset status/readiness and unlocked titles. The actions below are the complete list; `ui` dispatches only these. ADR 0004 loading remains; ADRs 0005/0008 remove release and add separate legacy-title reads. Both collections survive restart.
 
 | Action | Allowed when | Does |
 | --- | --- | --- |
@@ -436,7 +433,6 @@ The store holds `screen: 'title' | 'meeting' | 'results'`, `beat: 'speaking' | '
 | `finishTyping` | `speaking` | beat → choosing (also fired when typing completes) |
 | `choose(responseId)` | `choosing`, response enabled | Calls `resolve`; beat → outcome. Ignored in any other beat, which guards double taps and key repeats |
 | `continue` | `outcome` | If the run ended: computes score and titles, persists unlocks, screen → results. Otherwise calls `drawEvent`; beat → speaking |
-| `release(who)` | `speaking` or `choosing` | Calls `release`; a refused release changes nothing and the HUD shows why |
 | `callIt` | `speaking` or `choosing` | Calls `callIt`, computes score and titles, persists unlocks; screen → results (no outcome beat) |
 | `restart` | Results screen or error boundary | screen → title, game → null; unlocked titles are kept |
 
@@ -449,8 +445,7 @@ custom font, so the Title integration reports ready through the named action aft
 mount. Task 14b replaces the empty preload with required images/font. Reporting
 readiness never starts a run automatically.
 
-- The outcome beat shows the `line` of the latest `resolve` log entry. One-response events use the same flow; their single button is the acknowledgement.
-- Releasing: tapping a portrait shows one confirm button, "Thanks, you can drop off.", plus Cancel. Portraits that cannot be released (Priya, the last other attendee) show the reason instead.
+- The outcome beat shows the sampled branch `line` of the latest `resolve` log entry, with optional authored commentary as secondary text. One-response events use the same flow; their single button is the acknowledgement.
 - Typing progress, meter tweening and cost ticking are component-local state, never stored.
 - Keys: 1–3 choose in `choosing`; Enter runs `finishTyping` in `speaking` and `continue` in `outcome`.
 
@@ -468,30 +463,38 @@ readiness never starts a run automatically.
 
 - Choices are real `<button>` elements; keys 1–3 pick a choice, Enter skips the typing effect.
 - Focus moves to the first choice when choices appear. A visually hidden `aria-live="polite"` region receives each full line once; the visibly typed text is `aria-hidden` (D26).
-- Risk and progress never rely on colour alone (icons and numbers too). Text meets WCAG AA contrast.
+- Progress and ending/cuisine identity never rely on colour alone. Text meets WCAG AA contrast.
 - No audio in the MVP.
 
 **Share card**
 
 - `share/renderCard.ts` draws a 1200×627 PNG on an offscreen canvas after `document.fonts.ready`, using the same font and sprite atlas as the game.
+- Successful results, epilogues, share text and exported cards must name the actual agreed cuisine. A generic decision heading alone is a test failure; unsuccessful results must not call a nomination an agreement.
 - The finished card is always shown on the results screen as an `<img>` (blob URL), so long-press save works where download or file sharing is unavailable. The order of share paths follows the task-02 in-app browser probe results (D26).
 - Use `navigator.share` with the file when `navigator.canShare({ files })` is true. Otherwise offer a download plus copy-to-clipboard. If the clipboard is blocked (common in in-app browsers), show the share text in a selectable box.
 
 **Art assets**
 
-- The room is composed on a 16 px grid and exported as one flattened PNG; characters are 16×24 px frames with idle (2 frames), react-positive, react-negative, enter and leave.
+- The room is composed on a 16 px grid and exported as one flattened PNG; characters are 16×24 px frames with idle (2 frames), react-positive, react-negative and enter.
 - One shared palette of at most 16 colours, saved as `art-src/palette.gpl`.
 - All sprites in one atlas no larger than 2048×2048; all deployed image and font bytes total at most 400 KB, including the static OG image and any icons. JSON/JS are accounted separately; exported share cards are generated at runtime, not deployed assets.
 - Every asset is listed in `public/LICENSES.md` with source, author and licence before it is committed, including original art. Original human-created assets, CC0 office tilesets and OFL fonts are approved source classes; choose and document a specific source without another permission step. Other licences/sources require review. Keep editable sources and licence texts.
 
 **Persistence**
 
-- One `localStorage` key, `tcbae:v1:titles`, holding an array of unlocked title ids.
-- Every read and write is wrapped in try/catch. A missing, blocked or corrupt value means "no titles yet", never an error screen.
-- Validate and deduplicate against the v1 title catalog; unknown IDs are discarded.
-  If the initial storage acquisition/read throws, suppress writes for that store
-  instance so unseen stored unlocks cannot be overwritten; keep new unlocks in
-  memory. A readable missing or corrupt value may be replaced.
+- localStorage stores unlocked titles only. Read tcbae:v2:titles as the lunch
+  collection and tcbae:v1:titles as a separately labelled launch collection.
+  Never write/delete v1 or map its awards into lunch unlocks. The twelve active
+  slots use only the v2 catalog. Keep separate legacy/current ID types/catalogs.
+- Parse/deduplicate recognized entries independently, preserving raw v1 bytes and
+  unknown legacy data unchanged. Each storage acquisition/read/write is try/catch.
+- A failed v2 read suppresses writes for that store instance; new awards remain in
+  memory. Missing/corrupt readable v2 may be replaced. Failed writes never block play.
+  A failed v1 read does not prevent readable v2 use. No migration marker or stored
+  run is needed: archival is read-only, repeatable and has no copy/delete transaction.
+- Store integration reads both collections and writes only new lunch unlocks;
+  restart retains both. Test old-only/new-only/both, unknown/duplicate/malformed
+  values, independent read failures, blocked storage and failed writes.
 
 ## Project rules for the AI assistant
 
@@ -561,47 +564,90 @@ DOM/events/focus, canvas 2D for share export, CSS animation, `crypto.getRandomVa
 | Lint and format | `pnpm lint` | 01b | Zero errors and zero warnings |
 | Bundle budget | `pnpm build && pnpm size` | 01b | All JS, including lazy chunks, ≤ 120 KB gzip; deployed images + font ≤ 400 KB |
 | Unit, property, golden | `pnpm test` | 02 (runner); coverage rule from 03 | All pass; `core/` coverage ≥ 90% lines and ≥ 85% branches across every existing core file |
-| Content validation | part of `pnpm test` | 07a | Complete synthetic fixture packs pass structural validation; playable packs pass authored validation; live pack/catalog added in 07b |
+| Content validation | part of `pnpm test` | 07a | Complete synthetic fixture packs pass structural validation; playable packs pass authored validation; live pack/catalog added in 07b; lunch validation in L05 and activation in L08 |
 | Simulation invariants | `pnpm sim:ci` | 08a | No crash, illegal state or nondeterminism, ever |
-| Simulation balance | `pnpm sim:ci` | Diagnostic from 09; mandatory once task 10 completes | 2,000 fixed seeds × 7 policies meet every design acceptance criterion; the efficiency-floor deviation is reported as a diagnostic (D25) |
-| End-to-end | `pnpm e2e` | Shell smoke 02; meeting loop 12a; full-run paths 12b; share and collection 15 | All specs pass on Pixel 7 (Chromium), iPhone 14 (WebKit) and desktop Chromium, with no console errors |
+| Simulation balance | `pnpm sim:ci` | Diagnostic from 09/L11; mandatory once task 10/L12 completes | 2,000 fixed seeds × 7 policies meet every design acceptance criterion; the efficiency-floor deviation is reported as a diagnostic (D25) |
+| End-to-end | `pnpm e2e` | Shell smoke 02; meeting loop 12a (lunch replacement L08); full-run paths 12b/L13; share and collection 15/L13 | All specs pass on Pixel 7 (Chromium), iPhone 14 (WebKit) and desktop Chromium, with no console errors |
 | Full simulation | `pnpm sim -- --runs 10000` | Before each release | Same criteria at 10,000 runs; efficiency floor calibrated (D25); summary committed to `docs/sim/` |
+
+**Lunch task mapping and editorial evidence.** L01 approval changes the target
+contracts, not the currently running gates. L03/L04 add fixture-based outcome/rule
+checks alongside legacy tests; L05 adds lunch content validation; L06 storage
+failure tests; L07 isolated presentation checks; L08 activates lunch and replaces
+only the explicitly obsolete assertions described below. No gate is deactivated.
+L10 completes 08b reporting; L11 completes 09/seven policies; L12 completes 10 and
+activates mandatory balance. L13 retains separate 11b/12b/13/14a/14b/15 PRs and their
+full-run/stage/share checks. L14 retains 16/17 release requirements.
+
+L02/L02b are documentation tasks: require complete content/branch catalogs,
+writing-review coverage/change log, factual/length checks and Harry's D18 approval
+before L05/L06/L07 consume the table. L09 is the approved separate human lunch
+playtest prerequisite for L12 and polished art; it does not complete original
+12a V4. AI editorial review cannot substitute for L09 or the five-person release
+test. See the design for those approved pass criteria; no statistical humour gate
+or new automated threshold is invented.
 
 Do not merge gameplay tuning failures once the balance gate is mandatory.
 
 **What the unit tests MUST cover**
 
-- Every formula in `score.ts`, including the six worked examples from the design doc and the edges P = 99 vs. 100, R = 5 and a cancel at minute 0.
-- Changing the display rate leaves every score unchanged.
-- `release` refuses the decision owner and the last other attendee; `callIt` picks `cancelled` vs. `called-early` correctly.
-- Fairness guards: first two draws are substantive (hence two in the first six if reached); never two uncommon negative events in a row. Test callback due turns, early endings and absence variants as specified in the design.
-- Engine rule tests use fixture content packs (D13, D21); only content-validation tests assert live tuning values.
+- Six approved lunch score examples and P=99/100, cost floor/reference, null/tied
+  quality, close exact utilities, cancel at minute zero and rate-independent score.
+- Nomination-only setting, success recording/displaying the actual cuisine, invalid
+  P=100/null cuisine, no agreement on failure, deadline equality/overshoot and join
+  on a completing response. No release API; unique/nondecreasing attendance 6–8.
+- Every branch's eligibility/clamping/billing/queue; expected q before sampling,
+  same q on different rolled results, exact RNG vectors and rejection, no RNG
+  consumption by preview, enumeration vs resolution, duplicate/stale input guards.
+- First-two substantive/negative guards, n+2 callbacks, no chains/collisions,
+  early endings, invitation before/after arrival and every reachable new variant.
+- Authoritative counters, title thresholds/reachability, cuisine-aware epilogues,
+  truthful deduplicated commentary and archival/current persistence failure matrix.
+- Engine rules/goldens use fixture packs; only content-validation asserts live tuning.
 
-**Property tests (fast-check, random seeds and random valid choices)**
+**Property tests (fast-check, random seeds and valid choices)**
 
-- P stays in 0–100, R in 0–5, and minutes and person-minutes never decrease.
-- Every run ends within 50 resolved turns: at most 17 unique base families + 3 unique callbacks + 30 two-minute fillers. No artificial turn-cap ending. Test zero-minute emails and exhausted pools explicitly.
-- The same seed and choices give an identical final state.
-- Scores are integers from 0 to 1,000; a success's Outcome score is always above any failure's.
-- Engine functions never mutate a deep-frozen input.
+- P stays 0–100; minutes/person-minutes never decrease; attendance stays unique
+  6–8 and never decreases. Nomination stays fixed; agreement exactly matches success.
+- End within 50 resolutions: at most 17 unique base families + three callbacks +
+  30 two-minute fillers; no artificial turn-cap ending. All playable response
+  branches take 1–10 minutes. Test exhausted pools and both outcome branches.
+- Same revision/seed/actions gives byte-identical state; functions never mutate
+  deep-frozen inputs. Scores are integers 0–1,000; success Outcome > failure Outcome.
 
-**Golden runs**
+**Goldens and approved obsolete-criterion replacements**
 
-At least five recorded runs in `tests/golden/` on frozen fixture content packs (D21): seed + full ordered action list, including releases and Call it → expected final state and score. Cover cancellation, clean success, risky success, timeout, and callback plus absence variant. Because goldens never use live content, tuning PRs do not change them; a golden changes only when engine behaviour changes, in a PR that explains why. The simulation summary is the regression record for live content.
+Keep at least five frozen-fixture recorded runs, covering cancellation, success,
+timeout, callback and early Call it; add both seeded response branches and
+invitation/cuisine scenarios. Old risk/release goldens remain in Git history, not
+as a second shipped engine. L03–L07 preserve legacy tests; L08 explicitly replaces
+risk/release state/formula tests, thirteen release-absence scenarios, risk-tier
+copy and fixed-response preview obligations with the named checks above and the
+[approved replacement matrix](lunch-redesign-plan.md#explicitly-approved-acceptance-replacements).
+No wholesale snapshot blessing; explain each changed fixture. Live tuning must
+not change frozen goldens. Current sim summaries are live-content regressions.
 
 **End-to-end specs**
 
-- Start → play a full meeting by always picking the first choice → results card shows a title and a score.
-- Resolve at least one event, release an attendee, then call it early → "Let's Take This Offline" ending.
-- Share falls back to the selectable text box when the clipboard is blocked.
-- With reduced motion on, dialogue appears instantly.
+- Start → nominate → resolve → results/replay by touch and keyboard. Show the actual
+  cuisine on success and no agreement on failure; titles/score/cost/time remain.
+- Resolve, invite a new adult, then Call it; cancellation before a resolution is
+  separate. No release control or numeric choice-preview leakage, including ARIA.
+- Both seeded outcomes, explicit acknowledgement/outcome beats, double-input
+  protection, disabled reasons, focus/live regions and 320 px layout/44 px targets.
+- Reload preserves separate current/legacy collections and never rewrites v1.
+- Share fallback keeps selectable text when clipboard blocked; generated image is
+  visible and names the actual cuisine on success. Reduced motion is instant.
+- Preserve all unaffected shell/probe checks and console-error rejection.
 
 **Manual release checklist**
 
-- [ ] LinkedIn in-app browser on iOS and Android: loads, plays, shares.
-- [ ] Safari iOS, Chrome Android, and desktop Chrome, Firefox and Safari.
-- [ ] Lighthouse mobile on the preview URL: Performance ≥ 85, Accessibility ≥ 95.
-- [ ] Five-person playtest: can each player tell tangents from substantive issues?
+- [ ] LinkedIn in-app browsers on iOS and Android load, play and share. ADR 0002's
+      earlier Android evidence deferral is not a release pass.
+- [ ] Safari iOS, Chrome Android, desktop Chrome/Firefox/Safari.
+- [ ] Lighthouse mobile Performance ≥85, Accessibility ≥95.
+- [ ] Five-person lunch playtest meets the design's ≥4/5 goal/classification bar,
+      records two-second headline/uncertainty observations, duration/replay interest.
 
 ## Build, CI and deployment
 
@@ -683,21 +729,24 @@ docs/implementation-plan.md (task order, IDs, status), docs/content-table.md and
 Precedence, architecture rules and the gate schedule are defined only in docs/tech-spec.md.
 
 ## Stack (locked — changes need an ADR in docs/adr/)
+
 Node 24 LTS · pnpm · TypeScript 6 strict · Vite 8 · React 19 · Zustand 5
 Tailwind 4 · Vitest 5 + fast-check · Playwright · ESLint + Prettier · tsx · Vercel (static)
 Runtime deps are ONLY: react, react-dom, zustand, @vercel/analytics.
 The room is DOM sprites + CSS. No game engine.
 
 ## Architecture
+
 - src/core (engine + content) is pure TS: no DOM, React, Date, timers, Math.random.
 - store/ is the only browser caller of state-changing engine functions.
 - ui/ (React) owns all text and input. stage/ only draws the room and never dispatches.
 - sim/ runs in Node only and is never bundled.
 
 ## Guardrails
+
 1. Game rules live only in src/core/engine. ui/, store/, stage/ and sim/ never compute
    eligibility, effects, clamping, utility, score or titles; they call previewResponse,
-   previewRelease, getDrawCandidates, score and earnedTitles.
+   getResponseOutcomes, getDrawCandidates, score and earnedTitles.
 2. The store is the only writer of MeetingState. Only the store actions `start` and
    `continue` call drawEvent. ui/ dispatches named actions; stage/ never dispatches.
 3. Only src/core/engine/index.ts imports live content. Engine internals take a ContentPack
@@ -717,19 +766,22 @@ The room is DOM sprites + CSS. No game engine.
     description first. Never settle a convention in code alone.
 
 ## Code
+
 - No any, no !, no `as` (except `as const`), no enums, named exports only.
 - Numbers live in core/engine/constants.ts or core/content/; player text lives in core/content/. Tooling configuration values are exempt.
 - Money is integer person-minutes; dollars are display-only, formatted only by formatCost.
 - Engine functions are pure and return new state; never mutate input.
 
 ## Workflow
+
 - One blueprint task per PR; Conventional Commits; branch feat/ fix/ chore/ docs/.
 - First reply on a task: the task ID, files to touch, risks to the rules.
 - Run the gates active for this task (tech spec → Testing and quality gates) before saying done; document-only tasks run consistency checks. Add tests with every behaviour change. Never deactivate an active gate.
 - Tuning PRs include the before/after `pnpm sim:ci` summary.
-- Event content is transcribed from docs/content-table.md; do not invent event design in code PRs.
+- Event content is transcribed from docs/content-table.md after its D18 approval; unchanged launch tests/provenance use docs/content-table-launch.md during L02–L07. Do not invent event design in code PRs.
 
 ## Never
+
 - Add an unapproved direct dependency, CDN script, custom tracker or cookie. The explicit dependency allowlist and page-view Analytics are approved.
 - Weaken/skip a test or lower a threshold to go green.
 - Edit pnpm-lock.yaml by hand, rewrite an accepted ADR, or edit CI to pass.
@@ -737,6 +789,30 @@ The room is DOM sprites + CSS. No game engine.
 - Commit an asset without a LICENSES.md entry, or AI-generated final art.
 
 ## Stop and ask when
+
 - A locked choice looks wrong, the docs conflict or are silent on a needed rule,
   a gate can't pass.
+
+## Plan maintenance
+
+Follow docs/implementation-plan.md. Before implementing, identify the current task and any split.
+Update that plan after each task with completed work, actual check results, outstanding issues
+and the next task. Read docs/content-table.md when it exists; it is created in task 06b.
+Stop at the task boundary requested by Harry.
+
+## Lunch redesign handoff
+
+ADRs 0005–0008 were accepted on October 13, 2026; their rules/formulas do not
+need repeat approval. The design and tech spec define the lunch target; L03–L07
+preserve launch behavior during preparation and L08 performs the live switch.
+L02 authors the complete table; L02b performs the dedicated AI adult workplace
+humour/writing review before Harry’s D18 content approval. Successful results
+must name the actual agreed cuisine. Original 12a V4 remains pending historical
+evidence; L09 is the approved separate lunch playtest prerequisite.
+
+## Review size preference
+
+Harry explicitly accepted keeping PR #4 and larger future PRs on October 11, 2026.
+Keep one blueprint task per PR and use understandable commits; a large diff alone
+does not require splitting into multiple PRs or asking for approval.
 ```
