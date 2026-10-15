@@ -7,8 +7,8 @@ on October 14, 2026. Its initial content is approved for the scheduled preparati
 tasks; live activation remains L08. See the
 [approved plan](docs/lunch-redesign-plan.md), [task sequence](docs/implementation-plan.md)
 and [writing review brief](docs/lunch-writing-review.md). A successful lunch run
-must record and display the actual agreed cuisine. Original task 12a V4 human
-evidence remains pending; L09 is the separate new lunch playtest.
+must record and display the actual agreed cuisine. Harry accepted original task 12a V4 on October 15, 2026; individual tester
+reports remain unsupplied. L09 is the separate new lunch playtest.
 
 Read [CLAUDE.md](CLAUDE.md) and [the implementation plan](docs/implementation-plan.md)
 before making changes. See [task 02 setup](docs/task-02-setup.md) for the Vercel preview and real-device probe.
