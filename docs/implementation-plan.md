@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L04 complete locally; draft delivery and hosted verification in progress. Next task: L05.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18; L05/L06/L07’s content prerequisite is satisfied, with their other dependencies unchanged. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Original 12a V4 evidence remains pending.
+Current: **L04 complete and delivered in draft PR #20 with passing local/hosted Node 24 gates. Next task: L05.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18; L05/L06/L07’s content prerequisite is satisfied, with their other dependencies unchanged. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Original 12a V4 evidence remains pending.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -2105,3 +2105,10 @@ format scan for local gates; it is not included in L04.
 **L04 complete locally. Next task: L05**, subject to its listed dependencies.
 L08 removes the temporary profile/overloads/helpers alongside the existing L03
 migration contracts. No later task, human evidence or live activation is claimed.
+
+L04 delivery: [draft PR #20](https://github.com/hsivasambu/meeting-sim/pull/20)
+targets L03. Implementation `61c706c` passes [hosted Node 24 quality checks](https://github.com/hsivasambu/meeting-sim/actions/runs/38671197043).
+Downloaded reports confirm 420 unit passes, 30 browser passes (no skips/flakes/errors),
+core 824/835 lines and 872/897 branches, clean simulation replay and unchanged
+V3 summaries/hash. Build/size and Vercel preview pass. The final documentation
+receipt receives the same checks. **L04 complete and delivered; next task L05.**

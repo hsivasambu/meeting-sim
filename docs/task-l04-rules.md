@@ -103,3 +103,18 @@ old binding, along with the L03 migration contracts already listed in the plan.
 dependencies. The draft PR remains stacked on L03; retarget/rebase and rerun
 active gates after the dependency stack merges. Hosted delivery is recorded
 after creation. No later task or live activation is included.
+
+## Hosted delivery
+
+[Draft PR #20](https://github.com/hsivasambu/meeting-sim/pull/20) targets
+L03's branch and contains only the L04 implementation/status changes. Implementation
+commit `61c706c0500504b148834d010f5a4e470aaf4c2c` passes the
+[hosted Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38671197043).
+Downloaded quality-reports confirm **420 unit passes**, **30 browser passes**
+with zero skipped/flaky/unexpected cases, core **824/835 lines and 872/897 branches**,
+and clean simulation revision `35b359f3b04888fa0bf7172fec6a23d9131c1e63`
+with unchanged V3 summaries/hash. Build/size and Vercel preview pass.
+The final documentation receipt receives the same hosted gates.
+
+**L04 complete and delivered. Next task: L05.** Dependencies remain unmerged;
+this is a stacked draft, with no lunch activation or later-task implementation.
