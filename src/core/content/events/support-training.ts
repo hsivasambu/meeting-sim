@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → support-training.
+// Approved docs/content-table-launch.md → support-training.
 export const supportTraining = {
   id: 'support-training',
   kind: 'substantive',

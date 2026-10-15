@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → room-booked.
+// Approved docs/content-table-launch.md → room-booked.
 export const roomBooked = {
   id: 'room-booked',
   kind: 'noise',

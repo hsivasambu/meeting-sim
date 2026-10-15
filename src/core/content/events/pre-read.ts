@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → pre-read.
+// Approved docs/content-table-launch.md → pre-read.
 export const preRead = {
   id: 'pre-read',
   kind: 'gift',

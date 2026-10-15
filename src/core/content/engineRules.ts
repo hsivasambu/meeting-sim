@@ -1,5 +1,5 @@
 import type { EventRules } from '../engine/types';
-// Approved docs/content-table.md → Families and draw eligibility.
+// Approved docs/content-table-launch.md → Families and draw eligibility.
 export const engineRules = {
   arrivalAttendees: { legal: 'legal', 'vp-joins': 'vp' },
   callbackTargets: {

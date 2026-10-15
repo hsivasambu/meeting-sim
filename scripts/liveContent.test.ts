@@ -34,7 +34,7 @@ const allEvents: readonly MeetingEvent[] = [
   contentPack.filler,
 ];
 const source = readFileSync(
-  new URL('../docs/content-table.md', import.meta.url),
+  new URL('../docs/content-table-launch.md', import.meta.url),
   'utf8',
 );
 function rows(text: string): string[][] {

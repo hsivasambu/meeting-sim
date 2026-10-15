@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → failing-tests.
+// Approved docs/content-table-launch.md → failing-tests.
 export const failingTests = {
   id: 'failing-tests',
   kind: 'substantive',

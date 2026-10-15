@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → scope-revisit.
+// Approved docs/content-table-launch.md → scope-revisit.
 export const scopeRevisit = {
   id: 'scope-revisit',
   kind: 'tangent',

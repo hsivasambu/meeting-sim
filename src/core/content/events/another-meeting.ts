@@ -1,6 +1,6 @@
 import type { MeetingEvent } from '../../engine/types';
 
-// Approved docs/content-table.md → another-meeting.
+// Approved docs/content-table-launch.md → another-meeting.
 export const anotherMeeting = {
   id: 'another-meeting',
   kind: 'tangent',

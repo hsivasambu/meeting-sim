@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L01 approved contracts authored; separate PR/hosted delivery pending. L02 is the next content task.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
+Current: **L02 draft and review corrections delivered with local/hosted checks; next is L02b, then Harry's final D18 approval.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -76,8 +76,8 @@ draft at `docs/content-table.md` is not a live validation input before reviewed
 transcription and L08 activation. Assertions and fixtures remain unchanged, and
 this correction receives the active Node 24 checks.
 
-**Next content task: L02 — author the complete lunch content draft.**
-Then L02b performs the dedicated writing review before Harry’s final D18 approval.
+**Next task: L02b — dedicated AI adult workplace humour/writing review.**
+L02's complete draft is authored; Harry’s final D18 approval follows the review.
 Use [the writing-review brief](lunch-writing-review.md) to hand off that task.
 L03 is the first code task and may start after the now-complete L01; recommended
 user-facing order is L02 → L02b so the creative direction is reviewed early.
@@ -111,8 +111,134 @@ are unchanged. Targeted Prettier and `git diff --check` pass; the two source spe
 remain excluded by the existing Prettier ignore file and received structural,
 link and contract-consistency checks instead. No formatting ignore was changed.
 
-**L01 contracts ratified; PR/CI delivery pending. Next content task: L02.** L01 scope is documentation only; no game test, AI writing review or
+**L01 complete. Next task: L02. All L02-and-later tasks, including L02b, remain
+unstarted.** L01 scope is documentation only; no game test, AI writing review or
 human playtest pass is claimed.
+
+### L02 — complete lunch content draft (October 13, 2026)
+
+Status: **draft authored, review findings addressed and delivered in PR #17 with passing local/hosted checks. L02b and final D18 approval remain pending.**
+Dependency L01 is complete and ADRs 0005–0008 are accepted. This task does not
+reopen their rules/formulas or approve draft tuning. The active
+[content table](content-table.md) is revision `lunch-l02-draft-2`: 17 base families
+including equal cuisine nominations, three callbacks and filler; 22 presentations,
+54 choices and 57 complete outcome rows. Three choices have two weighted branches,
+each with a deterministic alternative. Includes all conditions/reasons,
+arrivalPermissions, callbackTargets, booking metadata, eight personalities,
+three cuisine names, twelve titles/legacy catalog, epilogues/moments,
+interface/results/share copy and seven factual commentary candidates.
+
+Preserved the prior launch table in [content-table-launch.md](content-table-launch.md)
+for L03–L07's unchanged runtime; historical execution links now point there.
+Created [lunch-playtest.md](lunch-playtest.md) with the approved L09 protocol,
+participant/run/retest forms and blank evidence fields. Original 12a V4 remains
+pending; no human findings, L09 acceptance or L02b review is claimed.
+
+Constructed evidence includes a ten-turn success with callback (Italian, T33,
+198 person-minutes), expiry with doorway arrival (Thai nominated only, T46,
+293 person-minutes, bookingEnd45), and two-invitation success (Mexican, T30,
+220 person-minutes). Separate constructions cover all callbacks, both branches
+and reliable alternatives, new variant/presence witnesses, booking/deadline
+boundaries, cancellation, early end, filler and title reachability. These are
+arithmetic/document witnesses, not seeded engine runs or balance statistics.
+
+Initial authorship document checks (superseded by review correction evidence below):
+
+- `python docs/lunch-content-checks.py`: **pass**. Counts above, 312 substituted
+  copy cells and twelve title names within limits, complete used/reference
+  catalogs, three full-route running sums, three callback mini-routes and three exact expected-utility/q
+  examples; relative file/heading references and accepted ADR statuses checked.
+- Relative references and Markdown table structure: **pass**, 90 relative
+  file/heading links across 18 documents, including archival and status pointers.
+- Targeted Prettier formatting and check: **pass** on content-table.md,
+  content-table-launch.md, lunch-playtest.md, README.md, lunch-redesign-plan.md
+  and this plan, using the installed
+  `node node_modules/prettier/bin/prettier.cjs`. The pnpm launcher first failed
+  with a sandbox EPERM while preparing its own tool cache; direct invocation of
+  the same installed formatter completed without changing permissions or tooling.
+- `git diff --check`: **pass**. No formatting ignore, CI or gate was changed.
+- Copy checks caught and corrected over-limit descriptions/opening copy;
+  factual checks removed assumptions of six people after arrivals. Reference
+  checks corrected the old V4 handoff link to the historical table.
+
+Outstanding: **L02b** must review every addressed presentation/choice/branch and
+catalog, log wording changes/reasons in its separate scheduled review report,
+and flag design issues without changing mechanics. Harry's final D18 content
+approval follows that review. Initial weights/effects remain draft hypotheses;
+80/20 is not adopted tuning. No policy bands, rarity calibration, rendered 320 px
+fit, human humour/comprehension or runtime validation is claimed. Those remain
+in L05/L07/L08/L09/L10/L11/L12/L13 as scheduled. Original 12a V4 acceptance and
+ADR 0002's Android evidence deferral remain pending.
+
+Initial authorship changed documentation and its audit helper only; gameplay
+content, dependencies, accepted ADRs and deployment were unchanged. That initial
+pass did not run active gates. Claude's review found four failing assertions
+because the content table is an active test input; the earlier completion claim
+was premature. The correction below documents the new source path before
+repointing the launch tests and provenance comments, with assertions intact.
+**Stop at L02. Next: L02b, using [the writing-review brief](lunch-writing-review.md).**
+
+### L02 review correction — delivered
+
+Harry instructed “Address all issues” in [Claude's review](L02-review.md).
+The [resolution record](L02-review-resolution.md) maps every finding to its fix
+or explicit L02b/D18/L09 follow-up. Fixed all five factual copy defects, separated
+commentary/title IDs, clarified Alex's possible longer discussion, and made D1
+(uncertain choices weak at the documented early states) and D2 (two expert-dependent paths each) explicit
+D18 decisions. Effects/weights/conditions/formulas remain unchanged. The corrected
+draft is lunch-l02-draft-2; no full L02b review or D18 approval is claimed.
+
+B1 correction: the spec first documents the temporary launch sources; both tests
+now read content-table-launch.md. A real Node 24 run also found the launch roster/
+title assertions reading the rewritten lunch design: preserve design-doc-launch.md
+and repoint that input as well. All test assertions are unchanged. All 22 live
+content source changes are provenance comments only. The current content values,
+engine, UI, store, fixtures, golden runs and thresholds are unchanged.
+
+Actual local Node 24.21.0 / pnpm 10.34.6 review-correction results:
+
+- pnpm check **passes**: typecheck, zero-warning ESLint/Prettier, **347 tests in
+  36 files**, core **628/630 lines (99.68%) and 602/610 branches (98.69%)**.
+- sim:ci **passes**: 2,000 Greedy and 2,000 Random seeds, all transition invariants
+  and identical replay. Launch diagnostics unchanged: Greedy 100%, median score
+  920/11 turns; Random 69.6%, median score 552.5/15 turns. These are launch results,
+  not lunch balance. Provenance comment edits change the source-content hash;
+  no numeric data or run behavior changes.
+- pnpm build and pnpm size **pass**: JS **82,877/122,880 gzip bytes**;
+  deployed images/fonts **0/409,600**.
+- pnpm e2e **passes 30/30**, across Pixel 7 Chromium, iPhone 14 WebKit and desktop
+  Chromium; no failing/skipped cases. Original human V4 is still pending.
+- Documentation audit **passes**: 312 copy cells, **388 complete cuisine/name/topic
+  substitutions**, all catalogs/lengths, three full routes, three callback routes,
+  three exact utility/q examples, launch source paths and exact CLAUDE/spec mirror.
+  References/table structure pass across 21 documents; final link count is reported
+  by the checker. Prettier and whitespace checks are rerun before delivery.
+
+The first check failed formatting on the supplied review; formatting-only repair
+preserved its findings. The next run discovered the old design test dependency;
+the final full active run above fixes it rather than dropping its assertions.
+Sandbox dependency junction restrictions required normal host access for pnpm.
+No active gate, ignore rule or acceptance threshold changed.
+
+B2 delivery: L01's ratification and prior L00 planning inputs are committed as
+c03e961 on docs/task-l01-lunch-contracts in [draft PR #16](https://github.com/hsivasambu/meeting-sim/pull/16),
+stacked on still-open [12a PR #15](https://github.com/hsivasambu/meeting-sim/pull/15).
+L01's isolated [hosted quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38486889654) passes; downloaded reports verify 347 unit passes, 30 E2E passes, unchanged core coverage and clean committed simulation replay. L02 is committed as d2b4d88 on docs/task-l02-lunch-content in [draft PR #17](https://github.com/hsivasambu/meeting-sim/pull/17), targeting the separate L01 branch. Its [hosted Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38487242892) passes. Downloaded reports verify 347 unit passes, 30 E2E passes (zero unexpected/flaky/skipped), unchanged coverage, and clean simulation matching local metrics/hash. Vercel previews for both PRs pass. This explicit stack
+preserves the current 12a implementation baseline without merging or accepting V4.
+The L01 and L02 content heads both have passing hosted evidence; the documentation follow-up receives the same hosted checks before closing this turn. No L00 proposal-era revision
+was reconstructed or historical approval invented; its accepted planning package
+is an input to L01's contract-ratification PR, not mixed with L02.
+
+D1 precision: the review's “Greedy never takes a gamble” assertion is not
+universal. Branchwise clamping gives menu-needs/invite q=1 at P94,H6,Alex absent
+(U=−26/25 versus hear/park −6/5), and quick-agreement/refocus q=1 at P99,H7,Pat
+present (U=−206/25 versus hear −44/5, invitation disabled). The document audit
+verifies both exact counterexamples. No weights/effects changed; D18 still needs
+to consider competitiveness through ordinary progression, with L11/L12 evidence.
+
+Remaining content work: L02b's full editorial coverage/change log, Harry's final
+D18 decisions/approval, later L09 human evidence and scheduled transcription/tuning.
+Stop at the L02 review-fix boundary; no runtime lunch gameplay is implemented.
 
 ## Historical launch blueprint and execution evidence
 
@@ -1111,7 +1237,7 @@ review is recorded in ADR 0001 and incorporated in the design and technical spec
 Tasks 03–06 are also present, allowing engine-backed checking of the hand examples;
 they are not additional dependencies for this design task.
 
-- Created [the content table](content-table.md): all **17 base families**, **13
+- Created [the content table](content-table-launch.md): all **17 base families**, **13
   ordered variants**, **3 scheduled-only callbacks**, repeatable filler, **30
   response sets / 78 authored response rows**, four disabled reason keys and
   six epilogue lines spanning the four endings and three success risk tiers.
@@ -1784,7 +1910,7 @@ Actual local **Node 24.21.0 / pnpm 10.34.6** evidence:
 Harry agreed to perform V4 and requested build access instructions. The built
 preview runs at <http://127.0.0.1:4174/> on this computer; restart instructions and
 three pending tester rows are in [the V4 record](task-12a-playtest.md). The
-[content table](content-table.md#task-12a--v4-feedback-handoff) records the pending
+[content table](content-table-launch.md#task-12a--v4-feedback-handoff) records the pending
 feedback handoff. No human comprehension result or content revision is invented.
 
 Outstanding acceptance: Harry's several runs plus two uncoached testers must
