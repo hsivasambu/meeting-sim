@@ -5,7 +5,7 @@ import { evaluateOutcomes, expectedUtility, hasOutcomes } from './outcomes';
 import { fractionNumber, serializeFraction } from './utilityFraction';
 import { ZERO } from './constants';
 import type {
-  MeetingState,
+  EngineState,
   Response,
   ResponsePreview,
   UtilityRules,
@@ -15,22 +15,22 @@ import type {
 } from './types';
 /** Implements Design Doc v2 → Events and responses → How a response is shown. */
 export function previewWithRules(
-  state: MeetingState<EngineResponse>,
+  state: EngineState,
   response: Response,
   rules: UtilityRules,
 ): ResponsePreview;
 export function previewWithRules(
-  state: MeetingState<EngineResponse>,
+  state: EngineState,
   response: OutcomeResponse,
   rules: UtilityRules,
 ): OutcomeResponsePreview;
 export function previewWithRules(
-  state: MeetingState<EngineResponse>,
+  state: EngineState,
   response: EngineResponse,
   rules: UtilityRules,
 ): ResponsePreview | OutcomeResponsePreview;
 export function previewWithRules(
-  state: MeetingState<EngineResponse>,
+  state: EngineState,
   response: EngineResponse,
   rules: UtilityRules,
 ): ResponsePreview | OutcomeResponsePreview {

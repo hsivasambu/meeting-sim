@@ -21,6 +21,7 @@ export interface Condition {
   readonly maxRisks?: number;
 }
 export interface Effect {
+  readonly nominateCuisine?: CuisineId;
   readonly progress?: number;
   readonly minutes: number;
   readonly risks?: number;
@@ -58,13 +59,13 @@ export interface ExactFraction {
   readonly numerator: string;
   readonly denominator: string;
 }
-export interface EventVariant {
+export interface EventVariant<R extends EngineResponse = Response> {
   readonly when: Condition;
   readonly speaker: AttendeeId | 'room';
   readonly line: string;
-  readonly responses: readonly Response[];
+  readonly responses: readonly R[];
 }
-export interface MeetingEvent {
+export interface MeetingEvent<R extends EngineResponse = Response> {
   readonly id: string;
   readonly kind: EventKind;
   readonly rarity: Rarity;
@@ -72,9 +73,9 @@ export interface MeetingEvent {
   readonly line: string;
   readonly weight?: number;
   readonly negative?: boolean;
-  readonly variants?: readonly EventVariant[];
+  readonly variants?: readonly EventVariant<R>[];
   readonly when?: Condition;
-  readonly responses: readonly Response[];
+  readonly responses: readonly R[];
 }
 export interface PresentedEvent<R extends EngineResponse = Response> {
   readonly id: string;
@@ -146,8 +147,8 @@ export type ResponsePreview =
       readonly personMinutesDelta: number;
       readonly utility: number;
     };
-export interface DrawCandidate {
-  readonly event: PresentedEvent;
+export interface DrawCandidate<R extends EngineResponse = Response> {
+  readonly event: PresentedEvent<R>;
   readonly probability: number;
 }
 export interface OutcomePreview {
@@ -208,22 +209,23 @@ export interface EventRules {
   readonly callbackTargets: Readonly<Record<string, string>>;
   readonly bookingEventIds: readonly string[];
 }
-export interface ContentPack {
-  readonly eventRules: EventRules;
-  readonly events: readonly MeetingEvent[];
-  readonly callbacks: readonly MeetingEvent[];
-  readonly filler: MeetingEvent;
+export interface ContentPack<
+  R extends EngineResponse = Response,
+  Rules = EventRules,
+> {
+  readonly eventRules: Rules;
+  readonly events: readonly MeetingEvent<R>[];
+  readonly callbacks: readonly MeetingEvent<R>[];
+  readonly filler: MeetingEvent<R>;
 }
-export interface MeetingState<R extends EngineResponse = Response> {
+export interface SharedMeetingState<R extends EngineResponse = Response> {
   readonly seed: string;
   readonly turn: number;
   readonly minute: number;
   readonly bookingEnd: number;
   readonly progress: number;
-  readonly risks: number;
   readonly personMinutes: number;
   readonly present: readonly AttendeeId[];
-  readonly releasedAttendeeIds: readonly AttendeeId[];
   readonly peakHeadcount: number;
   readonly seenEventIds: readonly string[];
   readonly spokenAttendeeIds: readonly AttendeeId[];
@@ -242,9 +244,62 @@ export interface MeetingState<R extends EngineResponse = Response> {
     'decision' | 'called-early' | 'time-expired' | 'cancelled' | null;
 }
 
-export interface UtilityRules {
+export interface MeetingState<
+  R extends EngineResponse = Response,
+> extends SharedMeetingState<R> {
+  readonly risks: number;
+  readonly releasedAttendeeIds: readonly AttendeeId[];
+}
+
+// Temporary fixture-injected migration profile; L08 removes the launch schema.
+export type CuisineId = string;
+export interface Cuisine {
+  readonly id: CuisineId;
+  readonly name: string;
+}
+export interface LunchState extends SharedMeetingState<OutcomeResponse> {
+  readonly nominatedCuisine: CuisineId | null;
+  readonly agreedCuisine: CuisineId | null;
+  readonly resolvedCallbackCount: number;
+  readonly shownCommentaryIds: readonly string[];
+  readonly lastCommentaryTurn: number | null;
+}
+export type EngineState = MeetingState<EngineResponse> | LunchState;
+export interface LunchEventRules {
+  readonly nominationEventId: string;
+  readonly arrivalPermissions: readonly {
+    readonly eventId: string;
+    readonly responseId: string;
+    readonly attendeeId: AttendeeId;
+  }[];
+  readonly arrivalAttendees: Readonly<Record<string, AttendeeId>>;
+  readonly callbackTargets: Readonly<Record<string, string>>;
+  readonly bookingEventIds: readonly string[];
+}
+export interface LunchContentPack extends ContentPack<
+  OutcomeResponse,
+  LunchEventRules
+> {
+  readonly cuisines: readonly Cuisine[];
+}
+export type LunchTitleId =
+  | Exclude<TitleId, 'ship-it-and-pray' | 'skeleton-crew' | 'gary-free-zone'>
+  | 'lunch-agreed'
+  | 'table-for-six'
+  | 'second-helping';
+
+export interface LaunchUtilityRules {
+  readonly profile?: 'launch';
   readonly costWeight: number;
   readonly riskWeight: number;
   readonly costUnit: number;
   readonly eventRules?: EventRules;
 }
+export interface LunchUtilityRules {
+  readonly profile: 'lunch';
+  readonly costWeight: number;
+  readonly costUnit: number;
+  readonly eventRules: LunchEventRules;
+  readonly cuisines: readonly Cuisine[];
+}
+export type UtilityRules = LaunchUtilityRules | LunchUtilityRules;

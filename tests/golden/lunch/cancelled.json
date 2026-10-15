@@ -1,0 +1,112 @@
+{
+  "actions": ["call-it"],
+  "state": {
+    "seed": "lunch-cancel",
+    "turn": 0,
+    "minute": 0,
+    "bookingEnd": 60,
+    "progress": 0,
+    "personMinutes": 0,
+    "present": ["priya", "dev", "sam", "morgan", "gary", "jordan"],
+    "peakHeadcount": 6,
+    "seenEventIds": ["fixture-nomination"],
+    "spokenAttendeeIds": ["priya"],
+    "parkedCount": 0,
+    "substantiveDrawCount": 1,
+    "previousDrawWasUncommonNegative": false,
+    "scheduled": [],
+    "decisions": [],
+    "log": [
+      {
+        "type": "draw",
+        "turn": 0,
+        "minute": 0,
+        "eventId": "fixture-nomination",
+        "speaker": "priya"
+      },
+      {
+        "type": "call-it",
+        "turn": 0,
+        "minute": 0
+      }
+    ],
+    "phase": "ended",
+    "ending": "cancelled",
+    "current": {
+      "id": "fixture-nomination",
+      "kind": "substantive",
+      "rarity": "common",
+      "negative": false,
+      "speaker": "priya",
+      "line": "Fixture nomination.",
+      "responses": [
+        {
+          "id": "fixture-a",
+          "label": "Fixture choice",
+          "description": "Fixture description.",
+          "technique": "hear",
+          "outcomes": [
+            {
+              "id": "done",
+              "weight": 1,
+              "effect": {
+                "minutes": 1,
+                "progress": 5,
+                "nominateCuisine": "fixture-a"
+              },
+              "line": "Fixture outcome."
+            }
+          ]
+        },
+        {
+          "id": "fixture-b",
+          "label": "Fixture choice",
+          "description": "Fixture description.",
+          "technique": "hear",
+          "outcomes": [
+            {
+              "id": "done",
+              "weight": 1,
+              "effect": {
+                "minutes": 1,
+                "progress": 5,
+                "nominateCuisine": "fixture-b"
+              },
+              "line": "Fixture outcome."
+            }
+          ]
+        },
+        {
+          "id": "fixture-c",
+          "label": "Fixture choice",
+          "description": "Fixture description.",
+          "technique": "hear",
+          "outcomes": [
+            {
+              "id": "done",
+              "weight": 1,
+              "effect": {
+                "minutes": 1,
+                "progress": 5,
+                "nominateCuisine": "fixture-c"
+              },
+              "line": "Fixture outcome."
+            }
+          ]
+        }
+      ]
+    },
+    "nominatedCuisine": null,
+    "agreedCuisine": null,
+    "resolvedCallbackCount": 0,
+    "shownCommentaryIds": [],
+    "lastCommentaryTurn": null
+  },
+  "score": {
+    "outcome": 0,
+    "efficiency": 0,
+    "decisions": 0,
+    "total": 0
+  },
+  "titles": ["could-have-been-an-email"]
+}

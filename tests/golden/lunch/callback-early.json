@@ -1,0 +1,247 @@
+{
+  "actions": [
+    "fixture-nomination:fixture-c",
+    "fixture-discussion:wait",
+    "fixture-noise-4:wait",
+    "fixture-parent-a:park",
+    "fixture-parent-b:park",
+    "fixture-return-a:ack",
+    "call-it"
+  ],
+  "state": {
+    "seed": "lunch-callback",
+    "turn": 6,
+    "minute": 6,
+    "bookingEnd": 60,
+    "progress": 5,
+    "personMinutes": 36,
+    "present": ["priya", "dev", "sam", "morgan", "gary", "jordan"],
+    "peakHeadcount": 6,
+    "seenEventIds": [
+      "fixture-nomination",
+      "fixture-discussion",
+      "fixture-noise-4",
+      "fixture-parent-a",
+      "fixture-parent-b",
+      "fixture-return-a",
+      "fixture-return-b"
+    ],
+    "spokenAttendeeIds": ["priya"],
+    "parkedCount": 2,
+    "substantiveDrawCount": 2,
+    "previousDrawWasUncommonNegative": false,
+    "scheduled": [],
+    "decisions": [
+      {
+        "turn": 0,
+        "eventId": "fixture-nomination",
+        "responseId": "fixture-c",
+        "quality": null,
+        "qualityFraction": null
+      },
+      {
+        "turn": 1,
+        "eventId": "fixture-discussion",
+        "responseId": "wait",
+        "quality": 0,
+        "qualityFraction": {
+          "numerator": "0",
+          "denominator": "1428"
+        }
+      },
+      {
+        "turn": 2,
+        "eventId": "fixture-noise-4",
+        "responseId": "wait",
+        "quality": 1,
+        "qualityFraction": {
+          "numerator": "373248000000",
+          "denominator": "373248000000"
+        }
+      },
+      {
+        "turn": 3,
+        "eventId": "fixture-parent-a",
+        "responseId": "park",
+        "quality": 0,
+        "qualityFraction": {
+          "numerator": "0",
+          "denominator": "1428"
+        }
+      },
+      {
+        "turn": 4,
+        "eventId": "fixture-parent-b",
+        "responseId": "park",
+        "quality": 0,
+        "qualityFraction": {
+          "numerator": "0",
+          "denominator": "1428"
+        }
+      },
+      {
+        "turn": 5,
+        "eventId": "fixture-return-a",
+        "responseId": "ack",
+        "quality": null,
+        "qualityFraction": null
+      }
+    ],
+    "log": [
+      {
+        "type": "draw",
+        "turn": 0,
+        "minute": 0,
+        "eventId": "fixture-nomination",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 0,
+        "minute": 1,
+        "eventId": "fixture-nomination",
+        "responseId": "fixture-c",
+        "technique": "hear",
+        "line": "Fixture outcome.",
+        "outcomeId": "done"
+      },
+      {
+        "type": "draw",
+        "turn": 1,
+        "minute": 1,
+        "eventId": "fixture-discussion",
+        "speaker": "priya"
+      },
+      {
+        "type": "resolve",
+        "turn": 1,
+        "minute": 2,
+        "eventId": "fixture-discussion",
+        "responseId": "wait",
+        "technique": "hear",
+        "line": "Fixture outcome.",
+        "outcomeId": "done"
+      },
+      {
+        "type": "draw",
+        "turn": 2,
+        "minute": 2,
+        "eventId": "fixture-noise-4",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 2,
+        "minute": 3,
+        "eventId": "fixture-noise-4",
+        "responseId": "wait",
+        "technique": "hear",
+        "line": "Fixture outcome.",
+        "outcomeId": "done"
+      },
+      {
+        "type": "draw",
+        "turn": 3,
+        "minute": 3,
+        "eventId": "fixture-parent-a",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 3,
+        "minute": 4,
+        "eventId": "fixture-parent-a",
+        "responseId": "park",
+        "technique": "park",
+        "line": "Fixture outcome.",
+        "outcomeId": "done"
+      },
+      {
+        "type": "draw",
+        "turn": 4,
+        "minute": 4,
+        "eventId": "fixture-parent-b",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 4,
+        "minute": 5,
+        "eventId": "fixture-parent-b",
+        "responseId": "park",
+        "technique": "park",
+        "line": "Fixture outcome.",
+        "outcomeId": "done"
+      },
+      {
+        "type": "draw",
+        "turn": 5,
+        "minute": 5,
+        "eventId": "fixture-return-a",
+        "speaker": "room"
+      },
+      {
+        "type": "resolve",
+        "turn": 5,
+        "minute": 6,
+        "eventId": "fixture-return-a",
+        "responseId": "ack",
+        "technique": "hear",
+        "line": "Fixture outcome.",
+        "outcomeId": "done"
+      },
+      {
+        "type": "draw",
+        "turn": 6,
+        "minute": 6,
+        "eventId": "fixture-return-b",
+        "speaker": "room"
+      },
+      {
+        "type": "call-it",
+        "turn": 6,
+        "minute": 6
+      }
+    ],
+    "phase": "ended",
+    "ending": "called-early",
+    "current": {
+      "id": "fixture-return-b",
+      "kind": "callback",
+      "rarity": "common",
+      "negative": false,
+      "speaker": "room",
+      "line": "Fixture callback.",
+      "responses": [
+        {
+          "id": "ack",
+          "label": "Fixture choice",
+          "description": "Fixture description.",
+          "technique": "hear",
+          "outcomes": [
+            {
+              "id": "done",
+              "weight": 1,
+              "effect": {
+                "minutes": 1
+              },
+              "line": "Fixture outcome."
+            }
+          ]
+        }
+      ]
+    },
+    "nominatedCuisine": "fixture-c",
+    "agreedCuisine": null,
+    "resolvedCallbackCount": 1,
+    "shownCommentaryIds": [],
+    "lastCommentaryTurn": null
+  },
+  "score": {
+    "outcome": 9,
+    "efficiency": 15,
+    "decisions": 75,
+    "total": 99
+  },
+  "titles": ["take-this-offline"]
+}

@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L03 complete and delivered in draft PR #19 with passing local/hosted Node 24 gates. Next task: L04.** L02b revision lunch-l02b-reviewed-2 in draft PR #18 awaits Harry's final D18 content approval, required before L05/L06/L07 consumption. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Original 12a V4 evidence remains pending.
+Current: **L04 complete locally; draft delivery and hosted verification in progress. Next task: L05.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18; L05/L06/L07’s content prerequisite is satisfied, with their other dependencies unchanged. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Original 12a V4 evidence remains pending.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -2076,3 +2076,32 @@ after dependencies merge, rebase/retarget and rerun active gates before merge.
 No dependency/task PR has been merged here. This final documentation receipt
 receives its own hosted run; it changes no implementation or checks.
 L05/L06/L07 still require final D18 content approval; L08 owns activation/removal.
+
+## L04 — Lunch rules and scoring, October 14, 2026
+
+L04 implementation and evidence are in [the L04 record](task-l04-rules.md).
+The fixture-injected lunch profile shares draw/effect/resolution/score/title
+primitives with launch; no public activation or live content/tuning change.
+Nomination, permanent 6–8 attendance, per-response arrival permissions, n+2
+callbacks, cuisine agreement before expiry and risk-free scoring are covered.
+The three replacement titles reuse retained predicates and priority.
+
+Local Node 24.21.0 / pnpm 10.34.6: `pnpm check` passes, **420 tests / 40 files**,
+core **824/835 lines (98.68%) / 872/897 branches (97.21%)**; launch simulation
+summaries/hash unchanged, invariant and replay checks pass for 2,000 seeds each
+Greedy/Random. Build/size pass (**84,675 gzip JS bytes**, zero images/fonts);
+E2E **30 passed** across all three profiles. Seven added lunch goldens preserve
+all six launch goldens. An exhausted 17-family/three-callback witness ends on
+turn 40 through filler; generated seed/action tests stay within 50 resolutions.
+
+Dependencies remain unmerged: the stack starts at draft #15 with pending V4
+human evidence; L03 #19 requires dependency integration and gate reruns before
+merge. Concurrent D18 approval documentation is preserved separately. L04
+starts from #19 head `77348a8f96ebde741d34d945494961ed5662e4c3` and will be
+delivered as its own stacked draft PR. Hosted verification follows creation.
+The existing untracked L03 review note was preserved byte-for-byte outside the
+format scan for local gates; it is not included in L04.
+
+**L04 complete locally. Next task: L05**, subject to its listed dependencies.
+L08 removes the temporary profile/overloads/helpers alongside the existing L03
+migration contracts. No later task, human evidence or live activation is claimed.

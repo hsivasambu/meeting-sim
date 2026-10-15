@@ -5,13 +5,13 @@ import { matchesCondition } from './conditions';
 import { EngineError } from './errors';
 import type {
   MeetingState,
+  EngineState,
   Response,
   UtilityRules,
-  EngineResponse,
 } from './types';
 /** Implements Design Doc v2 → Scoring → Decisions: effective, clamped valuation. */
-export function evaluateResponse<R extends EngineResponse>(
-  state: MeetingState<R>,
+export function evaluateResponse<S extends EngineState>(
+  state: S,
   response: Response,
   rules: UtilityRules,
 ) {
@@ -21,7 +21,15 @@ export function evaluateResponse<R extends EngineResponse>(
   const applied = applyEffect(
     state,
     response.effect,
-    Object.values(rules.eventRules?.arrivalAttendees ?? {}),
+    rules.profile === 'lunch'
+      ? rules.eventRules.arrivalPermissions
+          .filter(
+            (permission) =>
+              permission.eventId === state.current?.id &&
+              permission.responseId === response.id,
+          )
+          .map((permission) => permission.attendeeId)
+      : Object.values(rules.eventRules?.arrivalAttendees ?? {}),
   );
   const exact = utilityFraction(
     applied.progressDelta,

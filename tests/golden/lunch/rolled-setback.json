@@ -1,0 +1,58 @@
+{
+  "actions": ["fixture-numeric:lottery"],
+  "state": {
+    "seed": "lunch-roll-0",
+    "turn": 3,
+    "minute": 65,
+    "bookingEnd": 60,
+    "progress": 85,
+    "personMinutes": 36,
+    "present": ["priya", "dev", "sam", "morgan", "gary", "jordan"],
+    "peakHeadcount": 6,
+    "seenEventIds": [],
+    "spokenAttendeeIds": [],
+    "parkedCount": 0,
+    "substantiveDrawCount": 2,
+    "previousDrawWasUncommonNegative": false,
+    "scheduled": [],
+    "decisions": [
+      {
+        "turn": 2,
+        "eventId": "fixture-numeric",
+        "responseId": "lottery",
+        "quality": 0.5930232558139535,
+        "qualityFraction": {
+          "numerator": "47589120000",
+          "denominator": "80248320000"
+        }
+      }
+    ],
+    "log": [
+      {
+        "type": "resolve",
+        "turn": 2,
+        "minute": 65,
+        "eventId": "fixture-numeric",
+        "responseId": "lottery",
+        "technique": "hear",
+        "line": "Fixture setback.",
+        "outcomeId": "bad"
+      }
+    ],
+    "phase": "ended",
+    "ending": "time-expired",
+    "current": null,
+    "nominatedCuisine": "fixture-a",
+    "agreedCuisine": null,
+    "resolvedCallbackCount": 0,
+    "shownCommentaryIds": [],
+    "lastCommentaryTurn": null
+  },
+  "score": {
+    "outcome": 153,
+    "efficiency": 255,
+    "decisions": 178,
+    "total": 586
+  },
+  "titles": ["calendar-criminal"]
+}

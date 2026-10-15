@@ -1,11 +1,12 @@
 import { ZERO, ONE, CALLBACK_DELAY } from './constants';
 import { EngineError } from './errors';
+import { validateLunchResponse, validateNomination } from './lunchValidation';
 import type {
-  MeetingState,
+  EngineState,
+  EngineResponse,
   PresentedEvent,
   Response,
   UtilityRules,
-  EngineResponse,
 } from './types';
 /** Implements Design Doc v2 → Event schema and roster → Data model: authored disabled reasons. */
 export function reasonFor(response: EngineResponse): string {
@@ -20,6 +21,16 @@ function validateEvent(
   rules: UtilityRules,
 ): void {
   const metadata = rules.eventRules;
+  if (rules.profile === 'lunch') {
+    if (event.id === rules.eventRules.nominationEventId)
+      validateNomination(event);
+    if (
+      (response.effect.bookingEnd !== undefined) !==
+      metadata?.bookingEventIds.includes(event.id)
+    )
+      throw new EngineError('invalid-effect');
+    return;
+  }
   const expected =
     metadata !== undefined && Object.hasOwn(metadata.arrivalAttendees, event.id)
       ? metadata.arrivalAttendees[event.id]
@@ -38,7 +49,7 @@ function validateEvent(
     throw new EngineError('invalid-effect');
 }
 function validateCallback(
-  state: MeetingState<EngineResponse>,
+  state: EngineState,
   event: PresentedEvent<EngineResponse>,
   response: Response,
   rules: UtilityRules,
@@ -61,11 +72,19 @@ function validateCallback(
 }
 /** Implements Design Doc v2 → Game state model → Resolution and attendance boundaries: shared preview/resolve validation. */
 export function validateResponse(
-  state: MeetingState<EngineResponse>,
+  state: EngineState,
   response: Response,
   rules: UtilityRules,
 ): void {
+  if ('nominatedCuisine' in state !== (rules.profile === 'lunch'))
+    throw new EngineError('invalid-rules');
+  if (
+    rules.profile !== 'lunch' &&
+    response.effect.nominateCuisine !== undefined
+  )
+    throw new EngineError('invalid-effect');
   if (response.requires !== undefined) reasonFor(response);
+  if (rules.profile === 'lunch') validateLunchResponse(state, response, rules);
   const event = state.current;
   if (
     response.effect.minutes === ZERO &&
