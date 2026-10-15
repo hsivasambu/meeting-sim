@@ -807,8 +807,8 @@ need repeat approval. The design and tech spec define the lunch target; L03–L0
 preserve launch behavior during preparation and L08 performs the live switch.
 L02 authors the complete table; L02b performs the dedicated AI adult workplace
 humour/writing review before Harry’s D18 content approval. Successful results
-must name the actual agreed cuisine. Original 12a V4 remains pending historical
-evidence; L09 is the approved separate lunch playtest prerequisite.
+must name the actual agreed cuisine. Harry accepted original 12a V4 on October 15, 2026; individual tester reports
+remain unsupplied. L09 is the separate lunch playtest prerequisite.
 
 ## Review size preference
 

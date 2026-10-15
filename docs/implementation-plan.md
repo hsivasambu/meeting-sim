@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L04 complete and delivered in draft PR #20 with passing local/hosted Node 24 gates. Next task: L05.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18; L05/L06/L07’s content prerequisite is satisfied, with their other dependencies unchanged. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
+Current: **L05 implemented; final validation and draft PR delivery in progress. L04 PR #20 is merged with successful checks. Next task after L05: L06.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18; L05/L06/L07’s content prerequisite is satisfied, with their other dependencies unchanged. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -2160,3 +2160,43 @@ accepted documentation forward and receives fresh hosted gates. No gameplay,
 content mechanics, scoring formulas or test thresholds changed during integration.
 **Next implementation task remains L05** after its listed prerequisites; none
 was started in this acceptance/merge action.
+
+## L05 — Lunch content transcription and validation, October 15, 2026
+
+L04 [PR #20](https://github.com/hsivasambu/meeting-sim/pull/20) was already merged
+when checked, with both hosted quality runs and Vercel checks successful. L05
+branches from merged main `e9e6607`; approval prerequisites were already recorded.
+The [execution record](task-l05-content.md) explains the scope and migration
+boundary; the [checklist](task-l05-checklist.md) maps all 287 reviewed table rows.
+
+Complete approved lunch data is isolated under `src/core/content/lunch/` and
+validated through injection. All 22 presentations, 54 choices/57 outcome rows,
+three cuisines, invitation/arrival/callback relationships and complete copy/title/
+commentary catalogs are audited against the approved table. Constructed engine
+witnesses cover variants, requirements, every branch, walkthroughs, callback routes,
+all twelve title slots, exact utility/q and boundaries. No approved content,
+mechanics, weights or tuning values changed. Public launch binding and existing
+launch assertions/source documents remain unchanged until L08.
+
+Actual local **Node 24.21.0 / pnpm 10.34.6**:
+
+- `pnpm check`: pass; typecheck and zero-warning lint/format, **588 tests in 41 files**.
+- Core coverage: **1080/1102 lines (98.00%)**, **1119/1160 branches (96.47%)**;
+  unchanged 90%/85% gates.
+- `pnpm sim:ci`: pass, 2,000 fixed seeds each for current launch Greedy/Random;
+  every transition invariant and deterministic replay passes. Greedy 100% wins,
+  median score 920/11 turns; Random 69.6%, median score 552.5/15 turns. Balance
+  remains diagnostic; lunch activation/reporting/policies/tuning remain L08/L10–L12.
+- `pnpm build` / `pnpm size`: pass, **84,676/122,880 gzip JS bytes**;
+  **0/409,600 image/font bytes**. Live launch build remains unchanged.
+- `pnpm e2e`: **30 passes**, zero skipped/flaky/unexpected, Pixel 7 Chromium,
+  iPhone 14 WebKit and desktop Chromium.
+- `python docs/lunch-content-checks.py`: pass, all document/content/reference checks.
+  The pre-existing stale V4 text in the tech spec's CLAUDE mirror now matches the
+  already recorded approval. No gameplay contract changed.
+- The unrelated untracked L03 review was preserved outside the checkout during
+  gates and restored byte-for-byte; it is not part of L05. No gate was relaxed.
+
+Local correctness is complete. Draft PR and hosted evidence are recorded below
+when available. **Stop at L05. Next task: L06**, with L07's independent prerequisites
+unchanged. No storage migration, UI wiring, activation, tuning or L09 acceptance.
