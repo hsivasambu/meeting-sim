@@ -5,16 +5,17 @@ import type {
   PresentedEvent,
   Response,
   UtilityRules,
+  EngineResponse,
 } from './types';
 /** Implements Design Doc v2 → Event schema and roster → Data model: authored disabled reasons. */
-export function reasonFor(response: Response): string {
+export function reasonFor(response: EngineResponse): string {
   const key = response.disabledReasonKey;
   if (typeof key !== 'string' || !key.trim())
     throw new EngineError('invalid-response');
   return key;
 }
 function validateEvent(
-  event: PresentedEvent,
+  event: PresentedEvent<EngineResponse>,
   response: Response,
   rules: UtilityRules,
 ): void {
@@ -37,8 +38,8 @@ function validateEvent(
     throw new EngineError('invalid-effect');
 }
 function validateCallback(
-  state: MeetingState,
-  event: PresentedEvent,
+  state: MeetingState<EngineResponse>,
+  event: PresentedEvent<EngineResponse>,
   response: Response,
   rules: UtilityRules,
 ): void {
@@ -60,7 +61,7 @@ function validateCallback(
 }
 /** Implements Design Doc v2 → Game state model → Resolution and attendance boundaries: shared preview/resolve validation. */
 export function validateResponse(
-  state: MeetingState,
+  state: MeetingState<EngineResponse>,
   response: Response,
   rules: UtilityRules,
 ): void {

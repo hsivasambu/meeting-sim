@@ -1,4 +1,4 @@
-import type { MeetingState } from './types';
+import type { MeetingState, EngineResponse } from './types';
 export type EngineErrorCode =
   | 'ended'
   | 'not-ended'
@@ -19,7 +19,7 @@ export class EngineError extends Error {
   }
 }
 /** Implements Design Doc v2 → Core loop: actions require a running meeting. */
-export function assertRunning(state: MeetingState): void {
+export function assertRunning(state: MeetingState<EngineResponse>): void {
   if (state.phase !== 'running') throw new EngineError('ended');
 }
 

@@ -3,10 +3,15 @@ import { utilityFraction, fractionNumber } from './utilityFraction';
 import { applyEffect } from './applyEffect';
 import { matchesCondition } from './conditions';
 import { EngineError } from './errors';
-import type { MeetingState, Response, UtilityRules } from './types';
+import type {
+  MeetingState,
+  Response,
+  UtilityRules,
+  EngineResponse,
+} from './types';
 /** Implements Design Doc v2 → Scoring → Decisions: effective, clamped valuation. */
-export function evaluateResponse(
-  state: MeetingState,
+export function evaluateResponse<R extends EngineResponse>(
+  state: MeetingState<R>,
   response: Response,
   rules: UtilityRules,
 ) {
@@ -27,6 +32,7 @@ export function evaluateResponse(
   return {
     ...applied,
     utilityNumerator: exact.numerator,
+    utilityFraction: exact,
     utility: fractionNumber(exact.numerator, exact.denominator),
   };
 }

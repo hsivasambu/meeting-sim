@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L02b editorial review and Claude follow-ups delivered in draft PR #18 with passing local/hosted checks; revision lunch-l02b-reviewed-2 was approved by Harry for L02b/D18 on October 14, 2026. Next task: L03.** Lunch rules and named acceptance replacements were approved on October 13, 2026. Gameplay implementation has not started. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
+Current: **L03 complete and delivered in draft PR #19 with passing local/hosted Node 24 gates. Next task: L04.** Harry approved L02b/D18 on October 14, 2026; L05/L06/L07 retain their other dependencies. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -337,30 +337,6 @@ to consider competitiveness through ordinary progression, with L11/L12 evidence.
 Remaining content work: L02b's full editorial coverage/change log, Harry's final
 D18 decisions/approval, later L09 human evidence and scheduled transcription/tuning.
 Stop at the L02 review-fix boundary; no runtime lunch gameplay is implemented.
-
-## Harry’s L02b and D18 approval — October 14, 2026
-
-Harry explicitly approved: “Approve L02b and D18”. This accepts the completed
-L02b review and the complete table revision `lunch-l02b-reviewed-2`, whose
-player-facing content is pinned at `7efc2d19a65e5519063f2be653b2f02e438f326f`
-in PR #18. Approval covers the authored copy/catalogs, initial effects/weights,
-conditions and relationships, including D1’s present uncertainty tradeoffs and
-D2’s two expert-dependent responses per entrant. D3’s intentional room-booking
-tradeoff remains unchanged. No values are altered by recording this approval.
-
-These are approved initial content values, not evidence of balance. L11/L12
-still measure policy selection and tune under the existing reports, targets and
-change-control rules; the illustrative 80/20 is not adopted. The L02b/D18 content
-prerequisite for L05/L06/L07 is satisfied; their other dependencies still apply.
-This approval does not merge a PR, activate lunch before L08, accept L09 human
-evidence or complete original task 12a V4. Earlier pending-approval statements
-in dated execution records describe their historical status and are superseded
-by this explicit approval.
-
-Approval-record checks **pass**: document/catalog audit (312 copy cells,
-394 substitutions, 116 references across 24 documents), targeted Prettier and
-whitespace checks for this documentation-only record. No gameplay checks are claimed
-for the in-progress L04 working tree; its engine edits are outside this action.
 
 ## Historical launch blueprint and execution evidence
 
@@ -2061,6 +2037,45 @@ also retains local preview/restart instructions. This deployment/access evidence
 is separate from the still-pending human V4 results. This evidence-only update
 reruns the same hosted gates; there is no gameplay change.
 
+## L03 — Additive outcome capability, October 13, 2026
+
+Implementation and fixtures are documented in [the L03 record](task-l03-outcomes.md).
+Dependency revision: `1f7fa8168674154ef8475789e6ff83918a0e763e`, L02b PR #18.
+The feature branch is intentionally stacked on `docs/task-l02b-lunch-writing`;
+no dependency merge or final D18 content approval is inferred.
+
+One/two-outcome schema, keyed unbiased response RNG, branchwise clamped previews,
+exact expected pre-roll quality and pure successor enumeration share existing
+validation/application/resolution primitives. Temporary generic launch defaults
+and preview overloads keep live content/UI/store/policies and six goldens unchanged.
+The public lint allowlist adds getResponseOutcomes. No live tuning or lunch switch.
+
+Local Node 24.21.0 / pnpm 10.34.6 results: `pnpm check` passed (383 tests;
+core 99.58% lines / 98.24% branches; 2,000 seeds each Greedy/Random with invariant
+and replay PASS); `pnpm build` / `pnpm size` passed (83,809 gzip JS bytes;
+0 image/font bytes); `pnpm e2e` passed 30 tests across the three required profiles.
+Simulation summary objects match the committed V3 baseline exactly; existing
+unmet win-band diagnostics remain unchanged. Protocol-bound constants change the
+source hash, not live tuning. Document/delivery checks and hosted evidence follow.
+
+Delivered in [draft PR #19](https://github.com/hsivasambu/meeting-sim/pull/19),
+implementation commit `044561fb58f9dd78b1a7dcab46ec7c1ce7d4ac47`.
+Hosted [Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38494560088)
+passed frozen install, `pnpm check`, build/size and all E2E checks. Downloaded
+artifacts verify 383 unit tests, 30 browser passes with zero skipped/flaky/errors,
+core 99.58% lines / 98.24% branches, and clean hosted simulation with exact V3
+policy summaries. Hosted simulation revision (PR merge checkout):
+`12c3db0ddb51d6641ecfaa8598012617a2f60ff5`; L03 source hash
+`1bd0e3bb54dbd7e9bee2d83b22d2329439eb6fe9404eb9fb6addd9825ff011f5`.
+Hosted bundle bytes match local results. Vercel PR preview passes.
+Document links/decision-register checks, formatting and `git diff --check` pass.
+
+**L03 is complete. Next task: L04.** PR #19 remains draft and stacked on #18;
+after dependencies merge, rebase/retarget and rerun active gates before merge.
+No dependency/task PR has been merged here. This final documentation receipt
+receives its own hosted run; it changes no implementation or checks.
+L05/L06/L07 still require final D18 content approval; L08 owns activation/removal.
+
 ## Task 12a V4 acceptance — October 15, 2026
 
 Harry explicitly instructed “accept PR#15 V4”. [The acceptance record](task-12a-v4-acceptance.md)
@@ -2070,3 +2085,27 @@ were not supplied and are not fabricated. L09 lunch evidence remains separate.
 No game rules, content values or automated gates change. Local document format,
 relative-link and whitespace checks pass; hosted quality checks run before merge.
 The active lunch sequence remains authoritative; this does not start old task 08b.
+
+## Harry’s L02b and D18 approval — October 14, 2026
+
+Harry explicitly approved: “Approve L02b and D18”. This accepts the completed
+L02b review and the complete table revision `lunch-l02b-reviewed-2`, whose
+player-facing content is pinned at `7efc2d19a65e5519063f2be653b2f02e438f326f`
+in PR #18. Approval covers the authored copy/catalogs, initial effects/weights,
+conditions and relationships, including D1’s present uncertainty tradeoffs and
+D2’s two expert-dependent responses per entrant. D3’s intentional room-booking
+tradeoff remains unchanged. No values are altered by recording this approval.
+
+These are approved initial content values, not evidence of balance. L11/L12
+still measure policy selection and tune under the existing reports, targets and
+change-control rules; the illustrative 80/20 is not adopted. The L02b/D18 content
+prerequisite for L05/L06/L07 is satisfied; their other dependencies still apply.
+This approval does not merge a PR, activate lunch before L08, accept L09 human
+evidence or complete original task 12a V4. Earlier pending-approval statements
+in dated execution records describe their historical status and are superseded
+by this explicit approval.
+
+Approval-record checks **pass**: document/catalog audit (312 copy cells,
+394 substitutions, 116 references across 24 documents), targeted Prettier and
+whitespace checks for this documentation-only record. No gameplay checks are claimed
+for the in-progress L04 working tree; its engine edits are outside this action.

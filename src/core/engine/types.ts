@@ -40,6 +40,24 @@ export interface Response {
   readonly effect: Effect;
   readonly line: string;
 }
+// Temporary launch defaults are removed at L08; outcome fixtures share the engine.
+export interface ResponseOutcome {
+  readonly id: string;
+  readonly weight: number;
+  readonly effect: Effect;
+  readonly line: string;
+}
+export interface OutcomeResponse extends Omit<Response, 'effect' | 'line'> {
+  readonly description: string;
+  readonly outcomes: readonly ResponseOutcome[];
+  readonly effect?: never;
+  readonly line?: never;
+}
+export type EngineResponse = Response | OutcomeResponse;
+export interface ExactFraction {
+  readonly numerator: string;
+  readonly denominator: string;
+}
 export interface EventVariant {
   readonly when: Condition;
   readonly speaker: AttendeeId | 'room';
@@ -58,14 +76,14 @@ export interface MeetingEvent {
   readonly when?: Condition;
   readonly responses: readonly Response[];
 }
-export interface PresentedEvent {
+export interface PresentedEvent<R extends EngineResponse = Response> {
   readonly id: string;
   readonly kind: EventKind;
   readonly rarity: Rarity;
   readonly negative: boolean;
   readonly speaker: AttendeeId | 'room';
   readonly line: string;
-  readonly responses: readonly Response[];
+  readonly responses: readonly R[];
 }
 export interface DecisionRecord {
   readonly turn: number;
@@ -93,6 +111,7 @@ export type LogEntry =
       readonly responseId: string;
       readonly technique: Technique;
       readonly line: string;
+      readonly outcomeId?: string;
     }
   | {
       readonly type: 'release';
@@ -131,6 +150,33 @@ export interface DrawCandidate {
   readonly event: PresentedEvent;
   readonly probability: number;
 }
+export interface OutcomePreview {
+  readonly outcomeId: string;
+  readonly effect: Effect;
+  readonly probabilityFraction: ExactFraction;
+  readonly progressDelta: number;
+  readonly minutesDelta: number;
+  readonly personMinutesDelta: number;
+  readonly utility: number;
+  readonly utilityFraction: ExactFraction;
+}
+export type OutcomeResponsePreview =
+  | Extract<ResponsePreview, { enabled: false }>
+  | {
+      readonly enabled: true;
+      readonly responseId: string;
+      readonly outcomes: readonly OutcomePreview[];
+      readonly expectedUtilityFraction: ExactFraction;
+      readonly utility: number;
+      readonly progressDelta: number;
+      readonly minutesDelta: number;
+      readonly personMinutesDelta: number;
+    };
+export interface ResponseSuccessor<R extends EngineResponse = Response> {
+  readonly outcomeId: string;
+  readonly probabilityFraction: ExactFraction;
+  readonly state: MeetingState<R>;
+}
 export type ReleasePreview =
   | { readonly enabled: true }
   | {
@@ -168,7 +214,7 @@ export interface ContentPack {
   readonly callbacks: readonly MeetingEvent[];
   readonly filler: MeetingEvent;
 }
-export interface MeetingState {
+export interface MeetingState<R extends EngineResponse = Response> {
   readonly seed: string;
   readonly turn: number;
   readonly minute: number;
@@ -188,7 +234,7 @@ export interface MeetingState {
     readonly eventId: string;
     readonly dueTurn: number;
   }[];
-  readonly current: PresentedEvent | null;
+  readonly current: PresentedEvent<R> | null;
   readonly decisions: readonly DecisionRecord[];
   readonly log: readonly LogEntry[];
   readonly phase: 'running' | 'ended';
