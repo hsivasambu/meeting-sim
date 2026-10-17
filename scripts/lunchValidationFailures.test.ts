@@ -145,12 +145,22 @@ const failures: readonly Failure[] = [
   {
     rule: 'condition-key',
     path: rp,
-    pack: () => response((r) => ({ ...r, requires: { minRisks: 1 } })),
+    pack: () =>
+      response((r) => ({
+        ...r,
+        requires: { minRisks: 1 },
+        disabledReasonKey: 'alex-absent',
+      })),
   },
   {
     rule: 'condition',
     path: rp,
-    pack: () => response((r) => ({ ...r, requires: { minMinute: -1 } })),
+    pack: () =>
+      response((r) => ({
+        ...r,
+        requires: { minMinute: -1 },
+        disabledReasonKey: 'alex-absent',
+      })),
   },
   {
     rule: 'attendee-reference',
@@ -159,6 +169,7 @@ const failures: readonly Failure[] = [
       response((r) => ({
         ...r,
         requires: corrupt({}, 'present', ['unknown']),
+        disabledReasonKey: 'alex-absent',
       })),
   },
   {
@@ -449,6 +460,86 @@ const failures: readonly Failure[] = [
       interfaceCopy: {
         ...catalog.interfaceCopy,
         'failure-result': '{agreedCuisine}',
+      },
+    }),
+  },
+  {
+    rule: 'outcomes',
+    path: rp,
+    name: 'ticket overflow',
+    pack: () => outcome((o) => ({ ...o, weight: 65537 })),
+  },
+  {
+    rule: 'unique-ids',
+    path: rp,
+    name: 'duplicate outcome',
+    pack: () =>
+      response((r) => ({ ...r, outcomes: [...r.outcomes, ...r.outcomes] })),
+  },
+  {
+    rule: 'arrival-permission',
+    path: op,
+    name: 'duplicate join',
+    pack: () =>
+      outcome((o) => ({ ...o, effect: { ...o.effect, joins: ['vp', 'vp'] } })),
+  },
+  {
+    rule: 'condition',
+    path: rp,
+    name: 'reversed minute range',
+    pack: () =>
+      response((r) => ({
+        ...r,
+        requires: { minMinute: 5, maxMinute: 1 },
+        disabledReasonKey: 'alex-absent',
+      })),
+  },
+  {
+    rule: 'condition',
+    path: rp,
+    name: 'contradictory roster',
+    pack: () =>
+      response((r) => ({
+        ...r,
+        requires: { present: ['legal'], absent: ['legal'] },
+        disabledReasonKey: 'alex-absent',
+      })),
+  },
+  {
+    rule: 'disabled-reason',
+    path: rp,
+    name: 'orphaned reason',
+    pack: () => response((r) => ({ ...r, disabledReasonKey: 'alex-absent' })),
+  },
+  {
+    rule: 'cuisine-reference',
+    path: 'nominate-cuisine.presentation.0.italian.nominated',
+    name: 'unknown nomination',
+    pack: () =>
+      event('nominate-cuisine', (e) => ({
+        ...e,
+        responses: e.responses.map((r, i) =>
+          i === 0
+            ? {
+                ...r,
+                outcomes: r.outcomes.map((o) => ({
+                  ...o,
+                  effect: { ...o.effect, nominateCuisine: 'unknown' },
+                })),
+              }
+            : r,
+        ),
+      })),
+  },
+  {
+    rule: 'substituted-text',
+    path: 'first-postponed',
+    name: 'expanded topic length',
+    catalog: () => ({
+      ...catalog,
+      parkTopics: {
+        ...catalog.parkTopics,
+        'menu-needs / park': 'x'.repeat(100),
       },
     }),
   },

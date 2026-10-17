@@ -2252,3 +2252,20 @@ The untracked L03/L05 review originals were preserved under ignored tooling
 storage for local gates and are restored byte-for-byte, excluded from commits.
 The existing draft PR #21 receives these corrections and fresh hosted checks.
 **L05 remains the stopping boundary.** No merge or L06 work is included.
+
+Review-fix delivery: implementation `75e7e83` passes the
+[hosted Node 24 quality run](https://github.com/hsivasambu/meeting-sim/actions/runs/38996976762)
+and Vercel. A clean local committed simulation rerun also passes with unchanged
+hash/metrics and `workingTreeDirty=false`.
+
+Final boundary-fixture follow-up retains the earlier ticket-overflow,
+duplicate-outcome/join, reversed/contradictory condition, orphaned reason, unknown
+nomination and expanded-topic length scenarios with exact issue assertions.
+Condition fixtures have valid authored reason keys so missing-reason errors do
+not introduce incidental defects. Final local `pnpm check`: **633 tests / 42
+files**, **1099/1110 core lines (99.01%)**, **1148/1179 core branches (97.37%)**,
+zero type/lint/format errors and unchanged passing sim invariants/replay. Build,
+size, 30 browser passes and document consistency results above remain applicable;
+only tests/documentation changed after the build/browser run. The final commit
+receives the same hosted gates. All F1–F7 defects are fixed; none was accepted as
+a follow-up. Optional nondefect refactors remain outside this correction.
