@@ -1,8 +1,8 @@
 # L05 row-to-test checklist
 
-Source: approved `docs/content-table.md`, revision `lunch-l02b-reviewed-2`. All tests are in `scripts/lunchContent.test.ts`. Runtime data is plain `satisfies` data in `src/core/content/lunch/`; injection only until L08. The preserved launch content and launch design remain the existing launch assertions’ inputs.
+Source: approved `docs/content-table.md`, revision `lunch-l02b-reviewed-2`. Source and engine witnesses are in `scripts/lunchContent.test.ts`; exact-rule rejection cases are in `scripts/lunchValidationFailures.test.ts`. Runtime data is plain `satisfies` data in `src/core/content/lunch/`; injection only until L08. The preserved launch content and launch design remain the existing launch assertions’ inputs.
 
-Every authored family/presentation/response/outcome cell is audited exactly; the catalog audit compares every catalog entry and relationship. Constructed witnesses enumerate the four permanent attendance sets, delivered variants, enabled/disabled requirements and every branch using the shared engine. The three full walkthroughs and three callback mini-routes assert the approved running sums. Title constructions cover all twelve slots. Additional checks cover exact utility/q, invitation suppression, inclusive arrival gate, deadlines, completing joins, clamping, filler, callback suppression, 100 deterministic constructed replays and malformed content/catalogs. These establish correctness, not balance, human comprehension or rendered fitting.
+Every authored family/presentation/response/outcome cell is audited exactly; the catalog audit compares every catalog entry and relationship. Constructed witnesses enumerate the four permanent attendance sets, delivered variants, enabled/disabled requirements and every branch using the shared engine. The three full walkthroughs and three callback mini-routes assert the approved running sums. Title constructions cover all twelve slots. Additional checks cover exact utility/q, invitation suppression, inclusive arrival gate, deadlines, completing joins, clamping, filler, callback suppression, 100 seeded engine draws with varied enabled choices and immutable replay and malformed content/catalogs. These establish correctness, not balance, human comprehension or rendered fitting.
 
 | Source row                                                                            | Reviewed address                                                     | Test                                                                                                                          |
 | ------------------------------------------------------------------------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -297,3 +297,23 @@ Every authored family/presentation/response/outcome cell is audited exactly; the
 Checklist total: 287 reviewed table rows. Row numbers refer to the approved source at L05; executable tests parse current source line numbers. No runtime markdown parser or code generator is shipped.
 
 Commentary predicate strings are retained as authored review metadata; cadence/selection and presentation wiring remain L07/L08. Title predicates remain exclusively in `titleRules.ts`. Existing launch live tests and public binding are untouched.
+
+## Review corrections — October 16, 2026
+
+F1/F2: negative cases assert their exact issue path and rule, with separate
+malformed fields; field-specific token scopes and numeric-preview rejection
+cover all examples in Claude's review. The rejection suite also has one targeted
+case for every validator rule.
+
+F3/F4: the branch-results rows assert both complete successors and deterministic
+alternatives; separate utility cases cover all alternatives. Walkthroughs assert
+booking, park/callback/attendance/cuisine counters, scores, exact title sets and
+the Pat-present variant at draw 4. Cancel/early-end totals, both remaining T44
+booking choices, completing-join billing and both D1 boundary utilities/q are
+explicitly asserted. Every outcome witness independently compares its authored
+minutes, progress, attendance, booking, queue and counters with engine output.
+
+F5/F6: `pending` checks full-pack eligibility, narrows only the unseen pool,
+retains seen callback parents and calls the real `drawEventWith`. Seeded replay
+uses the full pack, real draw RNG and varied enabled responses. Title witnesses
+assert exact sets, so unintended extra awards fail.

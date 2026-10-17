@@ -5,7 +5,7 @@ import {
   lunchContentPack as authoredPack,
 } from '../src/core/content/lunch';
 import { validateLunchContent } from '../src/core/engine/contentValidationLunch';
-import { getDrawCandidatesWith } from '../src/core/engine/draw';
+import { drawEventWith, getDrawCandidatesWith } from '../src/core/engine/draw';
 import {
   getResponseOutcomesWithRules,
   resolveWithRules,
@@ -103,17 +103,18 @@ function presentation(
   return { ...event, responses };
 }
 function pending(state: LunchState, id: string): LunchState {
-  const current = presentation(state, id);
-  return {
-    ...state,
-    current,
-    scheduled: state.scheduled.filter((s) => s.eventId !== current.id),
-    substantiveDrawCount:
-      state.substantiveDrawCount + (current.kind === 'substantive' ? 1 : 0),
-    previousDrawWasUncommonNegative:
-      current.rarity === 'uncommon' && current.negative,
-    seenEventIds: [...new Set([...state.seenEventIds, id])],
+  const expected = presentation(state, id);
+  // Verify eligibility in the full pack, then force only the requested family.
+  // The real engine still owns presentation, counters, queue consumption and log.
+  const narrowed: LunchContentPack = {
+    ...pack,
+    events: pack.events.filter(
+      (e) => e.id === id || state.seenEventIds.includes(e.id),
+    ),
   };
+  const next = drawEventWith(narrowed, deepFreeze(state));
+  expect(next.current).toEqual(expected);
+  return next;
 }
 function step(
   state: LunchState,
@@ -364,15 +365,50 @@ for (const e of all)
           r.outcomes.map((o) => o.id).sort(),
         );
         for (const b of branches) {
+          const outcome = r.outcomes.find((o) => o.id === b.outcomeId);
+          if (outcome === undefined)
+            throw new Error('Missing authored outcome');
+          const effect = outcome.effect;
           expect(b.state.turn).toBe(before.turn + 1);
+          expect(b.state.minute).toBe(before.minute + effect.minutes);
           expect(b.state.personMinutes).toBe(
-            before.personMinutes +
-              (b.state.minute - before.minute) * before.present.length,
+            before.personMinutes + effect.minutes * before.present.length,
+          );
+          expect(b.state.progress).toBe(
+            Math.min(
+              100,
+              Math.max(0, before.progress + (effect.progress ?? 0)),
+            ),
+          );
+          expect(b.state.present).toEqual([
+            ...before.present,
+            ...(effect.joins ?? []),
+          ]);
+          expect(b.state.peakHeadcount).toBe(
+            Math.max(before.peakHeadcount, b.state.present.length),
+          );
+          expect(b.state.bookingEnd).toBe(
+            effect.bookingEnd ?? before.bookingEnd,
+          );
+          expect(b.state.scheduled).toEqual([
+            ...before.scheduled,
+            ...(effect.callback === undefined
+              ? []
+              : [
+                  {
+                    eventId: effect.callback.eventId,
+                    dueTurn: before.turn + effect.callback.afterTurns,
+                  },
+                ]),
+          ]);
+          expect(b.state.parkedCount).toBe(
+            before.parkedCount + (r.technique === 'park' ? 1 : 0),
+          );
+          expect(b.state.resolvedCallbackCount).toBe(
+            before.resolvedCallbackCount + (e.kind === 'callback' ? 1 : 0),
           );
           expect(b.state.nominatedCuisine).toBe(
-            e.id === 'nominate-cuisine'
-              ? r.outcomes[0]?.effect.nominateCuisine
-              : before.nominatedCuisine,
+            effect.nominateCuisine ?? before.nominatedCuisine,
           );
           expect(
             b.state.log.filter((entry) => entry.type === 'resolve').at(-1),
@@ -406,6 +442,12 @@ for (const name of [
       (r) => r.section === name && 'H billed' in r.cells,
     )) {
       expect(state.present.length).toBe(Number(cell(row, 'H billed')));
+      if (name.startsWith('Invitations') && cell(row, 'Turn') === '4') {
+        const variant = all.find((e) => e.id === 'lunch-window')?.variants?.[0];
+        const drawn = pending(state, 'lunch-window');
+        expect(drawn.current?.line).toBe(variant?.line);
+        expect(drawn.current?.responses).toEqual(variant?.responses);
+      }
       state = step(
         state,
         cell(row, 'Family'),
@@ -422,16 +464,42 @@ for (const name of [
     expect(state.agreedCuisine).toBe(
       name.startsWith('Failure') ? null : state.nominatedCuisine,
     );
-    const titles = earnedLunchTitles(state, score(state));
-    expect(titles).toEqual(
-      expect.arrayContaining(
-        name.startsWith('Failure')
-          ? ['calendar-criminal']
-          : name.startsWith('Invitations')
-            ? ['lunch-agreed', 'reply-all-royalty']
-            : ['lunch-agreed', 'table-for-six', 'second-helping'],
-      ),
-    );
+    const expected = name.startsWith('Failure')
+      ? {
+          bookingEnd: 45,
+          parkedCount: 0,
+          resolvedCallbackCount: 0,
+          peakHeadcount: 7,
+          nominatedCuisine: 'thai',
+          agreedCuisine: null,
+          score: 125,
+          titles: ['calendar-criminal'],
+        }
+      : name.startsWith('Invitations')
+        ? {
+            bookingEnd: 60,
+            parkedCount: 0,
+            resolvedCallbackCount: 0,
+            peakHeadcount: 8,
+            nominatedCuisine: 'mexican',
+            agreedCuisine: 'mexican',
+            score: 811,
+            titles: ['lunch-agreed', 'reply-all-royalty'],
+          }
+        : {
+            bookingEnd: 60,
+            parkedCount: 2,
+            resolvedCallbackCount: 1,
+            peakHeadcount: 6,
+            nominatedCuisine: 'italian',
+            agreedCuisine: 'italian',
+            score: 829,
+            titles: ['lunch-agreed', 'table-for-six', 'second-helping'],
+          };
+    const { score: total, titles, ...counters } = expected;
+    expect(state).toMatchObject(counters);
+    expect(score(state).total).toBe(total);
+    expect(earnedLunchTitles(state, score(state))).toEqual(titles);
   });
 for (const row of rows.filter((r) => r.section === 'Every callback due at n+2'))
   it(`callback mini-route ${row.line}`, () => {
@@ -457,9 +525,23 @@ it('nomination equality, cancel and early ending retain cuisine truth', () => {
       state.present.length,
     ]).toEqual([8, 2, 12, 6]);
     expect(state.decisions[0]?.qualityFraction).toBeNull();
-    expect(callIt(state).agreedCuisine).toBeNull();
+    expect(callIt(state)).toMatchObject({
+      ending: 'called-early',
+      progress: 8,
+      minute: 2,
+      personMinutes: 12,
+      nominatedCuisine: c.id,
+      agreedCuisine: null,
+    });
   }
-  expect(callIt(initialLunchState('cancel')).ending).toBe('cancelled');
+  expect(callIt(initialLunchState('cancel'))).toMatchObject({
+    ending: 'cancelled',
+    progress: 0,
+    minute: 0,
+    personMinutes: 0,
+    nominatedCuisine: null,
+    agreedCuisine: null,
+  });
 });
 
 it('enforces invitation before/after arrivals and the inclusive Pat doorway boundary', () => {
@@ -518,9 +600,12 @@ it('constructs all twelve title slots from the approved routes and counters', ()
     'spice-question/hear',
   ]);
   expect(score(high).total).toBe(960);
-  expect(earnedLunchTitles(high, score(high))).toEqual(
-    expect.arrayContaining(['inbox-zero', 'efficient-facilitator']),
-  );
+  expect(earnedLunchTitles(high, score(high))).toEqual([
+    'inbox-zero',
+    'efficient-facilitator',
+    'lunch-agreed',
+    'table-for-six',
+  ]);
   const parked = route([
     'nominate-cuisine/thai',
     'portion-plan/email',
@@ -537,17 +622,19 @@ it('constructs all twelve title slots from the approved routes and counters', ()
     parked.personMinutes,
     parked.parkedCount,
   ]).toEqual([29, 12, 72, 4]);
-  expect(earnedLunchTitles(callIt(parked), score(callIt(parked)))).toContain(
+  expect(earnedLunchTitles(callIt(parked), score(callIt(parked)))).toEqual([
+    'take-this-offline',
     'parking-lot-attendant',
-  );
+  ]);
   const early = callIt(route(['nominate-cuisine/thai', 'menu-needs/hear']));
-  expect(earnedLunchTitles(early, score(early))).toEqual(
-    expect.arrayContaining(['played-it-right', 'take-this-offline']),
-  );
+  expect(earnedLunchTitles(early, score(early))).toEqual([
+    'played-it-right',
+    'take-this-offline',
+  ]);
   const cancel = callIt(initialLunchState('cancel'));
-  expect(earnedLunchTitles(cancel, score(cancel))).toContain(
+  expect(earnedLunchTitles(cancel, score(cancel))).toEqual([
     'could-have-been-an-email',
-  );
+  ]);
   const slow = route([
     'nominate-cuisine/italian',
     'menu-needs/hear',
@@ -563,263 +650,12 @@ it('constructs all twelve title slots from the approved routes and counters', ()
     'quick-agreement/hear',
   ]);
   expect([slow.minute, slow.personMinutes]).toEqual([50, 300]);
-  expect(earnedLunchTitles(slow, score(slow))).toContain('death-by-diligence');
-});
-
-it.each([
-  [
-    'duplicate event',
-    (p: LunchContentPack): LunchContentPack => ({
-      ...p,
-      events: [...p.events, ...p.events],
-    }),
-  ],
-  [
-    'missing nomination',
-    (p: LunchContentPack): LunchContentPack => ({
-      ...p,
-      eventRules: { ...p.eventRules, nominationEventId: 'missing' },
-    }),
-  ],
-  [
-    'missing callback',
-    (p: LunchContentPack): LunchContentPack => ({ ...p, callbacks: [] }),
-  ],
-  [
-    'missing arrival',
-    (p: LunchContentPack): LunchContentPack => ({
-      ...p,
-      eventRules: { ...p.eventRules, arrivalAttendees: { missing: 'vp' } },
-    }),
-  ],
-  [
-    'missing booking',
-    (p: LunchContentPack): LunchContentPack => ({
-      ...p,
-      eventRules: { ...p.eventRules, bookingEventIds: ['missing'] },
-    }),
-  ],
-  [
-    'unused permission',
-    (p: LunchContentPack): LunchContentPack => ({
-      ...p,
-      eventRules: {
-        ...p.eventRules,
-        arrivalPermissions: [
-          ...p.eventRules.arrivalPermissions,
-          { eventId: 'missing', responseId: 'missing', attendeeId: 'vp' },
-        ],
-      },
-    }),
-  ],
-  [
-    'invalid filler',
-    (p: LunchContentPack): LunchContentPack => ({
-      ...p,
-      filler: { ...p.filler, when: { minMinute: 99 }, kind: 'tangent' },
-    }),
-  ],
-  [
-    'cuisine count',
-    (p: LunchContentPack): LunchContentPack => ({ ...p, cuisines: [] }),
-  ],
-] as const)('rejects %s', (_name, change) => {
-  expect(
-    validateLunchContent(change(pack), lunchCatalog).length,
-  ).toBeGreaterThan(0);
-});
-
-it.each([
-  [
-    'invalid weight',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      outcomes: r.outcomes.map((o) => ({ ...o, weight: 0 })),
-    }),
-  ],
-  [
-    'ticket overflow',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      outcomes: r.outcomes.map((o) => ({ ...o, weight: 65537 })),
-    }),
-  ],
-  [
-    'duplicate branch',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      outcomes: [...r.outcomes, ...r.outcomes, ...r.outcomes],
-    }),
-  ],
-  [
-    'invalid effect',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      outcomes: r.outcomes.map((o) => ({
-        ...o,
-        effect: { minutes: 0, progress: 26, risks: 1 },
-      })),
-    }),
-  ],
-  [
-    'invalid cuisine',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      outcomes: r.outcomes.map((o) => ({
-        ...o,
-        effect: { ...o.effect, nominateCuisine: 'unknown' },
-      })),
-    }),
-  ],
-  [
-    'invalid booking',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      outcomes: r.outcomes.map((o) => ({
-        ...o,
-        effect: { ...o.effect, bookingEnd: 45 },
-      })),
-    }),
-  ],
-  [
-    'invalid join',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      outcomes: r.outcomes.map((o) => ({
-        ...o,
-        effect: { ...o.effect, joins: ['vp', 'vp'] },
-      })),
-    }),
-  ],
-  [
-    'invalid callback',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      outcomes: r.outcomes.map((o) => ({
-        ...o,
-        effect: {
-          ...o.effect,
-          callback: { eventId: 'missing', afterTurns: 2 },
-        },
-      })),
-    }),
-  ],
-  [
-    'invalid condition',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      requires: {
-        minMinute: 5,
-        maxMinute: 1,
-        minRisks: 1,
-        present: ['legal'],
-        absent: ['legal'],
-      },
-    }),
-  ],
-  [
-    'unused reason',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      disabledReasonKey: 'missing',
-    }),
-  ],
-  [
-    'missing reason',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      requires: { present: ['legal'] },
-    }),
-  ],
-  [
-    'numeric preview',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      label: 'Gain 10 progress',
-    }),
-  ],
-  [
-    'blank copy',
-    (r: OutcomeResponse): OutcomeResponse => ({ ...r, description: '' }),
-  ],
-  [
-    'no deterministic fallback',
-    (r: OutcomeResponse): OutcomeResponse => ({
-      ...r,
-      outcomes: [
-        ...r.outcomes,
-        { id: 'other', weight: 1, effect: { minutes: 1 }, line: 'Fixture.' },
-      ],
-    }),
-  ],
-] as const)('rejects response %s', (_name, change) => {
-  const changed: LunchContentPack = {
-    ...pack,
-    events: pack.events.map((e) =>
-      e.id === 'portion-plan'
-        ? { ...e, responses: e.responses.map(change) }
-        : e,
-    ),
-  };
-  expect(validateLunchContent(changed, lunchCatalog).length).toBeGreaterThan(0);
-});
-
-it.each([
-  [
-    'unknown placeholder',
-    (c: LunchCatalog) => ({
-      ...c,
-      interfaceCopy: { ...c.interfaceCopy, objective: '{unknown}' },
-    }),
-  ],
-  [
-    'oversize substitution',
-    (c: LunchCatalog) => ({
-      ...c,
-      parkTopics: { ...c.parkTopics, 'menu-needs / park': 'x'.repeat(100) },
-    }),
-  ],
-  [
-    'success cuisine',
-    (c: LunchCatalog) => ({
-      ...c,
-      interfaceCopy: { ...c.interfaceCopy, 'success-result': 'Agreed' },
-    }),
-  ],
-  [
-    'false failure',
-    (c: LunchCatalog) => ({
-      ...c,
-      epilogues: { ...c.epilogues, cancelled: '{agreedCuisine}' },
-    }),
-  ],
-  [
-    'duplicate title',
-    (c: LunchCatalog) => ({ ...c, titles: [...c.titles, ...c.titles] }),
-  ],
-  ['bad roster', (c: LunchCatalog) => ({ ...c, attendees: [] })],
-  [
-    'unused reason',
-    (c: LunchCatalog) => ({
-      ...c,
-      disabledReasons: { ...c.disabledReasons, unused: 'Unused.' },
-    }),
-  ],
-  [
-    'bad commentary',
-    (c: LunchCatalog) => ({
-      ...c,
-      commentary: c.commentary.map((m) => ({
-        ...m,
-        id: 'lunch-agreed',
-        priority: 0,
-      })),
-    }),
-  ],
-] as const)('rejects catalog %s', (_name, change) => {
-  expect(
-    validateLunchContent(pack, change(lunchCatalog)).length,
-  ).toBeGreaterThan(0);
+  expect(earnedLunchTitles(slow, score(slow))).toEqual([
+    'lunch-agreed',
+    'death-by-diligence',
+    'table-for-six',
+    'second-helping',
+  ]);
 });
 
 it.each([
@@ -882,6 +718,7 @@ it('covers approved deadline, completing join, clamping and filler witnesses', (
     ending: 'decision',
     agreedCuisine: 'thai',
     present: [...baseline.present, 'legal'],
+    personMinutes: 30,
   });
   for (const minute of [44, 46])
     expect(
@@ -889,8 +726,31 @@ it('covers approved deadline, completing join, clamping and filler witnesses', (
     ).toMatchObject({
       minute: minute + 1,
       bookingEnd: 45,
+      progress: baseline.progress,
       ending: 'time-expired',
     });
+  expect(
+    step({ ...baseline, minute: 44 }, 'room-booked', 'hear'),
+  ).toMatchObject({
+    minute: 49,
+    bookingEnd: 60,
+    progress: baseline.progress,
+    personMinutes: 42,
+    ending: null,
+  });
+  expect(
+    step(
+      { ...baseline, minute: 44, present: [...baseline.present, 'vp'] },
+      'room-booked',
+      'vp',
+    ),
+  ).toMatchObject({
+    minute: 45,
+    bookingEnd: 60,
+    progress: baseline.progress,
+    personMinutes: 19,
+    ending: null,
+  });
   for (const progress of [0, 95]) {
     const before = pending({ ...baseline, progress }, 'quick-agreement');
     const branches = getResponseOutcomesWithRules(before, 'refocus', rules);
@@ -923,26 +783,49 @@ it('covers approved deadline, completing join, clamping and filler witnesses', (
     expect(parked.scheduled).toEqual([
       { eventId: target, dueTurn: baseline.turn + 2 },
     ]);
-    const ended = callIt(parked);
-    expect(getDrawCandidatesWith(pack, ended)).toEqual([]);
+    const intervening = pending(parked, 'introductions');
+    expect(intervening.current?.id).not.toBe(target);
+    expect(intervening.scheduled).toEqual([
+      { eventId: target, dueTurn: baseline.turn + 2 },
+    ]);
+    const advanced = resolveWithRules(intervening, 'timebox', rules);
+    expect(drawEventWith(pack, advanced).current?.id).toBe(target);
+    const ended = callIt(intervening);
+    expect(ended.turn).toBe(parked.turn);
+    expect(ended.minute).toBe(parked.minute);
+    expect(ended.resolvedCallbackCount).toBe(0);
+    expect(() => drawEventWith(pack, ended)).toThrow();
+    expect(
+      ended.log.some(
+        (entry) => entry.type === 'draw' && entry.eventId === target,
+      ),
+    ).toBe(false);
   }
 });
 
-it('keeps authored lunch replays immutable and bounded across constructed seeds', () => {
+it('keeps seeded engine draws and varied response replays immutable and bounded', () => {
+  const choiceIndexes = new Set<number>();
+  const outcomes = new Set<string>();
   for (let seed = 0; seed < 100; seed += 1) {
     const replay = () => {
       let s = initialLunchState(String(seed));
       let count = 0;
       while (s.phase === 'running') {
-        const candidates = getDrawCandidatesWith(pack, s);
-        const chosen = candidates[(seed + count) % candidates.length];
-        if (chosen === undefined) throw new Error('Empty pool');
-        const before = pending(s, chosen.event.id);
-        const r = before.current?.responses.find(
-          (r) => previewWithRules(before, r, rules).enabled,
-        );
+        const before = drawEventWith(pack, deepFreeze(s));
+        const enabled =
+          before.current?.responses.filter(
+            (r) => previewWithRules(before, r, rules).enabled,
+          ) ?? [];
+        const choiceIndex = (seed + count) % enabled.length;
+        choiceIndexes.add(choiceIndex);
+        const r = enabled[choiceIndex];
         if (r === undefined) throw new Error('No response');
         s = resolveWithRules(deepFreeze(before), r.id, rules);
+        const resolved = s.log
+          .filter((entry) => entry.type === 'resolve')
+          .at(-1);
+        if (resolved?.type === 'resolve' && resolved.outcomeId !== undefined)
+          outcomes.add(resolved.outcomeId);
         count += 1;
         expect(count).toBeLessThanOrEqual(50);
       }
@@ -953,63 +836,152 @@ it('keeps authored lunch replays immutable and bounded across constructed seeds'
     expect(state.present.length).toBeGreaterThanOrEqual(6);
     expect(state.agreedCuisine !== null).toBe(state.ending === 'decision');
   }
+  expect([...choiceIndexes].sort()).toEqual([0, 1, 2]);
+  expect([...outcomes]).toEqual(
+    expect.arrayContaining([
+      'helpful',
+      'more-questions',
+      'momentum',
+      'objections',
+      'clear',
+      'unclear',
+    ]),
+  );
 });
 
-it('rejects shadowed variants, absent speakers, blocked responses and malformed nomination', () => {
-  const base = pack.events.find((e) => e.id === 'portion-plan');
-  if (base === undefined) throw new Error('Missing family');
-  const changes = [
-    { ...base, speaker: 'legal' as const },
-    {
-      ...base,
-      responses: base.responses.map((r) => ({
-        ...r,
-        requires: { present: ['legal' as const] },
-        disabledReasonKey: 'alex-absent',
-      })),
-    },
-    {
-      ...base,
-      variants: [
-        {
-          when: {},
-          speaker: base.speaker,
-          line: base.line,
-          responses: base.responses,
-        },
-        {
-          when: {},
-          speaker: base.speaker,
-          line: base.line,
-          responses: base.responses,
-        },
-      ],
-    },
-    { ...base, weight: 0 },
-  ];
-  for (const changed of changes)
-    expect(
-      validateLunchContent(
-        {
-          ...pack,
-          events: pack.events.map((e) => (e.id === base.id ? changed : e)),
-        },
-        lunchCatalog,
-      ),
-    ).not.toEqual([]);
-  const nomination = pack.events.find(
-    (e) => e.id === pack.eventRules.nominationEventId,
+function expectFraction(
+  value: { numerator: string; denominator: string },
+  n: number,
+  d: number,
+): void {
+  expect(BigInt(value.numerator) * BigInt(d)).toBe(
+    BigInt(n) * BigInt(value.denominator),
   );
-  if (nomination === undefined) throw new Error('Missing nomination');
-  expect(
-    validateLunchContent(
-      {
-        ...pack,
-        events: pack.events.map((e) =>
-          e === nomination ? { ...e, responses: e.responses.slice(1) } : e,
-        ),
-      },
-      lunchCatalog,
-    ),
-  ).not.toEqual([]);
+}
+it.each([
+  [
+    'menu-needs',
+    'invite',
+    [
+      ['helpful', 24, 6, 36, 7],
+      ['more-questions', 12, 9, 54, 7],
+    ],
+    'hear',
+    [26, 8, 48, 6],
+  ],
+  [
+    'quick-agreement',
+    'refocus',
+    [
+      ['momentum', 31, 5, 30, 6],
+      ['objections', 2, 9, 54, 6],
+    ],
+    'hear',
+    [28, 9, 54, 6],
+  ],
+  [
+    'spice-question',
+    'timebox',
+    [
+      ['clear', 37, 7, 42, 6],
+      ['unclear', 11, 10, 60, 6],
+    ],
+    'hear',
+    [35, 11, 66, 6],
+  ],
+] as const)(
+  'asserts both branch results and deterministic alternative: %s/%s',
+  (id, response, expected, alternative, deterministic) => {
+    const start =
+      id === 'spice-question'
+        ? step(nominated, 'portion-plan', 'email')
+        : nominated;
+    const before = pending(start, id);
+    for (const [outcome, p, t, pm, h] of expected) {
+      const state = getResponseOutcomesWithRules(before, response, rules).find(
+        (b) => b.outcomeId === outcome,
+      )?.state;
+      expect(
+        state === undefined
+          ? undefined
+          : [
+              state.progress,
+              state.minute,
+              state.personMinutes,
+              state.present.length,
+            ],
+      ).toEqual([p, t, pm, h]);
+    }
+    const alt = resolveWithRules(before, alternative, rules);
+    expect([
+      alt.progress,
+      alt.minute,
+      alt.personMinutes,
+      alt.present.length,
+    ]).toEqual(deterministic);
+  },
+);
+it.each([
+  ['menu-needs', 'hear', 54, 5],
+  ['menu-needs', 'park', -6, 5],
+  ['quick-agreement', 'hear', 58, 5],
+  ['quick-agreement', 'invite', 36, 5],
+  ['spice-question', 'hear', 58, 5],
+  ['spice-question', 'park', -6, 5],
+] as const)('asserts alternative utility: %s/%s', (id, response, n, d) => {
+  const start =
+    id === 'spice-question'
+      ? step(nominated, 'portion-plan', 'email')
+      : nominated;
+  const before = pending(start, id);
+  const r = before.current?.responses.find((r) => r.id === response);
+  if (r === undefined) throw new Error('Missing alternative');
+  const p = previewWithRules(before, r, rules);
+  if (!p.enabled) throw new Error('Disabled alternative');
+  expectFraction(p.expectedUtilityFraction, n, d);
 });
+it.each([
+  ['menu-needs', 'invite', 94, false, -26, 25, 'hear', -6, 5],
+  ['quick-agreement', 'refocus', 99, true, -206, 25, 'hear', -44, 5],
+] as const)(
+  'asserts D1 clamped boundary: %s',
+  (id, response, progress, pat, n, d, alternative, an, ad) => {
+    const before = pending(
+      {
+        ...baseline,
+        progress,
+        present: pat ? [...baseline.present, 'vp'] : baseline.present,
+      },
+      id,
+    );
+    for (const [rid, num, den] of [
+      [response, n, d],
+      [alternative, an, ad],
+    ] as const) {
+      const r = before.current?.responses.find((r) => r.id === rid);
+      if (r === undefined) throw new Error('Missing boundary response');
+      const preview = previewWithRules(before, r, rules);
+      if (!preview.enabled) throw new Error('Disabled boundary');
+      expectFraction(preview.expectedUtilityFraction, num, den);
+    }
+    for (const b of getResponseOutcomesWithRules(before, response, rules)) {
+      const q = b.state.decisions.at(-1)?.qualityFraction;
+      if (q === undefined || q === null) throw new Error('Unscored boundary');
+      expectFraction(q, 1, 1);
+    }
+    if (pat) {
+      const invite = before.current?.responses.find((r) => r.id === 'invite');
+      if (invite === undefined) throw new Error('Missing invite');
+      expect(previewWithRules(before, invite, rules)).toMatchObject({
+        enabled: false,
+        reasonKey: 'pat-present',
+      });
+    } else {
+      const park = before.current?.responses.find((r) => r.id === 'park');
+      if (park === undefined) throw new Error('Missing park');
+      const p = previewWithRules(before, park, rules);
+      if (!p.enabled) throw new Error('Disabled park');
+      expectFraction(p.expectedUtilityFraction, -6, 5);
+    }
+  },
+);

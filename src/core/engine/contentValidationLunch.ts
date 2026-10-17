@@ -177,8 +177,8 @@ export function validateLunchContent(
         text(response.label, LABEL_CODE_POINTS, rp);
         text(response.description, LINE_CODE_POINTS, rp);
         if (
-          /\d|\b(percent|probability|utility)\b/i.test(
-            response.label + response.description,
+          /\d|\b(percent|probability|utility|odds)\b|\{(?:score|minute|headcount|unlocked|cost|seed|revision|roster|title)\}/i.test(
+            response.label + ' ' + response.description,
           )
         )
           add(rp, 'numeric-preview');

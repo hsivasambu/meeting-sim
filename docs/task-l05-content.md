@@ -31,7 +31,7 @@ constructs witnesses for all presentations, requirements and outcomes. It also
 executes the three full walkthroughs, three callback mini-routes, all twelve title
 slots, exact expected utilities/pre-roll q, invitation/arrival boundaries,
 clamping/deadline/join/filler/early-ending cases and 100 immutable deterministic
-constructed replays. Negative validation cases cover malformed packs and catalogs.
+constructed replays (replaced by full-pack seeded draws during the review fixes). Negative validation cases cover malformed packs and catalogs.
 These are correctness witnesses, not statistical balance or human playtest claims.
 
 The live `core/content/index.ts`, engine public binding, launch event files,
@@ -49,3 +49,5 @@ its correction changes approval status text only. No gate or threshold was relax
 Final results and hosted delivery are recorded in the implementation plan.
 L05 stops here. Next task: L06; L07 retains its own prerequisites. No L06 storage,
 L07 UI/commentary evaluator, L08 activation, tuning or human acceptance is claimed.
+
+Claude's F1–F7 review findings are addressed in the [resolution record](L05-review-resolution.md); the implementation plan records the fresh verification results.

@@ -76,7 +76,12 @@ export function validateLunchCatalog(
     revision: [catalog.revision],
     roster: [catalog.attendees.map((a) => a.name).join(', ')],
   };
-  const text = (value: string, limit: number, path: string): void => {
+  const text = (
+    value: string,
+    limit: number,
+    path: string,
+    allowed: readonly string[] = [],
+  ): void => {
     let rendered = [value];
     for (const token of new Set(
       [...value.matchAll(/\{(\w+)\}/g)].map((m) => m[ONE] ?? ''),
@@ -86,6 +91,7 @@ export function validateLunchCatalog(
         add(path, 'placeholder');
         continue;
       }
+      if (!allowed.includes(token)) add(path, 'placeholder-scope');
       rendered = rendered.flatMap((v) =>
         choices.map((choice) => v.replaceAll(`{${token}}`, choice)),
       );
@@ -98,7 +104,20 @@ export function validateLunchCatalog(
   for (const c of pack.cuisines) text(c.name, LINE_CODE_POINTS, c.id);
   for (const t of catalog.titles) {
     text(t.name, TITLE_CODE_POINTS, t.id);
-    text(t.flavour, LINE_CODE_POINTS, t.id);
+    text(
+      t.flavour,
+      LINE_CODE_POINTS,
+      t.id,
+      [
+        'efficient-facilitator',
+        'lunch-agreed',
+        'death-by-diligence',
+        'table-for-six',
+        'second-helping',
+      ].includes(t.id)
+        ? ['agreedCuisine']
+        : [],
+    );
     if (
       !Number.isSafeInteger(t.slot) ||
       t.slot < ONE ||
@@ -108,7 +127,12 @@ export function validateLunchCatalog(
       add(t.id, 'title-slot');
   }
   for (const c of catalog.commentary) {
-    text(c.line, LINE_CODE_POINTS, c.id);
+    text(
+      c.line,
+      LINE_CODE_POINTS,
+      c.id,
+      c.id === 'agreement-commentary' ? ['agreedCuisine'] : [],
+    );
     if (
       !Number.isSafeInteger(c.priority) ||
       c.priority < ONE ||
@@ -117,22 +141,62 @@ export function validateLunchCatalog(
     )
       add(c.id, 'commentary');
   }
-  for (const group of [
-    catalog.disabledReasons,
-    catalog.interfaceCopy,
-    catalog.epilogues,
-    catalog.moments,
-  ])
-    for (const [key, value] of Object.entries(group))
-      text(value, LINE_CODE_POINTS, key);
+  // Tokens belong to authored surfaces, not to a global formatting namespace.
+  const interfaceTokens: Readonly<Record<string, readonly string[]>> = {
+    'room-accessible': ['roster'],
+    considering: ['cuisine'],
+    'success-result': ['agreedCuisine'],
+    'success-summary': ['agreedCuisine'],
+    'ended-decision': ['agreedCuisine'],
+    'fallback-decision-heading': ['agreedCuisine'],
+    'share-success': ['agreedCuisine'],
+    'failure-nomination': ['cuisine'],
+    'share-nomination': ['cuisine'],
+    'collection-count': ['unlocked'],
+    'newly-earned': ['title'],
+    'share-score': ['score'],
+    'share-time': ['minute'],
+    'share-cost': ['cost'],
+    'share-peak': ['headcount'],
+    'share-seed': ['seed'],
+    'share-revision': ['revision'],
+  };
+  for (const [key, value] of Object.entries(catalog.disabledReasons))
+    text(value, LINE_CODE_POINTS, key);
+  for (const [key, value] of Object.entries(catalog.interfaceCopy))
+    text(value, LINE_CODE_POINTS, key, interfaceTokens[key] ?? []);
+  for (const [key, value] of Object.entries(catalog.epilogues))
+    text(
+      value,
+      LINE_CODE_POINTS,
+      key,
+      key === 'decision' ? ['agreedCuisine'] : [],
+    );
+  for (const [key, value] of Object.entries(catalog.moments))
+    text(
+      value,
+      LINE_CODE_POINTS,
+      key,
+      key === 'first-postponed'
+        ? ['minute', 'topic']
+        : key === 'first-arrival'
+          ? ['attendee', 'minute']
+          : key === 'decision-fallback'
+            ? ['agreedCuisine']
+            : [],
+    );
   for (const event of [...pack.events, ...pack.callbacks, pack.filler])
     for (const p of [event, ...(event.variants ?? [])]) {
-      text(p.line, LINE_CODE_POINTS, event.id);
+      const allowed =
+        event.id === pack.eventRules.nominationEventId ? [] : ['cuisine'];
+      text(p.line, LINE_CODE_POINTS, event.id, allowed);
       for (const r of p.responses) {
-        text(r.label, LABEL_CODE_POINTS, `${event.id}/${r.id}`);
-        text(r.description, LINE_CODE_POINTS, `${event.id}/${r.id}`);
+        text(r.label, LABEL_CODE_POINTS, `${event.id}/${r.id}`, allowed);
+        text(r.description, LINE_CODE_POINTS, `${event.id}/${r.id}`, allowed);
         for (const o of r.outcomes)
-          text(o.line, LINE_CODE_POINTS, `${event.id}/${r.id}/${o.id}`);
+          text(o.line, LINE_CODE_POINTS, `${event.id}/${r.id}/${o.id}`, [
+            'cuisine',
+          ]);
       }
     }
   const parks = [...pack.events, ...pack.callbacks, pack.filler].flatMap((e) =>
