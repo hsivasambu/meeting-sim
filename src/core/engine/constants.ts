@@ -126,3 +126,7 @@ export const ENGINE_LIMITS = Object.freeze({
   scoreMax: OUTCOME_MAX + EFFICIENCY_MAX + DECISIONS_MAX,
   fillerMinutes: FILLER_MINUTES,
 } as const);
+
+// Conservative authored display bounds, docs/content-table.md → copy substitutions.
+export const LUNCH_COPY_MINUTE_BOUND = 69;
+export const LUNCH_COPY_PM_BOUND = 552;

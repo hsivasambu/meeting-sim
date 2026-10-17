@@ -312,7 +312,7 @@ for path in paths:
 assert all('Status: **Accepted by Harry on October 13, 2026.**' in (ROOT / 'docs/adr' / name).read_text(encoding='utf-8')
            for name in ['0005-lunch-agreement-and-attendance.md', '0006-lunch-response-outcomes.md',
                         '0007-lunch-score-and-policies.md', '0008-lunch-presentation-and-unlocks.md'])
-assert 'V4 remains pending' in TEXT
+assert 'V4 was accepted by Harry on October 15, 2026' in TEXT
 for filename in ['contentTableValidation.test.ts', 'liveContent.test.ts']:
     source = (ROOT / 'scripts' / filename).read_text(encoding='utf-8')
     assert "new URL('../docs/content-table-launch.md', import.meta.url)" in source
