@@ -2378,3 +2378,46 @@ Actual local results for `b1453e9` on **Node 24.21.0 and pnpm 10.34.6**:
 
 **L07 stops at draft review.** L08 owns public lunch activation, store wiring and
 commentary selection.
+
+### L07 review corrections
+
+[Draft PR #23](https://github.com/hsivasambu/meeting-sim/pull/23) addresses the
+review of `f5a8d61`.
+
+- **F1** Results consume the first earned lunch title ID in engine display
+  priority. They render the catalog heading and flavour beside the cuisine
+  result, with an authored ending-specific heading when the ID is null.
+  Browser cases cover success, failure and both fallback headings.
+- **F2** The tech spec records the separate dev fixture and production preview
+  servers. The L08 row schedules moving the lunch specs to preview and removing
+  the fixture server.
+- **F3** Show choices now uses the same click-count guard as choices and
+  Continue. The browser regression double-clicks a choice and Continue, checks
+  the resulting beats, and verifies that each second click reaches the
+  replacement button. In an isolated desktop Chromium mutation run, replacing
+  all three guards with `true` skipped the outcome and failed the Continue
+  assertion. Replacing only the Show choices guard with `true` skipped the next
+  speaking beat and failed the Show choices assertion. Both mutations were
+  reverted.
+- **F4** `LunchFrame` documents frame identity, raw line and speaker sources,
+  response order, and the origin of agreement and commentary fields.
+
+Local gates for `8f68a76` ran in a clean worktree on **Node 24.21.0 and
+pnpm 10.34.6**.
+
+- `pnpm check` passed typecheck, zero-warning lint, formatting and **648 tests
+  in 43 files**. Core coverage was **1101/1112 lines (99.01%)** and **1148/1179
+  branches (97.37%)**.
+- `pnpm sim:ci` passed invariants and deterministic replay on 2,000 seeds per
+  launch policy. The content/constants hash and diagnostics match the original
+  L07 run.
+- `pnpm build` and `pnpm size` passed at **84,710/122,880 gzip JS bytes** and
+  **0/409,600 image/font bytes**.
+- `pnpm e2e` passed **57 tests**, including 27 lunch fixture cases across Pixel
+  7 Chromium, iPhone 14 WebKit and desktop Chromium, with zero failures,
+  skips or flaky tests. An earlier focused run in the working checkout hit two
+  fixture navigation timeouts. The full clean run passed both cases.
+- `python docs/lunch-content-checks.py` and `git diff --check` passed. The
+  untracked review files retained their original SHA-256 hashes.
+
+PR #23 stays in draft review. L08 is pending.
