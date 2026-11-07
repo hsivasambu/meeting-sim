@@ -15,8 +15,15 @@ import type { LunchChoice } from './presentation';
 
 export type LunchBeat = 'speaking' | 'choosing' | 'outcome';
 
+/**
+ * Give each draw and resolution a unique id. Keep a draw's id across speaking and choosing.
+ * Pass the raw template from current.line on a draw or the latest resolve log line
+ * on an outcome. Keep the presented event's speaker for its outcome.
+ * Keep choices in current.responses order so keys 1–3 map to the right buttons.
+ * Supply agreedCuisine only after agreement and take commentaryId from the engine's
+ * resolve entry.
+ */
 export interface LunchFrame {
-  /** Identity of this draw or resolution, stable across speaking and choosing. */
   readonly id: string;
   readonly hud: LunchHud;
   readonly present: readonly AttendeeId[];
@@ -192,7 +199,13 @@ export function LunchMeetingScreen({
       </section>
       <div className="choices" ref={controls}>
         {beat === 'speaking' && (
-          <button key="speaking" onClick={finishTyping}>
+          <button
+            key="speaking"
+            onClick={(event) => {
+              if (event.detail <= lunchUiConfig.singleClickCount)
+                finishTyping();
+            }}
+          >
             {copy['show-choices']}
           </button>
         )}

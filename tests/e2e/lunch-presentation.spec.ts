@@ -140,6 +140,57 @@ test('320 px title and nomination with skip, keyboard focus and a single live up
   );
 });
 
+test('double-clicks cannot activate the next beat’s button', async ({
+  page,
+}) => {
+  const data = nominationFixture();
+  const italian = data.outcomes.find(
+    ({ responseId }) => responseId === 'italian',
+  );
+  const next = italian?.next;
+  if (italian === undefined || next == null || !('frame' in next)) {
+    throw new Error('Expected the Italian nomination followed by a draw');
+  }
+  await openFixture(page, data, false);
+  // Keep the buttons in the same slot so each second click hits the replacement.
+  await page.addStyleTag({ content: '.dialogue { min-height: 10rem; }' });
+  const repeatTargets = await page.evaluateHandle(() => {
+    const targets: string[] = [];
+    document.addEventListener(
+      'click',
+      ({ detail, target }) => {
+        if (detail === 2 && target instanceof Element) {
+          targets.push(target.closest('button')?.textContent?.trim() ?? '');
+        }
+      },
+      true,
+    );
+    return targets;
+  });
+  const gesture = { position: { x: 12, y: 12 }, delay: 80 };
+  const showChoices = page.getByRole('button', { name: copy['show-choices'] });
+  const suggestItalian = page.getByRole('button', { name: 'Suggest Italian' });
+  const proceed = page.getByRole('button', { name: copy.continue });
+
+  await page.getByRole('button', { name: copy.start }).click();
+  await showChoices.click();
+  await suggestItalian.dblclick(gesture);
+  await expect(proceed).toBeVisible();
+  await expect(liveLine(page)).toHaveText(italian.frame.line);
+  expect(await repeatTargets.jsonValue()).toEqual([copy.continue]);
+
+  await proceed.dblclick(gesture);
+  await expect(showChoices).toBeVisible();
+  await expect(liveLine(page)).toHaveText(
+    next.frame.line.replace('{cuisine}', 'Italian'),
+  );
+  await expect(suggestItalian).toHaveCount(0);
+  expect(await repeatTargets.jsonValue()).toEqual([
+    copy.continue,
+    copy['show-choices'],
+  ]);
+});
+
 for (const { seed, cuisine, name, branch } of [
   { seed: 'l07-a', cuisine: 'thai', name: 'Thai', branch: 'momentum' },
   { seed: 'l07-a', cuisine: 'mexican', name: 'Mexican', branch: 'momentum' },
@@ -228,7 +279,16 @@ for (const { seed, cuisine, name, branch } of [
     ).toBeFocused();
     if (branch === 'momentum') {
       await expect(
+        page.getByRole('heading', { name: 'Lunch Is Settled', exact: true }),
+      ).toBeVisible();
+      await expect(
         page.getByRole('heading', { name: `Agreed: ${name}` }),
+      ).toBeVisible();
+      await expect(
+        page.getByText(
+          `Everyone agreed on ${name}. You may put the marker down.`,
+          { exact: true },
+        ),
       ).toBeVisible();
       await expect(
         page.getByText(`Everyone present agreed on ${name}.`, { exact: true }),
@@ -240,6 +300,15 @@ for (const { seed, cuisine, name, branch } of [
         ),
       ).toBeVisible();
     } else {
+      await expect(
+        page.getByRole('heading', { name: 'Calendar Criminal', exact: true }),
+      ).toBeVisible();
+      await expect(
+        page.getByText(
+          'The booking ended before the discussion did. The next team brought witnesses.',
+          { exact: true },
+        ),
+      ).toBeVisible();
       await expect(
         page.getByRole('heading', { name: copy['failure-result'] }),
       ).toBeVisible();
@@ -297,6 +366,47 @@ test('invitation updates the passive roster and Call it uses the first arrival',
   ).toBeVisible();
   await fits(page);
 });
+
+for (const ending of ['decision', 'time-expired'] as const) {
+  test(`result without an earned title uses the ${ending} heading`, async ({
+    page,
+  }) => {
+    const data = branchFixture(
+      ending === 'decision' ? 'l07-a' : 'l07-b',
+      'thai',
+    );
+    const outcome = data.outcomes.find(
+      ({ responseId }) => responseId === 'refocus',
+    );
+    const result = outcome?.next;
+    if (
+      outcome === undefined ||
+      result == null ||
+      'frame' in result ||
+      result.ending !== ending
+    ) {
+      throw new Error('Expected the requested terminal branch');
+    }
+    await openFixture(page, {
+      ...data,
+      outcomes: [{ ...outcome, next: { ...result, titleId: null } }],
+    });
+    await page.getByRole('button', { name: copy.start }).click();
+    await page.getByRole('button', { name: quickResponse.label }).click();
+    await page.getByRole('button', { name: copy.continue }).click();
+    await expect(
+      page.getByRole('heading', {
+        name:
+          ending === 'decision'
+            ? 'Agreed: Thai'
+            : copy['fallback-failure-heading'],
+        exact: true,
+        level: 2,
+      }),
+    ).toBeVisible();
+    await fits(page);
+  });
+}
 
 test('Call it before nomination shows cancellation and no cuisine', async ({
   page,

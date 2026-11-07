@@ -1,7 +1,4 @@
-import {
-  lunchContentPack as pack,
-  lunchCatalog,
-} from '../../../src/core/content/lunch/index';
+import { lunchContentPack as pack } from '../../../src/core/content/lunch/index';
 import { event as quickAgreement } from '../../../src/core/content/lunch/events/quick-agreement';
 import { event as menuNeeds } from '../../../src/core/content/lunch/events/menu-needs';
 import { W_COST, UTILITY_COST_PM } from '../../../src/core/engine/constants';
@@ -31,15 +28,13 @@ const rules = {
 function resultFor(game: LunchState): LunchResult {
   if (game.ending === null) throw new Error('Expected ended lunch fixture');
   const breakdown = score(game);
-  const titleId = earnedLunchTitles(game, breakdown)[0];
-  const title = lunchCatalog.titles.find((entry) => entry.id === titleId)?.name;
   const summary = {
     breakdown,
     minute: game.minute,
     personMinutes: game.personMinutes,
     peakHeadcount: game.peakHeadcount,
     log: game.log,
-    ...(title === undefined ? {} : { title }),
+    titleId: earnedLunchTitles(game, breakdown)[0] ?? null,
   };
   if (game.ending !== 'decision')
     return {
@@ -133,7 +128,7 @@ export function branchFixture(seed: string, cuisine: string): FixtureTurn {
     cuisine,
     rules,
   );
-  // Isolate the same presentation just before the deadline with Pat already present.
+  // Synthetic near-deadline snapshot with Pat already present and no arrival history.
   const nearDeadline = {
     ...nominated,
     progress: 90,

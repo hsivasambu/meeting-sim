@@ -6,8 +6,13 @@ import {
   moments,
   parkTopics,
 } from '../../../core/content/lunch/copy';
+import { titles } from '../../../core/content/lunch/titles';
 import { ENGINE_LIMITS, formatCost } from '../../../core/engine/index';
-import type { LogEntry, ScoreBreakdown } from '../../../core/engine/index';
+import type {
+  LogEntry,
+  LunchTitleId,
+  ScoreBreakdown,
+} from '../../../core/engine/index';
 import { cuisineName, formatLunchLine } from './presentation';
 
 export type LunchResult = {
@@ -16,7 +21,8 @@ export type LunchResult = {
   readonly peakHeadcount: number;
   readonly breakdown: ScoreBreakdown;
   readonly log: readonly LogEntry[];
-  readonly title?: string;
+  /** First earned title in engine display priority. */
+  readonly titleId: LunchTitleId | null;
 } & (
   | { readonly ending: 'decision'; readonly agreedCuisine: string }
   | {
@@ -76,6 +82,15 @@ export function LunchResultsScreen({
       ? cuisineName(result.agreedCuisine)
       : undefined;
   const facts = agreedCuisine === undefined ? {} : { agreedCuisine };
+  const title = titles.find(({ id }) => id === result.titleId);
+  const cuisineResult =
+    result.ending === 'decision'
+      ? formatLunchLine(copy['success-result'], facts)
+      : copy['failure-result'];
+  const fallback =
+    result.ending === 'decision'
+      ? formatLunchLine(copy['fallback-decision-heading'], facts)
+      : copy['fallback-failure-heading'];
   const { breakdown } = result;
 
   return (
@@ -83,12 +98,15 @@ export function LunchResultsScreen({
       <h1 ref={heading} tabIndex={-1}>
         {copy.results}
       </h1>
-      <h2>
-        {result.ending === 'decision'
-          ? formatLunchLine(copy['success-result'], facts)
-          : copy['failure-result']}
-      </h2>
-      {result.title && <p>{result.title}</p>}
+      <div>
+        <h2>{title?.name ?? fallback}</h2>
+        {title && (
+          <>
+            <h3 className="lunch-objective">{cuisineResult}</h3>
+            <p>{formatLunchLine(title.flavour, facts)}</p>
+          </>
+        )}
+      </div>
       {result.ending === 'decision' ? (
         <p>{formatLunchLine(copy['success-summary'], facts)}</p>
       ) : (

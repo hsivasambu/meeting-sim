@@ -137,6 +137,7 @@ export const parkTopics = {
   'pat-arrives / park': "Pat's questions",
 } satisfies Readonly<Record<string, string>>;
 
+// Interface constants used by the lunch screens.
 export const lunchUiConfig = {
   choiceKeys: ['1', '2', '3'],
   lineStart: 0,
