@@ -1,4 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
+import { legacyTitleIds } from '../core/content/legacyTitleIds';
+import { titles as launchTitles } from '../core/content/titles';
 import { createLunchTitlePersistence } from './persistence';
 
 const v1Key = 'tcbae:v1:titles';
@@ -21,6 +23,19 @@ function blocked(): never {
 }
 
 describe('lunch title persistence (ADR 0008)', () => {
+  it('recognizes every ID issued by the launch catalog', () => {
+    const launchIds = launchTitles.map((title) => title.id);
+    const legacy = JSON.stringify(launchIds);
+    const storage = storageWith(legacy, null);
+    const snapshot = createLunchTitlePersistence(() => storage);
+
+    expect(legacyTitleIds).toEqual(launchIds);
+    expect(snapshot.legacyTitles).toEqual(launchIds);
+    expect(snapshot.currentTitles).toEqual([]);
+    expect(storage.setItem).not.toHaveBeenCalled();
+    expect(storage.values.get(v1Key)).toBe(legacy);
+  });
+
   it('archives old-only storage without granting any current titles across starts', () => {
     const legacy =
       ' [ "ship-it-and-pray", "inbox-zero", "未知", "inbox-zero" ]\r\n';

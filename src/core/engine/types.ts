@@ -191,7 +191,7 @@ export interface ScoreBreakdown {
   readonly decisions: number;
   readonly total: number;
 }
-export type TitleId =
+export type LegacyTitleId =
   | 'inbox-zero'
   | 'efficient-facilitator'
   | 'ship-it-and-pray'
@@ -204,6 +204,7 @@ export type TitleId =
   | 'take-this-offline'
   | 'calendar-criminal'
   | 'could-have-been-an-email';
+export type TitleId = LegacyTitleId;
 export interface EventRules {
   readonly arrivalAttendees: Readonly<Record<string, AttendeeId>>;
   readonly callbackTargets: Readonly<Record<string, string>>;
@@ -316,7 +317,10 @@ export interface LunchCatalog {
   readonly parkTopics: Readonly<Record<string, string>>;
 }
 export type LunchTitleId =
-  | Exclude<TitleId, 'ship-it-and-pray' | 'skeleton-crew' | 'gary-free-zone'>
+  | Exclude<
+      LegacyTitleId,
+      'ship-it-and-pray' | 'skeleton-crew' | 'gary-free-zone'
+    >
   | 'lunch-agreed'
   | 'table-for-six'
   | 'second-helping';
