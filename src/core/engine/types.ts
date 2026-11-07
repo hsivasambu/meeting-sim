@@ -282,6 +282,39 @@ export interface LunchContentPack extends ContentPack<
 > {
   readonly cuisines: readonly Cuisine[];
 }
+export interface LunchAttendee {
+  readonly id: AttendeeId;
+  readonly name: string;
+  readonly role: string;
+  readonly startsPresent: boolean;
+  readonly voice: string;
+}
+export interface LunchTitle {
+  readonly slot: number;
+  readonly id: LunchTitleId;
+  readonly name: string;
+  /** Review annotation; predicates are evaluated only by titleRules.ts. */
+  readonly predicate: string;
+  readonly flavour: string;
+}
+export interface LunchCommentary {
+  readonly id: string;
+  readonly priority: number;
+  /** Authored post-resolution predicate; activation/evaluation belongs to L07/L08. */
+  readonly predicate: string;
+  readonly line: string;
+}
+export interface LunchCatalog {
+  readonly revision: string;
+  readonly attendees: readonly LunchAttendee[];
+  readonly titles: readonly LunchTitle[];
+  readonly commentary: readonly LunchCommentary[];
+  readonly disabledReasons: Readonly<Record<string, string>>;
+  readonly interfaceCopy: Readonly<Record<string, string>>;
+  readonly epilogues: Readonly<Record<string, string>>;
+  readonly moments: Readonly<Record<string, string>>;
+  readonly parkTopics: Readonly<Record<string, string>>;
+}
 export type LunchTitleId =
   | Exclude<TitleId, 'ship-it-and-pray' | 'skeleton-crew' | 'gary-free-zone'>
   | 'lunch-agreed'
