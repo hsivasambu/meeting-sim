@@ -4,4 +4,5 @@ export const storeConfig = {
   hexRadix: 16,
   hexByteWidth: 2,
   titlesKey: 'tcbae:v1:titles',
+  lunchTitlesKey: 'tcbae:v2:titles',
 } as const;
