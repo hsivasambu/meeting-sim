@@ -25,6 +25,8 @@ export type {
   ReleasePreview,
   ScoreBreakdown,
   TitleId,
+  LegacyTitleId,
+  LunchTitleId,
   ContentPack,
   EventRules,
   MeetingState,

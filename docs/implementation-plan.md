@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L05 complete and delivered in draft PR #21 with passing local/hosted Node 24 gates. L04 PR #20 is merged with successful checks. Next task: L06.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18; L05/L06/L07’s content prerequisite is satisfied, with their other dependencies unchanged. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Harry accepted original 12a V4 on October 15, 2026; individual reports remain unsupplied.
+Current: **L05 PR #21 is merged. L06 review corrections are complete with passing local Node 24 gates in draft PR #22. Next task: L07.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Harry accepted original 12a V4 on October 15, 2026, and individual reports remain unsupplied.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -2269,3 +2269,70 @@ size, 30 browser passes and document consistency results above remain applicable
 only tests/documentation changed after the build/browser run. The final commit
 receives the same hosted gates. All F1–F7 defects are fixed; none was accepted as
 a follow-up. Optional nondefect refactors remain outside this correction.
+
+## L06 — Versioned title persistence, November 7, 2026
+
+[L05 PR #21](https://github.com/hsivasambu/meeting-sim/pull/21) was squash-merged
+after verifying head `ce26ff5`, its passing required `quality` check and its
+mergeability. L06 branches from the resulting main `2dec299`.
+
+The ADR 0008 adapter reads `tcbae:v1:titles` and `tcbae:v2:titles` independently
+against the launch and lunch catalogs. It returns separate deduplicated
+collections and writes only v2. A failed v2 acquisition or read suppresses saves
+for that instance. Readable missing or malformed v2 can be replaced. Write
+failures leave the caller's unlocks in memory. Fourteen new tests cover the
+storage matrix, repeated initialization and exact v1 value preservation. L08
+owns live store integration and legacy collection rendering.
+
+Actual local results for implementation `64e9431` on **Node 24.21.0 and pnpm
+10.34.6**:
+
+- `pnpm check` passed typecheck, zero-warning lint and formatting, and all
+  **647 tests in 43 files**, including launch and lunch content validation.
+  Core coverage was **1099/1110 lines (99.01%)** and **1148/1179 branches (97.37%)**.
+- `pnpm sim:ci` passed every invariant and deterministic replay for **2,000
+  seeds per launch policy** on a clean tree. Greedy won 100% with median score
+  920 and 11 turns. Random won 69.6% with median score 552.5 and 15 turns.
+  Both win rates fall outside their diagnostic bands. Balance is scheduled
+  for L12.
+- `pnpm build` and `pnpm size` passed at **84,706/122,880 gzip JS bytes** and
+  **0/409,600 image/font bytes**.
+- `pnpm e2e` passed all **30 tests** across Pixel 7 Chromium, iPhone 14 WebKit and
+  desktop Chromium, with zero skipped, flaky or failed tests.
+- `python docs/lunch-content-checks.py` and `git diff --check` passed. The two
+  untracked review files were restored and verified against their original
+  SHA-256 hashes after the gates.
+
+**L06 stops at draft review.** L07 remains pending and L08 owns activation.
+
+### L06 review corrections
+
+[Draft PR #22](https://github.com/hsivasambu/meeting-sim/pull/22) addresses F1–F3.
+The archival read uses a dedicated twelve-ID catalog and `LegacyTitleId`. A
+regression test checks exact parity with the issued launch IDs. L08 can replace
+the live `TitleId` and launch catalog while retaining the archive IDs. The
+adapter uses the canonical `LunchTitleId` and exposes read-only snapshots.
+
+The caller supplies the complete current unlock set, including existing and
+newly earned titles. A successful save replaces v2 with that deduplicated set.
+Unknown v2 entries are ignored on read and omitted on the next successful
+save. Unknown v1 entries stay in the original raw value. The existing launch
+store keeps its v1 binding until L08.
+
+Actual local results for review correction `8c77f50` on **Node 24.21.0 and pnpm
+10.34.6**:
+
+- `pnpm check` passed typecheck, zero-warning lint and formatting, and **648
+  tests in 43 files**. Core coverage was **1100/1111 lines (99.01%)** and
+  **1148/1179 branches (97.37%)**.
+- `pnpm sim:ci` passed invariants and deterministic replay on a clean tree
+  with 2,000 seeds per launch policy. Content/constants hash and diagnostic
+  metrics match the initial L06 run above.
+- `pnpm build` and `pnpm size` passed at **84,709/122,880 gzip JS bytes** and
+  **0/409,600 image/font bytes**.
+- `pnpm e2e` passed all **30 tests** across Pixel 7 Chromium, iPhone 14 WebKit and
+  desktop Chromium, with zero skipped, flaky or failed tests.
+- `python docs/lunch-content-checks.py` and `git diff --check` passed. All
+  three untracked review files were restored with matching SHA-256 hashes.
+
+L06 remains in draft review. L07 is next and has not started.
