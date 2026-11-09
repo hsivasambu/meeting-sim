@@ -2453,4 +2453,38 @@ boundaries, storage recovery, build budgets and probe checks remain covered.
 The defensive Results headings use component tests because valid terminal states
 always earn a title. The browser tests run only on the production preview.
 
+Local verification at `63b1af7` in a clean checkout on **Node 24.21.0 and
+pnpm 10.34.6**, with a frozen install:
+
+- `pnpm check` passed typecheck, zero-warning lint, formatting, **498 tests in
+  31 files** and the simulation smoke. Core coverage was **788/797 lines
+  (98.87%)** and **758/774 branches (97.93%)**.
+- `pnpm build` and `pnpm size` passed at **90,384/122,880 gzip JS bytes** and
+  **0/409,600 image/font bytes**.
+- `pnpm e2e` passed **42 tests**, 14 each on Pixel 7 Chromium, iPhone 14 WebKit
+  and desktop Chromium. Each ran eight lunch cases against the production
+  preview. Seed `0000000000000091` reached Thai and Mexican agreements on
+  the momentum branch and showed agreement commentary. Seed
+  `00000000000001ac` sampled objections and expired with no agreement. Seed
+  `0000000000000008` covered nomination, the Alex invitation then Call it,
+  cancellation, replay and the v1/v2 reload check. The run had zero failures,
+  skips, flakes or browser console errors.
+- `python docs/lunch-content-checks.py` and `git diff --check` passed. All
+  four untracked review files matched their original SHA-256 hashes.
+
+The before and after `pnpm sim:ci` runs used `v3:0` through `v3:1999` for each
+policy and checked invariants and deterministic replay. The launch baseline ran
+in a clean checkout of `670a75f`. The lunch run used the approved content and
+unchanged tuning values.
+
+| Runtime | Policy |   Wins / runs | Win rate | Median score | Median resolutions |
+| ------- | ------ | ------------: | -------: | -----------: | -----------------: |
+| Launch  | Greedy | 2,000 / 2,000 |     100% |          920 |                 11 |
+| Launch  | Random | 1,392 / 2,000 |    69.6% |        552.5 |                 15 |
+| Lunch   | Greedy | 2,000 / 2,000 |     100% |          859 |                 11 |
+| Lunch   | Random | 1,415 / 2,000 |   70.75% |          574 |                 13 |
+
+Lunch Greedy met the 9–12 median-turn diagnostic. Both policies exceeded their
+future win-rate bands. L12 owns balance acceptance.
+
 **Stop at L08 draft review. L09 is pending.**
