@@ -73,35 +73,21 @@ export function fractionNumber(numerator: bigint, denominator: bigint): number {
 export function utilityFraction(
   progress: number,
   personMinutes: number,
-  risks: number,
-  rules: UtilityRules,
+  rules: Pick<UtilityRules, 'costWeight' | 'costUnit'>,
 ) {
   if (
     !Number.isSafeInteger(progress) ||
     !Number.isSafeInteger(personMinutes) ||
-    !Number.isSafeInteger(risks) ||
     rules.costUnit <= ZERO
   )
     throw new EngineError('invalid-rules');
   const cost = decimalFraction(rules.costWeight),
     unit = decimalFraction(rules.costUnit);
-  if (rules.profile === 'lunch') {
-    const denominator = cost.denominator * unit.numerator;
-    return {
-      numerator:
-        BigInt(progress) * denominator -
-        cost.numerator * unit.denominator * BigInt(personMinutes),
-      denominator,
-    };
-  }
-  const risk = decimalFraction(rules.riskWeight);
-  const denominator = cost.denominator * unit.numerator * risk.denominator;
-  const numerator =
-    BigInt(progress) * denominator -
-    cost.numerator *
-      unit.denominator *
-      BigInt(personMinutes) *
-      risk.denominator -
-    risk.numerator * BigInt(risks) * cost.denominator * unit.numerator;
-  return { numerator, denominator };
+  const denominator = cost.denominator * unit.numerator;
+  return {
+    numerator:
+      BigInt(progress) * denominator -
+      cost.numerator * unit.denominator * BigInt(personMinutes),
+    denominator,
+  };
 }

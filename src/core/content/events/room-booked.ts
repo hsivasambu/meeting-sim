@@ -1,54 +1,74 @@
+// Approved docs/content-table.md — lunch-l02b-reviewed-2.
 import type { MeetingEvent } from '../../engine/types';
-
-// Approved docs/content-table-launch.md → room-booked.
-export const roomBooked = {
+export const event = {
   id: 'room-booked',
   kind: 'noise',
   rarity: 'uncommon',
   weight: 1,
   negative: true,
   speaker: 'room',
-  line: 'We have this room at :45, right?',
+  line: 'The next team says this room is theirs from minute 45. Our invitation says 60.',
   responses: [
     {
       id: 'hear',
       label: 'Check the reservation',
+      description:
+        'Confirm the full booking. Keeps the original hour, at the cost of discussion time.',
       technique: 'hear',
-      effect: {
-        minutes: 5,
-        progress: 0,
-        risks: 0,
-        bookingEnd: 60,
-      },
-      line: 'The reservation says an hour. The next team finds another room.',
+      outcomes: [
+        {
+          id: 'confirmed',
+          weight: 1,
+          effect: {
+            minutes: 5,
+            progress: 0,
+            bookingEnd: 60,
+          },
+          line: 'The original hour is confirmed. The next team looks for another room to discuss rooms.',
+        },
+      ],
     },
     {
       id: 'timebox',
-      label: 'Agree to leave at :45',
+      label: 'Accept the earlier end',
+      description:
+        'Accept the shorter booking and keep moving. Quick now, with less time left to agree.',
       technique: 'timebox',
-      effect: {
-        minutes: 1,
-        progress: 0,
-        risks: 0,
-        bookingEnd: 45,
-      },
-      line: 'We agree to leave at :45. The clock has become more persuasive.',
+      outcomes: [
+        {
+          id: 'shortened',
+          weight: 1,
+          effect: {
+            minutes: 1,
+            progress: 0,
+            bookingEnd: 45,
+          },
+          line: 'We accept the earlier finish. The next team stays by the door to help us remember.',
+        },
+      ],
     },
     {
       id: 'vp',
-      label: 'Let the VP handle it',
+      label: 'Ask Pat to handle it',
+      description:
+        'Let Pat protect the booking. Quick if Pat is here; the lunch question still waits.',
       technique: 'owner',
       requires: {
         present: ['vp'],
       },
-      disabledReasonKey: 'vp-absent',
-      effect: {
-        minutes: 1,
-        progress: 0,
-        risks: 0,
-        bookingEnd: 60,
-      },
-      line: 'The VP mentions their calendar. The next team finds another room.',
+      disabledReasonKey: 'pat-absent',
+      outcomes: [
+        {
+          id: 'protected',
+          weight: 1,
+          effect: {
+            minutes: 1,
+            progress: 0,
+            bookingEnd: 60,
+          },
+          line: 'Pat mentions the original booking. The next team decides the hour was always ours.',
+        },
+      ],
     },
   ],
-} as const satisfies MeetingEvent;
+} satisfies MeetingEvent;

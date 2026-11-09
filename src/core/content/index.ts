@@ -1,49 +1,72 @@
-import type { ContentPack } from '../engine/types';
+// Approved docs/content-table.md — lunch-l02b-reviewed-2.
+import type { ContentPack, LunchCatalog } from '../engine/types';
+import { event as nominate_cuisine } from './events/nominate-cuisine';
+import { event as menu_needs } from './events/menu-needs';
+import { event as lunch_window } from './events/lunch-window';
+import { event as portion_plan } from './events/portion-plan';
+import { event as quick_agreement } from './events/quick-agreement';
+import { event as projector } from './events/projector';
+import { event as introductions } from './events/introductions';
+import { event as soup_debate } from './events/soup-debate';
+import { event as lunch_history } from './events/lunch-history';
+import { event as lunch_committee } from './events/lunch-committee';
+import { event as chair_arrangement } from './events/chair-arrangement';
+import { event as spice_question } from './events/spice-question';
+import { event as alex_arrives } from './events/alex-arrives';
+import { event as pat_arrives } from './events/pat-arrives';
+import { event as room_booked } from './events/room-booked';
+import { event as menu_read } from './events/menu-read';
+import { event as small_concession } from './events/small-concession';
+import { event as menu_return } from './events/menu-return';
+import { event as soup_return } from './events/soup-return';
+import { event as spice_return } from './events/spice-return';
+import { event as filler } from './events/filler';
 import { engineRules } from './engineRules';
-import { hdmi } from './events/hdmi';
-import { tvNoSignal } from './events/tv-no-signal';
-import { intros } from './events/intros';
-import { scopeRevisit } from './events/scope-revisit';
-import { unrelatedQ } from './events/unrelated-q';
-import { anotherMeeting } from './events/another-meeting';
-import { circleBack } from './events/circle-back';
-import { whereWeStand } from './events/where-we-stand';
-import { supportTraining } from './events/support-training';
-import { failingTests } from './events/failing-tests';
-import { pressDate } from './events/press-date';
-import { p1Bug } from './events/p1-bug';
-import { legal } from './events/legal';
-import { vpJoins } from './events/vp-joins';
-import { roomBooked } from './events/room-booked';
-import { preRead } from './events/pre-read';
-import { aligned } from './events/aligned';
-import { circleBackReturn } from './events/circle-back-return';
-import { supportFollowUp } from './events/support-follow-up';
-import { p1FollowUp } from './events/p1-follow-up';
-import { filler } from './events/filler';
-
-export { engineRules } from './engineRules';
+import { cuisines } from './cuisines';
+import { attendees } from './attendees';
+import { titles } from './titles';
+import { commentary } from './commentary';
+import {
+  disabledReasons,
+  interfaceCopy,
+  epilogues,
+  moments,
+  parkTopics,
+} from './copy';
 export const contentPack = {
   eventRules: engineRules,
+  cuisines,
+  commentary,
   events: [
-    hdmi,
-    tvNoSignal,
-    intros,
-    scopeRevisit,
-    unrelatedQ,
-    anotherMeeting,
-    circleBack,
-    whereWeStand,
-    supportTraining,
-    failingTests,
-    pressDate,
-    p1Bug,
-    legal,
-    vpJoins,
-    roomBooked,
-    preRead,
-    aligned,
+    nominate_cuisine,
+    menu_needs,
+    lunch_window,
+    portion_plan,
+    quick_agreement,
+    projector,
+    introductions,
+    soup_debate,
+    lunch_history,
+    lunch_committee,
+    chair_arrangement,
+    spice_question,
+    alex_arrives,
+    pat_arrives,
+    room_booked,
+    menu_read,
+    small_concession,
   ],
-  callbacks: [circleBackReturn, supportFollowUp, p1FollowUp],
+  callbacks: [menu_return, soup_return, spice_return],
   filler,
-} as const satisfies ContentPack;
+} satisfies ContentPack;
+export const lunchCatalog = {
+  revision: 'lunch-l02b-reviewed-2',
+  attendees,
+  titles,
+  commentary,
+  disabledReasons,
+  interfaceCopy,
+  epilogues,
+  moments,
+  parkTopics,
+} satisfies LunchCatalog;

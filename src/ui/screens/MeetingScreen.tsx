@@ -1,142 +1,274 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { attendees } from '../../core/content/attendees';
+import { commentary } from '../../core/content/commentary';
 import {
   disabledReasons,
-  meetingCopy,
-  meetingUiConfig,
+  interfaceCopy as copy,
+  lunchUiConfig,
 } from '../../core/content/copy';
-import { formatCost, previewResponse } from '../../core/engine/index';
-import { useGameStore } from '../../store/gameStore';
-import { MeetingStats } from './MeetingStats';
-import { Roster } from './Roster';
+import type { AttendeeId } from '../../core/engine/index';
+import { LunchMeetingStats } from './MeetingStats';
+import type { LunchHud } from './MeetingStats';
+import { LunchRoster } from './Roster';
+import { cuisineName, formatLunchLine, useReducedMotion } from './presentation';
+import type { LunchChoice } from './presentation';
 
-export function MeetingScreen() {
-  const game = useGameStore((state) => state.game);
-  const beat = useGameStore((state) => state.beat);
-  const finishTyping = useGameStore((state) => state.finishTyping);
-  const choose = useGameStore((state) => state.choose);
-  const continueMeeting = useGameStore((state) => state.continue);
-  const callIt = useGameStore((state) => state.callIt);
-  const controls = useRef<HTMLDivElement>(null);
-  const current = game?.current;
+export type LunchBeat = 'speaking' | 'choosing' | 'outcome';
+
+/**
+ * Give each draw and resolution a unique id. Keep a draw's id across speaking and choosing.
+ * Pass the raw template from current.line on a draw or the latest resolve log line
+ * on an outcome. Keep the presented event's speaker for its outcome.
+ * Keep choices in current.responses order so keys 1–3 map to the right buttons.
+ * Supply agreedCuisine only after agreement and take commentaryId from the engine's
+ * resolve entry.
+ */
+export interface LunchFrame {
+  readonly id: string;
+  readonly hud: LunchHud;
+  readonly present: readonly AttendeeId[];
+  readonly speaker: AttendeeId | 'room';
+  readonly line: string;
+  readonly choices: readonly LunchChoice[];
+  readonly commentaryId?: string;
+  readonly agreedCuisine?: string;
+}
+
+function SpokenLine({
+  line,
+  typing,
+  finishTyping,
+}: {
+  readonly line: string;
+  readonly typing: boolean;
+  readonly finishTyping: () => void;
+}) {
+  const reducedMotion = useReducedMotion();
+  const [visible, setVisible] = useState('');
   useEffect(() => {
-    controls.current
-      ?.querySelector<HTMLButtonElement>('button:enabled')
-      ?.focus();
-  }, [beat, current]);
-  useEffect(() => {
-    function keydown(event: KeyboardEvent) {
-      if (event.repeat) {
-        if (
-          event.key === 'Enter' ||
-          meetingUiConfig.choiceKeys.some((key) => key === event.key)
-        )
-          event.preventDefault();
+    if (!typing) return;
+    if (reducedMotion) {
+      finishTyping();
+      return;
+    }
+    const characters = Array.from(line);
+    const start = performance.now();
+    let frame = requestAnimationFrame(tick);
+    function tick(now: number) {
+      const count = Math.floor(
+        ((now - start) * lunchUiConfig.charactersPerSecond) /
+          lunchUiConfig.millisecondsPerSecond,
+      );
+      if (count >= characters.length) {
+        finishTyping();
         return;
       }
-      if (event.altKey || event.ctrlKey || event.metaKey) return;
+      setVisible(characters.slice(lunchUiConfig.lineStart, count).join(''));
+      frame = requestAnimationFrame(tick);
+    }
+    return () => cancelAnimationFrame(frame);
+  }, [line, typing, reducedMotion, finishTyping]);
+  return <p aria-hidden="true">{typing && !reducedMotion ? visible : line}</p>;
+}
+
+export function LunchMeetingScreen({
+  frame,
+  beat,
+  finishTyping,
+  choose,
+  continueMeeting,
+  callIt,
+}: {
+  readonly frame: LunchFrame;
+  readonly beat: LunchBeat;
+  readonly finishTyping: () => void;
+  readonly choose: (responseId: string) => void;
+  readonly continueMeeting: () => void;
+  readonly callIt: () => void;
+}) {
+  const controls = useRef<HTMLDivElement>(null);
+  const callItButton = useRef<HTMLButtonElement>(null);
+  const id = useId();
+  const speaker =
+    attendees.find((person) => person.id === frame.speaker)?.name ??
+    copy['room-speaker'];
+  const facts = {
+    ...(frame.hud.nominatedCuisine === null
+      ? {}
+      : { cuisine: cuisineName(frame.hud.nominatedCuisine) }),
+    ...(frame.agreedCuisine === undefined
+      ? {}
+      : { agreedCuisine: cuisineName(frame.agreedCuisine) }),
+  };
+  const line = formatLunchLine(frame.line, facts);
+  const commentaryTemplate = commentary.find(
+    (entry) => entry.id === frame.commentaryId,
+  )?.line;
+  const secondary =
+    beat === 'outcome' && commentaryTemplate !== undefined
+      ? formatLunchLine(commentaryTemplate, facts)
+      : '';
+  const [announcement, setAnnouncement] = useState<{
+    id: string;
+    line: string;
+    secondary: string;
+  } | null>(null);
+
+  useEffect(() => {
+    // Keep the live region mounted before adding the full line and update once per frame.
+    const animation = requestAnimationFrame(() =>
+      setAnnouncement({ id: frame.id, line, secondary }),
+    );
+    return () => cancelAnimationFrame(animation);
+  }, [frame.id, line, secondary]);
+
+  useEffect(() => {
+    const first =
+      controls.current?.querySelector<HTMLButtonElement>('button:enabled');
+    (first ?? callItButton.current)?.focus();
+  }, [beat, frame.id]);
+
+  useEffect(() => {
+    function keydown(event: KeyboardEvent) {
       if (
-        event.target instanceof Element &&
-        event.target.closest(
-          'input, textarea, select, [contenteditable], .release',
-        )
+        event.defaultPrevented ||
+        event.isComposing ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.shiftKey
       )
         return;
+      const target = event.target instanceof Element ? event.target : null;
+      if (
+        target?.closest('input, textarea, select, [contenteditable], a[href]')
+      )
+        return;
+      const choiceKey = lunchUiConfig.choiceKeys.find(
+        (key) => key === event.key,
+      );
+      if (event.repeat && (event.key === 'Enter' || choiceKey !== undefined)) {
+        event.preventDefault();
+        return;
+      }
       if (event.key === 'Enter' && beat !== 'choosing') {
-        if (
-          event.target instanceof Element &&
-          event.target.closest('button') &&
-          !controls.current?.contains(event.target)
-        )
-          return;
+        const button = target?.closest('button');
+        if (button && !controls.current?.contains(button)) return;
         event.preventDefault();
         if (beat === 'speaking') finishTyping();
         else continueMeeting();
-      } else if (beat === 'choosing') {
-        const index = meetingUiConfig.choiceKeys.findIndex(
-          (key) => key === event.key,
-        );
-        const response = current?.responses[index];
-        if (response !== undefined) {
+      } else if (beat === 'choosing' && choiceKey !== undefined) {
+        const choice =
+          frame.choices[lunchUiConfig.choiceKeys.indexOf(choiceKey)];
+        if (choice?.enabled) {
           event.preventDefault();
-          choose(response.id);
+          choose(choice.id);
         }
       }
     }
     window.addEventListener('keydown', keydown);
     return () => window.removeEventListener('keydown', keydown);
-  }, [beat, current, finishTyping, choose, continueMeeting]);
-  if (game === null) return null;
-  const outcome = [...game.log]
-    .reverse()
-    .find((entry) => entry.type === 'resolve');
-  const line =
-    beat === 'outcome' && outcome?.type === 'resolve'
-      ? outcome.line
-      : current?.line;
-  const speakerId =
-    current?.speaker ??
-    [...game.log].reverse().find((entry) => entry.type === 'draw')?.speaker;
-  const speaker =
-    speakerId === 'room'
-      ? meetingCopy.room
-      : attendees.find((person) => person.id === speakerId)?.name;
+  }, [beat, frame.choices, finishTyping, choose, continueMeeting]);
+
   return (
     <section className="panel">
-      <h1>{meetingCopy.meeting}</h1>
-      <MeetingStats game={game} />
-      <Roster key={beat} game={game} interactive={beat !== 'outcome'} />
+      <h1>{copy.meeting}</h1>
+      <LunchMeetingStats hud={frame.hud} />
+      <LunchRoster present={frame.present} />
       <section className="dialogue" aria-label={speaker}>
         <h2>{speaker}</h2>
-        <p aria-hidden="true">{line}</p>
-        <p className="sr-only" aria-live="polite" aria-atomic="true">
-          {line}
-        </p>
+        <SpokenLine
+          key={frame.id}
+          line={line}
+          typing={beat === 'speaking'}
+          finishTyping={finishTyping}
+        />
+        {secondary && (
+          <p className="hint" aria-hidden="true">
+            {secondary}
+          </p>
+        )}
+        <div className="sr-only" aria-live="polite" aria-atomic="true">
+          {announcement && (
+            <div key={announcement.id}>
+              <p>{announcement.line}</p>
+              {announcement.secondary && <p>{announcement.secondary}</p>}
+            </div>
+          )}
+        </div>
       </section>
       <div className="choices" ref={controls}>
         {beat === 'speaking' && (
-          <button onClick={finishTyping}>{meetingCopy.showChoices}</button>
+          <button
+            key="speaking"
+            onClick={(event) => {
+              if (event.detail <= lunchUiConfig.singleClickCount)
+                finishTyping();
+            }}
+          >
+            {copy['show-choices']}
+          </button>
         )}
         {beat === 'choosing' &&
-          current?.responses.map((response, index) => {
-            const preview = previewResponse(game, response);
-            const reason = !preview.enabled
+          frame.choices.map((choice, index) => {
+            const key = lunchUiConfig.choiceKeys[index];
+            const description = `${id}-response-${choice.id}`;
+            const reason = !choice.enabled
               ? Object.entries(disabledReasons).find(
-                  ([key]) => key === preview.reasonKey,
+                  ([reasonKey]) => reasonKey === choice.reasonKey,
                 )?.[1]
               : undefined;
             return (
-              <div key={response.id}>
-                <button
-                  disabled={!preview.enabled}
-                  aria-describedby={`preview-${response.id}`}
-                  onClick={() => choose(response.id)}
-                >
-                  {meetingUiConfig.choiceNumbers[index]}. {response.label}
-                </button>
-                <p id={`preview-${response.id}`}>
-                  {preview.enabled ? (
-                    <>
-                      {preview.minutesDelta} {meetingCopy.previewMinutes} ·{' '}
-                      {preview.progressDelta} {meetingCopy.previewProgress} ·{' '}
-                      {preview.risksDelta} {meetingCopy.previewRisks} ·{' '}
-                      {formatCost(preview.personMinutesDelta)}
-                    </>
-                  ) : (
-                    reason
-                  )}
-                </p>
-              </div>
+              <button
+                key={choice.id}
+                className="lunch-choice"
+                disabled={!choice.enabled}
+                aria-keyshortcuts={choice.enabled ? key : undefined}
+                aria-labelledby={`${description}-label`}
+                aria-describedby={description}
+                onClick={(event) => {
+                  if (
+                    choice.enabled &&
+                    event.detail <= lunchUiConfig.singleClickCount
+                  )
+                    choose(choice.id);
+                }}
+              >
+                <span aria-hidden="true">{key}. </span>
+                <strong id={`${description}-label`}>
+                  {formatLunchLine(choice.label, facts)}
+                </strong>
+                <span id={description} className="lunch-choice-detail">
+                  <span>{formatLunchLine(choice.description, facts)}</span>
+                  {reason && <span>{formatLunchLine(reason, facts)}</span>}
+                </span>
+              </button>
             );
           })}
         {beat === 'outcome' && (
-          <button onClick={continueMeeting}>{meetingCopy.continue}</button>
+          <button
+            key="outcome"
+            onClick={(event) => {
+              if (event.detail <= lunchUiConfig.singleClickCount)
+                continueMeeting();
+            }}
+          >
+            {copy.continue}
+          </button>
         )}
       </div>
-      <button disabled={beat === 'outcome'} onClick={callIt}>
-        {meetingCopy.callIt}
+      <button
+        ref={callItButton}
+        aria-describedby={`${id}-call-it`}
+        disabled={beat === 'outcome'}
+        onClick={callIt}
+      >
+        {copy['call-it']}
       </button>
-      <p className="hint">{meetingCopy.keyboard}</p>
+      <p className="hint" id={`${id}-call-it`}>
+        {copy['call-it-description']}
+      </p>
+      <p className="hint">{copy.keyboard}</p>
     </section>
   );
 }

@@ -7,20 +7,20 @@ import {
 import { matchesCondition } from './conditions';
 import { ONE, ZERO, PROGRESS_MAX, CALLBACK_DELAY } from './constants';
 import { assertRunning, EngineError } from './errors';
-import { evaluateOutcomes, expectedUtility, hasOutcomes } from './outcomes';
+import { evaluateOutcomes, expectedUtility } from './outcomes';
 import { responseRng, sampleOutcome } from './rng';
-import { validateLunchState } from './lunchValidation';
+import { selectCommentary } from './commentary';
+import { validateMeetingState } from './lunchValidation';
 import type {
   DecisionRecord,
-  EngineState,
   MeetingState,
   PresentedEvent,
   UtilityRules,
-  EngineResponse,
+  Response,
   ResponseOutcome,
 } from './types';
 function schedule(
-  state: EngineState,
+  state: MeetingState,
   outcome: ResponseOutcome,
 ): MeetingState['scheduled'] {
   const callback = outcome.effect.callback;
@@ -32,9 +32,9 @@ function schedule(
       ];
 }
 function quality(
-  state: EngineState,
-  event: PresentedEvent<EngineResponse>,
-  response: EngineResponse,
+  state: MeetingState,
+  event: PresentedEvent,
+  response: Response,
   rules: UtilityRules,
 ): Pick<DecisionRecord, 'quality' | 'qualityFraction'> {
   const utilities = event.responses
@@ -59,7 +59,7 @@ function quality(
   ).exact;
   const difference = subtractFractions(chosen, worst);
   const range = subtractFractions(best, worst);
-  // Cancel a common denominator directly, preserving legacy serialized q bytes.
+  // Cancel a common denominator directly when possible.
   const exact =
     chosen.denominator === worst.denominator &&
     best.denominator === worst.denominator
@@ -77,11 +77,12 @@ function quality(
   };
 }
 function resolutionLog(
-  state: EngineState,
-  next: EngineState,
-  event: PresentedEvent<EngineResponse>,
-  response: EngineResponse,
+  state: MeetingState,
+  next: MeetingState,
+  event: PresentedEvent,
+  response: Response,
   outcome: ResponseOutcome,
+  commentaryId: string | undefined,
 ): MeetingState['log'] {
   const joins = next.present.filter((id) => !state.present.includes(id));
   return [
@@ -94,7 +95,8 @@ function resolutionLog(
       responseId: response.id,
       technique: response.technique,
       line: outcome.line,
-      ...(hasOutcomes(response) ? { outcomeId: outcome.id } : {}),
+      outcomeId: outcome.id,
+      ...(commentaryId === undefined ? {} : { commentaryId }),
     },
     ...joins.map((who) => ({
       type: 'join' as const,
@@ -104,14 +106,15 @@ function resolutionLog(
     })),
   ];
 }
-function finishResolution<S extends EngineState>(
-  state: S,
-  next: S,
-  event: PresentedEvent<EngineResponse>,
-  response: EngineResponse,
+function finishResolution(
+  state: MeetingState,
+  next: MeetingState,
+  event: PresentedEvent,
+  response: Response,
   outcome: ResponseOutcome,
   decisionQuality: Pick<DecisionRecord, 'quality' | 'qualityFraction'>,
-): S {
+  rules: UtilityRules,
+): MeetingState {
   const ending =
     next.progress >= PROGRESS_MAX
       ? 'decision'
@@ -124,16 +127,11 @@ function finishResolution<S extends EngineState>(
     responseId: response.id,
     ...decisionQuality,
   };
-  return {
+  const resolved: MeetingState = {
     ...next,
-    ...('nominatedCuisine' in next
-      ? {
-          agreedCuisine: ending === 'decision' ? next.nominatedCuisine : null,
-          resolvedCallbackCount:
-            next.resolvedCallbackCount +
-            (event.kind === 'callback' ? ONE : ZERO),
-        }
-      : {}),
+    agreedCuisine: ending === 'decision' ? next.nominatedCuisine : null,
+    resolvedCallbackCount:
+      next.resolvedCallbackCount + (event.kind === 'callback' ? ONE : ZERO),
     turn: state.turn + ONE,
     current: null,
     scheduled: schedule(state, outcome),
@@ -142,13 +140,23 @@ function finishResolution<S extends EngineState>(
     phase: ending === null ? 'running' : 'ended',
     ending,
     decisions: [...state.decisions, decision],
-    log: resolutionLog(state, next, event, response, outcome),
+  };
+  const commentaryId = selectCommentary(resolved, rules.commentary);
+  return {
+    ...resolved,
+    ...(commentaryId === undefined
+      ? {}
+      : {
+          shownCommentaryIds: [...state.shownCommentaryIds, commentaryId],
+          lastCommentaryTurn: resolved.turn,
+        }),
+    log: resolutionLog(state, next, event, response, outcome, commentaryId),
   };
 }
 /** Implements Design Doc v2 → Game state model → Resolution and attendance boundaries. */
-function pendingResponse<S extends EngineState>(state: S, responseId: string) {
+function pendingResponse(state: MeetingState, responseId: string) {
   assertRunning(state);
-  if ('nominatedCuisine' in state) validateLunchState(state);
+  validateMeetingState(state);
   const event = state.current;
   if (event === null) throw new EngineError('missing-event');
   const responses = event.responses.filter(
@@ -160,8 +168,8 @@ function pendingResponse<S extends EngineState>(state: S, responseId: string) {
   return { event, response };
 }
 /** ADR 0006: enumeration applies the same transition without sampling or seed inspection. */
-export function getResponseOutcomesWithRules<S extends EngineState>(
-  state: S,
+export function getResponseOutcomesWithRules(
+  state: MeetingState,
   responseId: string,
   rules: UtilityRules,
 ) {
@@ -178,15 +186,16 @@ export function getResponseOutcomesWithRules<S extends EngineState>(
       response,
       branch.outcome,
       decisionQuality,
+      rules,
     ),
   }));
 }
 /** ADR 0006: validate and score expected choice quality before sampling once. */
-export function resolveWithRules<S extends EngineState>(
-  state: S,
+export function resolveWithRules(
+  state: MeetingState,
   responseId: string,
   rules: UtilityRules,
-): S {
+): MeetingState {
   const { event, response } = pendingResponse(state, responseId);
   const branches = evaluateOutcomes(state, response, rules);
   const decisionQuality = quality(state, event, response, rules);
@@ -203,5 +212,6 @@ export function resolveWithRules<S extends EngineState>(
     response,
     outcome,
     decisionQuality,
+    rules,
   );
 }

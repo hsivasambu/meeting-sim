@@ -4,8 +4,6 @@ import {
   BIGINT_ZERO,
   PROGRESS_MAX,
   OUTCOME_MAX,
-  RISK_PENALTY,
-  RISK_PENALTY_CAP,
   FAIL_MULTIPLIER,
   EFFICIENCY_MAX,
   COST_REF_PM,
@@ -14,12 +12,12 @@ import {
   DISPLAY_HOURLY_RATE,
   MINUTES_PER_HOUR,
 } from './constants';
-import type { EngineState, ScoreBreakdown } from './types';
+import type { MeetingState, ScoreBreakdown } from './types';
 import { decimalFraction } from './utilityFraction';
 import { assertEnded } from './errors';
-import { validateLunchState } from './lunchValidation';
+import { validateMeetingState } from './lunchValidation';
 
-function qualityFraction(state: EngineState) {
+function qualityFraction(state: MeetingState) {
   let numerator = BIGINT_ZERO,
     denominator = BIGINT_ONE,
     count = BIGINT_ZERO;
@@ -37,7 +35,10 @@ function qualityFraction(state: EngineState) {
 }
 
 /** Implements Design Doc v2 → Titles: compare unrounded average quality exactly. */
-export function qualityAtLeast(state: EngineState, threshold: number): boolean {
+export function qualityAtLeast(
+  state: MeetingState,
+  threshold: number,
+): boolean {
   const average = qualityFraction(state),
     minimum = decimalFraction(threshold);
   return (
@@ -46,7 +47,7 @@ export function qualityAtLeast(state: EngineState, threshold: number): boolean {
   );
 }
 
-function decisionScore(state: EngineState): number {
+function decisionScore(state: MeetingState): number {
   const average = qualityFraction(state),
     maximum = decimalFraction(DECISIONS_MAX);
   const numerator = average.numerator * maximum.numerator;
@@ -57,15 +58,12 @@ function decisionScore(state: EngineState): number {
 }
 
 /** Implements Design Doc v2 → Scoring: round each component before summing. */
-export function score(state: EngineState): ScoreBreakdown {
+export function score(state: MeetingState): ScoreBreakdown {
   assertEnded(state);
-  if ('nominatedCuisine' in state) validateLunchState(state);
+  validateMeetingState(state);
   const outcome = Math.round(
-    state.progress >= PROGRESS_MAX
-      ? OUTCOME_MAX -
-          ('risks' in state
-            ? Math.min(RISK_PENALTY * state.risks, RISK_PENALTY_CAP)
-            : ZERO)
+    state.ending === 'decision'
+      ? OUTCOME_MAX
       : FAIL_MULTIPLIER * state.progress,
   );
   const costRange = COST_REF_PM - COST_FLOOR_PM;

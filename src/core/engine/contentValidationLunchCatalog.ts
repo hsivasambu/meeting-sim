@@ -15,11 +15,11 @@ import {
   LUNCH_COPY_PM_BOUND,
 } from './constants';
 import { formatCost } from './score';
-import type { LunchCatalog, LunchContentPack } from './types';
+import type { LunchCatalog, ContentPack } from './types';
 
 /** Validate every catalog substitution, including all cuisines, people and park topics. */
 export function validateLunchCatalog(
-  pack: LunchContentPack,
+  pack: ContentPack,
   catalog: LunchCatalog,
   add: (path: string, rule: string) => void,
 ): void {
@@ -137,7 +137,7 @@ export function validateLunchCatalog(
       !Number.isSafeInteger(c.priority) ||
       c.priority < ONE ||
       !c.predicate.trim() ||
-      catalog.titles.some((t) => t.id === c.id)
+      catalog.titles.some((t) => String(t.id) === c.id)
     )
       add(c.id, 'commentary');
   }

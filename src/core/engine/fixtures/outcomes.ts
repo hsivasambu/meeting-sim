@@ -1,4 +1,5 @@
-import type { EngineResponse, MeetingState, OutcomeResponse } from '../types';
+import type { MeetingState, Response } from '../types';
+import { lunchRules } from './lunch';
 import { pending } from './transitions';
 
 export const lottery = {
@@ -20,7 +21,7 @@ export const lottery = {
       line: 'Fixture bad outcome.',
     },
   ],
-} as const satisfies OutcomeResponse;
+} as const satisfies Response;
 export const steady = {
   id: 'steady',
   label: 'Fixture steady',
@@ -34,21 +35,14 @@ export const steady = {
       line: 'Fixture steady outcome.',
     },
   ],
-} as const satisfies OutcomeResponse;
+} as const satisfies Response;
 export const outcomeRules = {
-  costWeight: 1.2,
-  riskWeight: 0,
-  costUnit: 6,
-  eventRules: {
-    arrivalAttendees: {},
-    callbackTargets: {},
-    bookingEventIds: [],
-  },
+  ...lunchRules,
 } as const;
 export function outcomePending(
-  responses: readonly EngineResponse[] = [lottery, steady],
-  state: Partial<MeetingState<EngineResponse>> = {},
-): MeetingState<EngineResponse> {
+  responses: readonly Response[] = [lottery, steady],
+  state: Partial<MeetingState> = {},
+): MeetingState {
   const base = pending([]);
   if (base.current === null) throw new Error('Missing fixture presentation');
   return { ...base, ...state, current: { ...base.current, responses } };

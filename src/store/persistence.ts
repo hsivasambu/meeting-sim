@@ -1,12 +1,7 @@
-import { legacyTitleIds } from '../core/content/legacyTitleIds';
-import { titles as lunchTitles } from '../core/content/lunch/titles';
+import { legacyTitles } from '../core/content/legacyTitles';
+import { titles as lunchTitles } from '../core/content/titles';
 import { storeConfig } from '../core/content/storeConfig';
-import { titles as launchTitles } from '../core/content/titles';
-import type {
-  LegacyTitleId,
-  LunchTitleId,
-  TitleId,
-} from '../core/engine/index';
+import type { LegacyTitleId, TitleId } from '../core/engine/index';
 
 export interface TitleStorage {
   getItem(key: string): string | null;
@@ -17,16 +12,9 @@ const browserStorage: StorageProvider = () => globalThis.localStorage;
 
 export interface LunchTitlePersistence {
   readonly legacyTitles: readonly LegacyTitleId[];
-  readonly currentTitles: readonly LunchTitleId[];
+  readonly currentTitles: readonly TitleId[];
   /** Replaces v2. The caller combines existing unlocks with newly earned titles. */
-  writeCurrentTitles(unlocked: readonly LunchTitleId[]): void;
-}
-
-/** Technical spec → Persistence: corrupt or blocked storage never prevents play. */
-export function readTitles(
-  storage: StorageProvider = browserStorage,
-): TitleId[] {
-  return readTitleSnapshot(storage).titles;
+  writeCurrentTitles(unlocked: readonly TitleId[]): void;
 }
 
 function parseTitles<Id extends string>(
@@ -76,31 +64,16 @@ function writeCollection(
   }
 }
 
-/** A failed read must not authorize overwriting an unseen existing collection. */
-export function readTitleSnapshot(storage: StorageProvider = browserStorage): {
-  readonly titles: TitleId[];
-  readonly readable: boolean;
-} {
-  return readCollection(
-    storeConfig.titlesKey,
-    launchTitles.map((title) => title.id),
-    storage,
-  );
-}
-
-export function writeTitles(
-  unlocked: readonly TitleId[],
-  storage: StorageProvider = browserStorage,
-): void {
-  writeCollection(storeConfig.titlesKey, unlocked, storage);
-}
-
 /** ADR 0008: initialize once per lunch store instance and archive launch titles. */
 export function createLunchTitlePersistence(
   storage: StorageProvider = browserStorage,
 ): LunchTitlePersistence {
   // A storage acquisition failure for one key must not skip the other read.
-  const legacy = readCollection(storeConfig.titlesKey, legacyTitleIds, storage);
+  const legacy = readCollection(
+    storeConfig.legacyTitlesKey,
+    legacyTitles.map(({ id }) => id),
+    storage,
+  );
   const current = readCollection(
     storeConfig.lunchTitlesKey,
     lunchTitles.map((title) => title.id),
@@ -110,7 +83,7 @@ export function createLunchTitlePersistence(
   return {
     legacyTitles: legacy.titles,
     currentTitles: current.titles,
-    writeCurrentTitles(unlocked: readonly LunchTitleId[]): void {
+    writeCurrentTitles(unlocked: readonly TitleId[]): void {
       if (current.readable) {
         writeCollection(storeConfig.lunchTitlesKey, unlocked, storage);
       }

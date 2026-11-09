@@ -1,80 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
+import { useId } from 'react';
 import { attendees } from '../../core/content/attendees';
-import { meetingCopy, releaseReasons } from '../../core/content/copy';
-import { previewRelease } from '../../core/engine/index';
-import type { AttendeeId, MeetingState } from '../../core/engine/index';
-import { useGameStore } from '../../store/gameStore';
+import { interfaceCopy as copy } from '../../core/content/copy';
+import type { AttendeeId } from '../../core/engine/index';
 
-export function Roster({
-  game,
-  interactive,
+export function LunchRoster({
+  present,
 }: {
-  readonly game: MeetingState;
-  readonly interactive: boolean;
+  readonly present: readonly AttendeeId[];
 }) {
-  const [selected, setSelected] = useState<AttendeeId | null>(null);
-  const release = useGameStore((state) => state.release);
-  const cancel = useRef<HTMLButtonElement>(null);
-  const roster = useRef<HTMLDivElement>(null);
-  const preview =
-    selected === null || !interactive ? null : previewRelease(game, selected);
-  useEffect(() => {
-    if (selected !== null) cancel.current?.focus();
-  }, [selected]);
-  function close() {
-    roster.current
-      ?.querySelector<HTMLButtonElement>(`[data-attendee="${selected}"]`)
-      ?.focus();
-    setSelected(null);
-  }
+  const heading = useId();
   return (
-    <section aria-label={meetingCopy.roster}>
-      <h2>{meetingCopy.roster}</h2>
-      <div className="roster" ref={roster}>
+    <section aria-labelledby={heading}>
+      <h2 id={heading}>{copy.roster}</h2>
+      <ul className="roster lunch-roster" role="list">
         {attendees
-          .filter((person) => game.present.includes(person.id))
+          .filter((person) => present.includes(person.id))
           .map((person) => (
-            <button
-              key={person.id}
-              data-attendee={person.id}
-              disabled={!interactive}
-              aria-expanded={selected === person.id}
-              onClick={() => setSelected(person.id)}
-            >
+            <li key={person.id}>
               <strong>{person.name}</strong>
               <span>{person.role}</span>
-            </button>
+            </li>
           ))}
-      </div>
-      {selected !== null && preview !== null && (
-        <div
-          className="release"
-          role="group"
-          aria-label={attendees.find((person) => person.id === selected)?.name}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') close();
-          }}
-        >
-          {preview.enabled ? (
-            <button
-              onClick={() => {
-                release(selected);
-                setSelected(null);
-                roster.current
-                  ?.querySelector<HTMLButtonElement>('button:enabled')
-                  ?.focus();
-              }}
-            >
-              {meetingCopy.confirmRelease}
-            </button>
-          ) : (
-            <p role="status">{releaseReasons[preview.reasonKey]}</p>
-          )}
-          <button ref={cancel} onClick={close}>
-            {meetingCopy.cancel}
-          </button>
-        </div>
-      )}
+      </ul>
     </section>
   );
 }

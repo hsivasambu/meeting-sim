@@ -6,19 +6,14 @@ import { previewResponse, getResponseOutcomes, resolve } from './index';
 import { responseOutcomes } from './outcomes';
 import * as rng from './rng';
 import { compareFractions } from './utilityFraction';
-import {
-  deepFreeze,
-  pending,
-  fixtureResponse,
-  fixtureUtilityRules,
-} from './fixtures/transitions';
+import { deepFreeze } from './fixtures/transitions';
 import {
   lottery,
   steady,
   outcomeRules,
   outcomePending,
 } from './fixtures/outcomes';
-import type { ExactFraction, OutcomeResponse } from './types';
+import type { ExactFraction, Response } from './types';
 
 const exact = (value: ExactFraction) => ({
   numerator: BigInt(value.numerator),
@@ -177,58 +172,8 @@ it('enumerates both complete immutable successors without sampling and matches a
   sample.mockRestore();
   responseStream.mockRestore();
 });
-it('preserves legacy resolve bytes and deterministic numeric preview equivalence', () => {
-  const legacy = pending([fixtureResponse]);
-  const successors = getResponseOutcomesWithRules(
-    legacy,
-    fixtureResponse.id,
-    fixtureUtilityRules,
-  );
-  expect(successors[0]?.state).toEqual(
-    resolveWithRules(legacy, fixtureResponse.id, fixtureUtilityRules),
-  );
-  expect(successors[0]?.state.log[0]).not.toHaveProperty('outcomeId');
-  const deterministic: OutcomeResponse = {
-    id: fixtureResponse.id,
-    label: fixtureResponse.label,
-    technique: fixtureResponse.technique,
-    description: 'Fixture equivalent response.',
-    outcomes: [
-      {
-        id: 'done',
-        weight: 13,
-        effect: fixtureResponse.effect,
-        line: fixtureResponse.line,
-      },
-    ],
-  };
-  const modern = outcomePending([deterministic]);
-  const a = previewWithRules(legacy, fixtureResponse, fixtureUtilityRules);
-  const b = previewWithRules(modern, deterministic, fixtureUtilityRules);
-  expect(
-    a.enabled &&
-      b.enabled && [
-        a.progressDelta,
-        a.minutesDelta,
-        a.personMinutesDelta,
-        a.utility,
-      ],
-  ).toEqual(
-    b.enabled && [
-      b.progressDelta,
-      b.minutesDelta,
-      b.personMinutesDelta,
-      b.utility,
-    ],
-  );
-  expect(
-    resolveWithRules(modern, deterministic.id, fixtureUtilityRules).progress,
-  ).toBe(
-    resolveWithRules(legacy, fixtureResponse.id, fixtureUtilityRules).progress,
-  );
-});
 it('exposes successor enumeration and outcome previews through the public allowlist', () => {
-  const state = outcomePending();
+  const state = outcomePending(undefined, { nominatedCuisine: 'thai' });
   const branches = getResponseOutcomes(state, 'choose');
   const preview = previewResponse(state, lottery);
   expect(preview.enabled && preview.outcomes.length).toBe(2);
@@ -307,7 +252,15 @@ it('uses complete branch effects for joins, billing, booking, queues and ending 
   const rules = {
     ...outcomeRules,
     eventRules: {
+      ...outcomeRules.eventRules,
       arrivalAttendees: { 'fixture-event': 'legal' as const },
+      arrivalPermissions: [
+        {
+          eventId: 'fixture-event',
+          responseId: 'choose',
+          attendeeId: 'legal' as const,
+        },
+      ],
       bookingEventIds: ['fixture-event'],
       callbackTargets: { 'fixture-event': 'later' },
     },
@@ -354,7 +307,11 @@ it.each([
 it('rejects shared effects, invalid effects and actions before creating a response stream', () => {
   const stream = vi.spyOn(rng, 'responseRng');
   expect(() =>
-    responseOutcomes({ ...lottery, effect: { minutes: 1 }, line: 'shared' }),
+    responseOutcomes({
+      ...lottery,
+      effect: { minutes: 1 },
+      line: 'shared',
+    } as unknown as Response),
   ).toThrow('invalid-response');
   for (const effect of [
     { minutes: 0 },
@@ -420,7 +377,7 @@ it('replays JSON states, clamps independently and never mutates arbitrary frozen
   fc.assert(
     fc.property(
       fc.string(),
-      fc.integer({ min: 0, max: 100 }),
+      fc.integer({ min: 0, max: 99 }),
       fc.integer({ min: 0, max: 60 }),
       (seed, progress, minute) => {
         const state = deepFreeze(

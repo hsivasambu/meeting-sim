@@ -4,20 +4,19 @@ import {
   initialState,
   drawEvent,
   resolve,
-  release,
   callIt,
   previewResponse,
   score,
   earnedTitles,
 } from '../core/engine/index';
 import type {
-  AttendeeId,
+  LegacyTitleId,
   MeetingState,
   ScoreBreakdown,
   TitleId,
 } from '../core/engine/index';
 import { storeConfig } from '../core/content/storeConfig';
-import { readTitleSnapshot, writeTitles } from './persistence';
+import { createLunchTitlePersistence } from './persistence';
 import type { StorageProvider } from './persistence';
 
 export type AssetStatus = 'loading' | 'ready' | 'failed';
@@ -26,6 +25,8 @@ export interface GameStoreState {
   readonly screen: 'title' | 'meeting' | 'results';
   readonly beat: 'speaking' | 'choosing' | 'outcome';
   readonly game: MeetingState | null;
+  readonly legacyUnlockedTitles: readonly LegacyTitleId[];
+  readonly titleId: TitleId | null;
   readonly unlockedTitles: readonly TitleId[];
   readonly assetsReady: boolean;
   readonly assetStatus: AssetStatus;
@@ -35,7 +36,6 @@ export interface GameStoreState {
   finishTyping(): void;
   choose(responseId: string): void;
   continue(): void;
-  release(who: AttendeeId): void;
   callIt(): void;
   restart(): void;
 }
@@ -54,15 +54,20 @@ export function createGameStore(
     readonly storage?: StorageProvider;
   } = {},
 ) {
-  const persisted = readTitleSnapshot(options.storage);
+  const persisted = createLunchTitlePersistence(options.storage);
   return createStore<GameStoreState>()((set, get) => {
     function results(game: MeetingState): void {
       const breakdown = score(game);
-      const unlockedTitles = [
-        ...new Set([...get().unlockedTitles, ...earnedTitles(game, breakdown)]),
-      ];
-      if (persisted.readable) writeTitles(unlockedTitles, options.storage);
-      set({ game, breakdown, unlockedTitles, screen: 'results' });
+      const earned = earnedTitles(game, breakdown);
+      const unlockedTitles = [...new Set([...get().unlockedTitles, ...earned])];
+      persisted.writeCurrentTitles(unlockedTitles);
+      set({
+        game,
+        breakdown,
+        unlockedTitles,
+        titleId: earned[0] ?? null,
+        screen: 'results',
+      });
     }
     function interactive(): MeetingState | null {
       const state = get();
@@ -74,7 +79,9 @@ export function createGameStore(
       screen: 'title',
       beat: 'speaking',
       game: null,
-      unlockedTitles: persisted.titles,
+      unlockedTitles: persisted.currentTitles,
+      legacyUnlockedTitles: persisted.legacyTitles,
+      titleId: null,
       assetsReady: false,
       assetStatus: 'loading',
       breakdown: null,
@@ -108,19 +115,19 @@ export function createGameStore(
         if (game.phase === 'ended') results(game);
         else set({ game: drawEvent(game), beat: 'speaking' });
       },
-      release(who) {
-        const game = interactive();
-        if (game === null) return;
-        const next = release(game, who);
-        if (next.present !== game.present) set({ game: next });
-      },
       callIt() {
         const game = interactive();
         if (game !== null) results(callIt(game));
       },
       restart() {
         // Also callable by the error boundary in any screen.
-        set({ screen: 'title', beat: 'speaking', game: null, breakdown: null });
+        set({
+          screen: 'title',
+          beat: 'speaking',
+          game: null,
+          breakdown: null,
+          titleId: null,
+        });
       },
     };
   });

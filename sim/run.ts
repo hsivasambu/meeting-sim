@@ -5,7 +5,7 @@ import { parseArgs } from 'node:util';
 import { DEFAULT_RUNS, POLICIES, SEED_PREFIX } from './settings';
 import { verifiedMeeting } from './runner';
 import { summarize } from './summary';
-import { contentPack } from '../src/core/content/index';
+import { contentPack, lunchCatalog } from '../src/core/content/index';
 
 const { values } = parseArgs({
   args: process.argv.slice(process.argv[2] === '--' ? 3 : 2),
@@ -19,9 +19,7 @@ const runs = Number(values.runs);
 if (!Number.isSafeInteger(runs) || runs <= 0)
   throw new Error('--runs must be a positive safe integer');
 if (!['all', ...POLICIES].includes(values.policy))
-  throw new Error(
-    'Task 08a supports --policy all|greedy|random; remaining policies land in 09',
-  );
+  throw new Error('Use --policy all|greedy|random');
 const policies = POLICIES.filter(
   (policy) => values.policy === 'all' || policy === values.policy,
 );
@@ -34,7 +32,8 @@ const summaries = policies.map((policy) =>
   ),
 );
 const report = {
-  task: '08a',
+  task: 'L08',
+  contentRevision: lunchCatalog.revision,
   revision: execFileSync('git', ['rev-parse', 'HEAD'], {
     encoding: 'utf8',
   }).trim(),

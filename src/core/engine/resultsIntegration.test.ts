@@ -1,6 +1,12 @@
 import { expect, it } from 'vitest';
-import { initialState, resolve, callIt, score, earnedTitles } from './index';
-import { pending, fixtureResponse, deepFreeze } from './fixtures/transitions';
+import { initialState, callIt, score, earnedTitles } from './index';
+import { lunchChoice, lunchState } from './fixtures/lunch';
+import { resolveWithRules } from './resolve';
+import {
+  pending,
+  fixtureUtilityRules,
+  deepFreeze,
+} from './fixtures/transitions';
 import { EngineError } from './errors';
 import type { MeetingState } from './types';
 
@@ -10,42 +16,24 @@ function decision(
   best: number,
   worst = 0,
 ): MeetingState {
-  return resolve(
+  return resolveWithRules(
     deepFreeze(
       pending(
         [
-          {
-            ...fixtureResponse,
-            id: 'worst',
-            effect: { minutes: 1, progress: worst },
-          },
-          {
-            ...fixtureResponse,
-            id: 'chosen',
-            effect: { minutes: 1, progress: chosen },
-          },
-          {
-            ...fixtureResponse,
-            id: 'best',
-            effect: { minutes: 1, progress: best },
-          },
-          {
-            ...fixtureResponse,
-            id: 'disabled',
-            requires: { present: ['vp'] },
-            disabledReasonKey: 'fixture-needs-vp',
-            effect: { minutes: 1, progress: 100 },
-          },
+          lunchChoice('worst', { minutes: 1, progress: worst }),
+          lunchChoice('chosen', { minutes: 1, progress: chosen }),
+          lunchChoice('best', { minutes: 1, progress: best }),
         ],
         state,
       ),
     ),
     'chosen',
+    fixtureUtilityRules,
   );
 }
 
 it('scores resolve-produced thirds and fifteenths at the exact Played It Right boundary', () => {
-  let state = initialState('exact-result-average');
+  let state = lunchState({ seed: 'exact-result-average' });
   for (const [chosen, best] of [
     [10, 15],
     [3, 3],
@@ -88,7 +76,7 @@ it('scores resolve-produced thirds and fifteenths at the exact Played It Right b
 });
 
 it('does not grant the title below the exact boundary', () => {
-  let state = initialState('below-result-average');
+  let state = lunchState({ seed: 'below-result-average' });
   for (const [chosen, best] of [
     [10, 15],
     [3, 3],
@@ -102,7 +90,7 @@ it('does not grant the title below the exact boundary', () => {
 });
 
 it('scores an exact zero quality produced by resolve without dropping it from the average', () => {
-  let state = decision(initialState('zero-quality'), 0, 10);
+  let state = decision(lunchState({ seed: 'zero-quality' }), 0, 10);
   state = decision(state, 10, 10);
   expect(score(callIt(state)).decisions).toBe(150);
 });
@@ -110,7 +98,11 @@ it('scores an exact zero quality produced by resolve without dropping it from th
 it.each(['initial', 'resolved', 'missing-ending'] as const)(
   'rejects %s state from both result APIs',
   (kind) => {
-    const running = decision(initialState('unfinished-results'), 10, 10);
+    const running = decision(
+      lunchState({ seed: 'unfinished-results' }),
+      10,
+      10,
+    );
     const state =
       kind === 'initial'
         ? initialState('unfinished')
@@ -140,11 +132,10 @@ it.each(['initial', 'resolved', 'missing-ending'] as const)(
 );
 
 it('rounds an exact half from resolve-produced thirds and hundredths up', () => {
-  let state = decision(initialState('exact-decision-half'), 1, 3);
-  // P=1: clamped deltas -1, +6, +99 give q=7/100 for the chosen response.
-  state = decision(state, 6, 100, -1);
+  let state = decision(lunchState({ seed: 'exact-decision-half' }), 1, 3);
+  // 300 × (1/3 + 7/20) / 2 = 102.5 exactly.
+  state = decision(state, 7, 20);
   const ended = callIt(state);
-  expect(ended.decisions.map((d) => d.quality)).toEqual([1 / 3, 7 / 100]);
-  // 300 * (1/3 + 7/100) / 2 = 60.5, exactly.
-  expect(score(ended).decisions).toBe(61);
+  expect(ended.decisions.map((d) => d.quality)).toEqual([1 / 3, 7 / 20]);
+  expect(score(ended).decisions).toBe(103);
 });

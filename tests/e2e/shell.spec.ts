@@ -1,11 +1,11 @@
 import { test, expect } from './fixtures';
-import { shellCopy } from '../../src/core/content/copy';
+import { interfaceCopy as shellCopy } from '../../src/core/content/copy';
 
-test('built shell explains the Friday objective', async ({ page }) => {
+test('built shell explains the lunch objective', async ({ page }) => {
   const response = await page.goto('/');
   expect(response?.ok()).toBe(true);
   await expect(
-    page.getByRole('heading', { name: shellCopy.title }),
+    page.getByRole('heading', { name: shellCopy['product-title'] }),
   ).toBeVisible();
   await expect(
     page.getByText(shellCopy.objective, { exact: true }),
@@ -20,7 +20,7 @@ test('shell has no horizontal overflow at 320 pixels with reduced motion', async
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
   await expect(
-    page.getByRole('heading', { name: shellCopy.title }),
+    page.getByRole('heading', { name: shellCopy['product-title'] }),
   ).toBeVisible();
   expect(
     await page.evaluate(() => document.documentElement.scrollWidth),

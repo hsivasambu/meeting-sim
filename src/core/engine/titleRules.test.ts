@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { earnedTitles, score, initialState, release, callIt } from './index';
+import { earnedTitles, score, initialState } from './index';
 import { scoreState, qualityRecords } from './fixtures/scores';
 import { deepFreeze } from './fixtures/transitions';
 import type { MeetingState, TitleId } from './types';
@@ -20,16 +20,16 @@ const boundaries = [
     earns: { personMinutes: 90, decisions: qualityRecords([0.5]) },
     misses: { personMinutes: 90, decisions: qualityRecords([0.498]) },
   },
-  { title: 'ship-it-and-pray', earns: { risks: 3 }, misses: { risks: 2 } },
+  { title: 'lunch-agreed', earns: {}, misses: { ending: 'time-expired' } },
   {
     title: 'death-by-diligence',
     earns: { personMinutes: 270 },
     misses: { personMinutes: 269 },
   },
   {
-    title: 'skeleton-crew',
-    earns: { present: ['priya', 'sam', 'dev'] },
-    misses: { present: ['priya', 'sam', 'dev', 'gary'] },
+    title: 'table-for-six',
+    earns: {},
+    misses: { present: [...initialState('fixture').present, 'vp'] },
   },
   {
     title: 'reply-all-royalty',
@@ -42,9 +42,9 @@ const boundaries = [
     misses: { parkedCount: 3 },
   },
   {
-    title: 'gary-free-zone',
-    earns: { releasedAttendeeIds: ['gary'] },
-    misses: { releasedAttendeeIds: ['gary'], spokenAttendeeIds: ['gary'] },
+    title: 'second-helping',
+    earns: { resolvedCallbackCount: 1 },
+    misses: { resolvedCallbackCount: 0 },
   },
   {
     title: 'played-it-right',
@@ -86,16 +86,16 @@ describe('Design Doc v2 title predicates', () => {
 
   it.each([
     'efficient-facilitator',
-    'ship-it-and-pray',
+    'lunch-agreed',
     'death-by-diligence',
-    'skeleton-crew',
+    'table-for-six',
+    'second-helping',
   ] as const)('%s also requires a decision ending', (title) => {
     const state = scoreState({
       ending: 'called-early',
       progress: 99,
-      risks: 3,
       personMinutes: 270,
-      present: ['priya', 'sam'],
+      resolvedCallbackCount: 1,
       decisions: qualityRecords([1]),
     });
     expect(
@@ -130,96 +130,5 @@ describe('Design Doc v2 title predicates', () => {
       decisions: qualityRecords([null, 0.8, 0.9]),
     });
     expect(earnedTitles(exact, score(exact))).toContain('played-it-right');
-  });
-
-  it('Gary must have been released, and a delivered line counts even before resolution', () => {
-    const absent = scoreState({ present: ['priya', 'sam'] });
-    expect(earnedTitles(absent, score(absent))).not.toContain('gary-free-zone');
-    const spoke = scoreState({
-      releasedAttendeeIds: ['gary'],
-      spokenAttendeeIds: ['gary'],
-      current: {
-        id: 'fixture',
-        kind: 'tangent',
-        rarity: 'common',
-        negative: false,
-        speaker: 'gary',
-        line: 'Fixture.',
-        responses: [],
-      },
-    });
-    expect(earnedTitles(spoke, score(spoke))).not.toContain('gary-free-zone');
-    const cancelled = callIt(
-      release(initialState('fixture-title-release'), 'gary'),
-    );
-    expect(earnedTitles(cancelled, score(cancelled))).toEqual([
-      'could-have-been-an-email',
-      'gary-free-zone',
-    ]);
-  });
-
-  it('returns all earned unlocks once in display priority without reading narrative logs', () => {
-    const allSuccess = scoreState({
-      personMinutes: 270,
-      risks: 3,
-      present: ['priya', 'sam'],
-      peakHeadcount: 8,
-      parkedCount: 4,
-      releasedAttendeeIds: ['gary'],
-    });
-    const supplied = {
-      outcome: 400,
-      efficiency: 300,
-      decisions: 300,
-      total: 1000,
-    };
-    expect(earnedTitles(allSuccess, supplied)).toEqual([
-      'inbox-zero',
-      'efficient-facilitator',
-      'ship-it-and-pray',
-      'death-by-diligence',
-      'skeleton-crew',
-      'reply-all-royalty',
-      'parking-lot-attendant',
-      'gary-free-zone',
-    ]);
-    for (const ending of [
-      'called-early',
-      'time-expired',
-      'cancelled',
-    ] as const) {
-      const failed = deepFreeze({
-        ...allSuccess,
-        ending,
-        progress: 84,
-        decisions: qualityRecords([0.9]),
-      });
-      const before = JSON.stringify(failed);
-      const titles = earnedTitles(failed, score(failed));
-      expect(titles.slice(0, 2)).toEqual(
-        ending === 'cancelled'
-          ? ['could-have-been-an-email', 'played-it-right']
-          : [
-              'played-it-right',
-              ending === 'called-early'
-                ? 'take-this-offline'
-                : 'calendar-criminal',
-            ],
-      );
-      expect(new Set(titles).size).toBe(titles.length);
-      expect(JSON.stringify(failed)).toBe(before);
-    }
-    const falseNarrative = scoreState({
-      log: [
-        { type: 'release', who: 'gary', turn: 0, minute: 0 },
-        { type: 'join', who: 'vp', turn: 0, minute: 0 },
-      ],
-    });
-    expect(earnedTitles(falseNarrative, score(falseNarrative))).toEqual([]);
-  });
-
-  it('returns no collectible for a result below all predicates', () => {
-    const state = scoreState();
-    expect(earnedTitles(state, score(state))).toEqual([]);
   });
 });

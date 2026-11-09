@@ -2,8 +2,8 @@ import { drawEventWith } from '../draw';
 import { resolveWithRules } from '../resolve';
 import { previewWithRules } from '../preview';
 import { score } from '../score';
-import { earnedLunchTitles } from '../titleRules';
-import { initialLunchState, callIt } from '../state';
+import { earnedTitles } from '../titleRules';
+import { initialState, callIt } from '../state';
 import {
   lunchPack,
   lunchRules,
@@ -11,7 +11,7 @@ import {
   lunchChoice,
   lottery,
 } from './lunch';
-import type { LunchState } from '../types';
+import type { MeetingState } from '../types';
 
 // Frozen synthetic routes, independent of live content and its unapproved draft.
 export const lunchGoldenRoutes = [
@@ -27,7 +27,7 @@ export type LunchGoldenRoute = (typeof lunchGoldenRoutes)[number];
 
 export function runLunchGolden(route: LunchGoldenRoute) {
   const actions: string[] = [];
-  let state: LunchState =
+  let state: MeetingState =
     route.mode === 'roll'
       ? lunchPending(
           [
@@ -37,7 +37,7 @@ export function runLunchGolden(route: LunchGoldenRoute) {
           ],
           { seed: route.seed, progress: 95, minute: 59 },
         )
-      : initialLunchState(route.seed);
+      : initialState(route.seed);
   while (state.phase === 'running') {
     if (
       route.mode === 'cancel' ||
@@ -75,6 +75,6 @@ export function runLunchGolden(route: LunchGoldenRoute) {
     actions,
     state,
     score: breakdown,
-    titles: earnedLunchTitles(state, breakdown),
+    titles: earnedTitles(state, breakdown),
   };
 }

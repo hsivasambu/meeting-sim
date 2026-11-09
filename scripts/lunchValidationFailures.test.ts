@@ -1,18 +1,18 @@
 import { expect, it } from 'vitest';
 import {
-  lunchContentPack,
+  contentPack,
   lunchCatalog as authoredCatalog,
-} from '../src/core/content/lunch';
+} from '../src/core/content/index';
 import { validateLunchContent } from '../src/core/engine/contentValidationLunch';
 import type {
-  LunchContentPack,
+  ContentPack,
   LunchCatalog,
   MeetingEvent,
-  OutcomeResponse,
+  Response,
   ResponseOutcome,
 } from '../src/core/engine/types';
 
-const pack: LunchContentPack = lunchContentPack;
+const pack: ContentPack = contentPack;
 const catalog: LunchCatalog = authoredCatalog;
 // Deliberately malformed runtime inputs without unchecked casts or changing originals.
 function corrupt<T extends object>(
@@ -27,8 +27,8 @@ function corrupt<T extends object>(
 }
 function event(
   id: string,
-  change: (e: MeetingEvent<OutcomeResponse>) => MeetingEvent<OutcomeResponse>,
-): LunchContentPack {
+  change: (e: MeetingEvent) => MeetingEvent,
+): ContentPack {
   return {
     ...pack,
     events: pack.events.map((e) => (e.id === id ? change(e) : e)),
@@ -36,17 +36,13 @@ function event(
     filler: pack.filler.id === id ? change(pack.filler) : pack.filler,
   };
 }
-function response(
-  change: (r: OutcomeResponse) => OutcomeResponse,
-): LunchContentPack {
+function response(change: (r: Response) => Response): ContentPack {
   return event('portion-plan', (e) => ({
     ...e,
     responses: e.responses.map((r, i) => (i === 0 ? change(r) : r)),
   }));
 }
-function outcome(
-  change: (o: ResponseOutcome) => ResponseOutcome,
-): LunchContentPack {
+function outcome(change: (o: ResponseOutcome) => ResponseOutcome): ContentPack {
   return response((r) => ({
     ...r,
     outcomes: r.outcomes.map((o, i) => (i === 0 ? change(o) : o)),
@@ -58,7 +54,7 @@ interface Failure {
   rule: string;
   path: string;
   name?: string;
-  pack?: () => LunchContentPack;
+  pack?: () => ContentPack;
   catalog?: () => LunchCatalog;
 }
 const failures: readonly Failure[] = [
@@ -148,7 +144,7 @@ const failures: readonly Failure[] = [
     pack: () =>
       response((r) => ({
         ...r,
-        requires: { minRisks: 1 },
+        requires: { ...{ minRisks: 1 }, minMinute: 0 },
         disabledReasonKey: 'alex-absent',
       })),
   },

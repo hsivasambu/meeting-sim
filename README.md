@@ -1,14 +1,14 @@
 # This Could've Been an Email
 
-The current code is the text-only launch meeting baseline. The lunch redesign
-rules and plan were approved on October 13, 2026; gameplay has not switched yet.
-Harry approved the [L02b-reviewed lunch table](docs/content-table.md) and D18
-on October 14, 2026. Its initial content is approved for the scheduled preparation
-tasks; live activation remains L08. See the
-[approved plan](docs/lunch-redesign-plan.md), [task sequence](docs/implementation-plan.md)
-and [writing review brief](docs/lunch-writing-review.md). A successful lunch run
-must record and display the actual agreed cuisine. Harry accepted original task 12a V4 on October 15, 2026; individual tester
-reports remain unsupplied. L09 is the separate new lunch playtest.
+Six adults are trying to agree on a cuisine for lunch. Start, nominate a cuisine,
+and choose how to move the room toward agreement before the booking expires.
+Results show the actual agreement and its discussion cost. Play again to start
+a fresh meeting. The title screen shows lunch awards and, if present, the
+separate archived launch collection.
+
+L08 activates the [D18-approved lunch table](docs/content-table.md) and the
+[approved lunch redesign](docs/lunch-redesign-plan.md). L09 is the separate lunch
+playtest.
 
 Read [CLAUDE.md](CLAUDE.md) and [the implementation plan](docs/implementation-plan.md)
 before making changes. See [task 02 setup](docs/task-02-setup.md) for the Vercel preview and real-device probe.

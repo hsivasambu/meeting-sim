@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L06 merged in PR #22. L07 isolated lunch presentation is implemented and locally verified for draft review. L08 is pending.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Harry accepted original 12a V4 on October 15, 2026, and individual reports remain unsupplied.
+Current: **L07 merged in PR #23. L08 activates lunch and stops at draft review. L09 is pending.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18. Lunch rules and named acceptance replacements were approved on October 13, 2026. Harry accepted original 12a V4 on October 15, 2026, and individual reports remain unsupplied.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -2421,3 +2421,36 @@ pnpm 10.34.6**.
   untracked review files retained their original SHA-256 hashes.
 
 PR #23 stays in draft review. L08 is pending.
+
+## L08 — Atomic lunch cutover
+
+[PR #23](https://github.com/hsivasambu/meeting-sim/pull/23) was marked ready and
+squash-merged as `670a75f` after verifying F1–F4, mergeability and the required
+`quality` check at `407cd3f3bec9c8ed88f29720f9a34915c0e7e4ad`. L08 branches
+from that merged main.
+
+The public engine and browser now share a single lunch pack transcribed from
+D18 revision `lunch-l02b-reviewed-2`. Start draws nomination. The store resolves
+one sampled branch, waits for acknowledgment, and draws again or opens Results.
+The screens use authored qualitative descriptions, an always-present HUD and
+passive roster. Success displays the agreed cuisine. Endings use the engine's
+ending ID and the first title in engine priority. The engine selects commentary
+after resolution using the approved priority, eligibility and cadence. The
+collection saves lunch unlocks under v2 and reads v1 only for the archive.
+
+The [approved replacement matrix](lunch-redesign-plan.md#explicitly-approved-acceptance-replacements)
+governs the deletions. Attendance/invitation/arrival tests replace release checks.
+The live transcription, structural validation and authored negative cases check
+the lunch schema and all reviewed rows, variants, outcomes and callbacks. The
+six lunch score examples and seven existing lunch goldens cover cancellation,
+agreement, expiry, callback and early ending, invitation and both seeded branches.
+The timeout golden changes only the synthetic filler technique from `hear` to
+`ack` so the complete fixture passes the authored filler rule. The actions,
+state counters, score and other six lunch goldens are unchanged.
+The old launch goldens remain in Git history. Exact fractions, seeded RNG, draw
+and callback rejection, score rounding and display-rate independence, title
+boundaries, storage recovery, build budgets and probe checks remain covered.
+The defensive Results headings use component tests because valid terminal states
+always earn a title. The browser tests run only on the production preview.
+
+**Stop at L08 draft review. L09 is pending.**

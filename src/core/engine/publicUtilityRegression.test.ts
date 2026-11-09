@@ -1,26 +1,23 @@
 import { expect, it } from 'vitest';
-import { initialState, previewResponse, resolve, release } from './index';
-import { pending, fixtureResponse } from './fixtures/transitions';
-import type { Response } from './types';
+import { initialState, previewResponse, resolve } from './index';
+import { pending } from './fixtures/transitions';
+import { lunchChoice } from './fixtures/lunch';
 // Explicitly requested current public-profile regression; no tuning targets are asserted.
-it.each([6, 2])(
+it.each([6, 8])(
   'leaves the reported current-profile tie unscored at headcount %i',
   (headcount) => {
-    let state = initialState('review-case');
-    if (headcount === 2)
-      for (const who of ['sam', 'morgan', 'gary', 'jordan'] as const)
-        state = release(state, who);
-    const a: Response = {
-      ...fixtureResponse,
-      id: 'a',
-      effect: { minutes: 1, progress: 0 },
-    };
-    const b: Response = {
-      ...fixtureResponse,
-      id: 'b',
-      effect: { minutes: 6, progress: headcount },
-    };
-    state = pending([a, b], state);
+    const initial = initialState('review-case');
+    const present =
+      headcount === 6
+        ? initial.present
+        : ([...initial.present, 'legal', 'vp'] as const);
+    const a = lunchChoice('a', { minutes: 1, progress: 0 });
+    const b = lunchChoice('b', { minutes: 6, progress: headcount });
+    const state = pending([a, b], {
+      ...initial,
+      present,
+      nominatedCuisine: 'thai',
+    });
     const left = previewResponse(state, a),
       right = previewResponse(state, b);
     if (!left.enabled || !right.enabled)

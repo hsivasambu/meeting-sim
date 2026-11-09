@@ -1,20 +1,10 @@
-import type {
-  MeetingState,
-  PresentedEvent,
-  Response,
-  UtilityRules,
-} from '../types';
-import { fixtureState, fixturePack } from './packs';
+import type { MeetingState, PresentedEvent, Response } from '../types';
+import { lunchState, lunchChoice, lunchRules } from './lunch';
 export const fixtureUtilityRules = {
+  ...lunchRules,
   costWeight: 2,
-  riskWeight: 3,
   costUnit: 4,
-  eventRules: {
-    ...fixturePack.eventRules,
-    arrivalAttendees: { legal: 'legal', 'vp-joins': 'vp' },
-    bookingEventIds: ['room-booked'],
-  },
-} as const satisfies UtilityRules;
+};
 const deeplyFrozenInputs = new WeakSet<object>();
 /** Supports Design Doc v2 → Game state model immutability checks with frozen fixtures. */
 export function deepFreeze<T>(input: T): T {
@@ -37,7 +27,7 @@ export function pending(
   event: Partial<PresentedEvent> = {},
 ): MeetingState {
   return {
-    ...fixtureState,
+    ...lunchState({ turn: 0 }),
     ...state,
     current: {
       id: 'fixture-event',
@@ -51,11 +41,8 @@ export function pending(
     },
   };
 }
-export const fixtureResponse: Response = {
-  id: 'choose',
-  disabledReasonKey: 'fixture-unavailable',
-  label: 'Fixture choose',
-  technique: 'owner',
-  effect: { minutes: 3, progress: 20, risks: -1 },
-  line: 'Fixture result.',
-};
+export const fixtureResponse = lunchChoice(
+  'choose',
+  { minutes: 3, progress: 20 },
+  'owner',
+);

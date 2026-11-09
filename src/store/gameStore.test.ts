@@ -12,6 +12,7 @@ vi.mock('../core/engine/index', async (importOriginal) => {
     ...actual,
     drawEvent: vi.fn((state: MeetingState) => ({
       ...state,
+      nominatedCuisine: 'thai',
       current: presentation,
     })),
   };
@@ -28,17 +29,31 @@ const presentation = {
       id: 'expert',
       label: 'Fixture expert',
       technique: 'owner',
-      requires: { present: ['sam'] },
-      disabledReasonKey: 'sam-absent',
-      effect: { minutes: 2, progress: 20 },
-      line: 'Fixture expert outcome.',
+      requires: { absent: ['vp'] },
+      disabledReasonKey: 'pat-present',
+      description: 'Fixture expert description.',
+      outcomes: [
+        {
+          id: 'done',
+          weight: 1,
+          effect: { minutes: 2, progress: 20 },
+          line: 'Fixture expert outcome.',
+        },
+      ],
     },
     {
       id: 'ack',
       label: 'Fixture acknowledge',
       technique: 'ack',
-      effect: { minutes: 2 },
-      line: 'Fixture outcome.',
+      description: 'Fixture acknowledgement.',
+      outcomes: [
+        {
+          id: 'done',
+          weight: 1,
+          effect: { minutes: 2 },
+          line: 'Fixture outcome.',
+        },
+      ],
     },
   ],
 } as const satisfies PresentedEvent;
@@ -88,7 +103,6 @@ describe('D17 store action table', () => {
     const title = store.getState();
     title.choose('ack');
     title.continue();
-    title.release('sam');
     title.callIt();
     title.finishTyping();
     expect(store.getState()).toBe(title);
@@ -112,7 +126,6 @@ describe('D17 store action table', () => {
       line: 'Fixture outcome.',
     });
     const outcome = store.getState();
-    outcome.release('sam');
     outcome.callIt();
     outcome.finishTyping();
     outcome.start();
@@ -123,33 +136,18 @@ describe('D17 store action table', () => {
     expect(drawEvent).toHaveBeenCalledTimes(2);
     expect(currentGame(store).turn).toBe(1);
   });
-  it.each(['speaking', 'choosing'] as const)(
-    'release in %s keeps delivered text, blocks expert, and refuses owner/minimum/absent',
-    (beat) => {
-      const { store } = readyStore();
-      store.getState().start();
-      if (beat === 'choosing') store.getState().finishTyping();
-      const delivered = currentGame(store).current;
-      const original = store.getState();
-      original.release('priya');
-      original.release('legal');
-      expect(store.getState()).toBe(original);
-      original.release('sam');
-      expect(currentGame(store).current).toBe(delivered);
-      expect(store.getState().beat).toBe(beat);
-      store.getState().finishTyping();
-      const beforeDisabled = store.getState();
-      beforeDisabled.choose('expert');
-      expect(store.getState()).toBe(beforeDisabled);
-      for (const id of ['dev', 'morgan', 'gary'] as const)
-        store.getState().release(id);
-      const minimum = store.getState();
-      minimum.release('jordan');
-      minimum.release('sam');
-      expect(store.getState()).toBe(minimum);
-      expect(currentGame(store).present).toEqual(['priya', 'jordan']);
-    },
-  );
+  it('keeps a disabled choice from advancing the beat', () => {
+    const { store } = readyStore();
+    store.getState().start();
+    const game = currentGame(store);
+    store.setState({
+      game: { ...game, present: [...game.present, 'vp'], peakHeadcount: 7 },
+    });
+    store.getState().finishTyping();
+    const before = store.getState();
+    before.choose('expert');
+    expect(store.getState()).toBe(before);
+  });
   it.each(['speaking', 'choosing'] as const)(
     'Call it in %s goes directly to results and retains every unlock on replay',
     (beat) => {
@@ -166,13 +164,12 @@ describe('D17 store action table', () => {
       ];
       expect(store.getState().unlockedTitles).toEqual(expected);
       expect(setItem).toHaveBeenCalledExactlyOnceWith(
-        'tcbae:v1:titles',
+        'tcbae:v2:titles',
         JSON.stringify(expected),
       );
       const results = store.getState();
       results.callIt();
       results.choose('ack');
-      results.release('sam');
       results.continue();
       results.start();
       results.finishTyping();

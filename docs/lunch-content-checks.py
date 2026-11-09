@@ -313,15 +313,15 @@ assert all('Status: **Accepted by Harry on October 13, 2026.**' in (ROOT / 'docs
            for name in ['0005-lunch-agreement-and-attendance.md', '0006-lunch-response-outcomes.md',
                         '0007-lunch-score-and-policies.md', '0008-lunch-presentation-and-unlocks.md'])
 assert 'V4 was accepted by Harry on October 15, 2026' in TEXT
-for filename in ['contentTableValidation.test.ts', 'liveContent.test.ts']:
-    source = (ROOT / 'scripts' / filename).read_text(encoding='utf-8')
-    assert "new URL('../docs/content-table-launch.md', import.meta.url)" in source
-    assert "new URL('../docs/content-table.md', import.meta.url)" not in source
-assert "new URL('../docs/design-doc-launch.md', import.meta.url)" in (
-    ROOT / 'scripts/liveContent.test.ts').read_text(encoding='utf-8')
-launch_headers = [ROOT / 'src/core/content/engineRules.ts'] + list((ROOT / 'src/core/content/events').glob('*.ts'))
-assert len(launch_headers) == 22
-assert all('// Approved docs/content-table-launch.md' in p.read_text(encoding='utf-8') for p in launch_headers)
+source = (ROOT / 'scripts/lunchContent.test.ts').read_text(encoding='utf-8')
+assert "new URL('../docs/content-table.md', import.meta.url)" in source
+assert 'content-table-launch.md' not in source
+content = ROOT / 'src/core/content'
+live_headers = [content / 'engineRules.ts', *sorted((content / 'events').glob('*.ts'))]
+assert len(live_headers) == len(base) + len(callbacks) + 2
+assert all('// Approved docs/content-table.md — lunch-l02b-reviewed-2.' in
+           p.read_text(encoding='utf-8') for p in live_headers)
+assert not (content / 'lunch').exists()
 claude = (ROOT / 'CLAUDE.md').read_text(encoding='utf-8').strip()
 spec = (ROOT / 'docs/tech-spec.md').read_text(encoding='utf-8')
 assert claude == spec.split('**Drop-in `CLAUDE.md`**')[1].split('```markdown\n')[1].split('\n```')[0].strip()
@@ -330,7 +330,7 @@ print(f'PASS: {len(responses)} choices, {sum(map(len, responses.values()))} outc
 print(f'PASS: {len(lengths)} copy cells, {rendered_count} complete catalog substitutions, 12 titles, 7 commentary rows')
 print('PASS: 3 complete walkthrough running sums, 3 callback mini-routes, 3 exact expected-utility/quality examples')
 print(f'PASS: table structure in {len(paths)} documents, {links} relative file/heading references, accepted ADR statuses')
-print('PASS: launch test/provenance source paths and exact CLAUDE/spec mirror')
+print('PASS: live lunch test/provenance source paths and exact CLAUDE/spec mirror')
 print('PASS: two clamped-state counterexamples; no universal gamble-dominance claim')
 
 # Optional Git-backed editorial audit: replay both wording logs, then compare all
