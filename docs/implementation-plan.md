@@ -2487,4 +2487,28 @@ unchanged tuning values.
 Lunch Greedy met the 9–12 median-turn diagnostic. Both policies exceeded their
 future win-rate bands. L12 owns balance acceptance.
 
+### L08 review corrections
+
+- **F1** Call it and Play again now use the meeting's click-count guard. The
+  browser regression places both buttons under the same pointer position and
+  verifies Results stays open when the second click hits Play again.
+- **F2** Play again and Start suppress repeated Enter activation. The browser
+  holds Enter across replay, verifies the title screen stays open, then
+  presses Enter afresh to start the next meeting.
+- **F3** The expiry route taps Continue on both touch profiles. The terminal
+  routes press a number during the outcome and check the outcome and Continue
+  focus. The invitation route checks the called-early title and the line
+  naming Italian as the suggestion.
+
+The F1 and F2 regressions reproduced both skipped screens on desktop Chromium
+against the reviewed `e86ac3b` build. A clean checkout of `6405f91` on Node
+24.21.0 and pnpm 10.34.6 passed `pnpm check` with **498 tests in 31 files**.
+The 2,000-seed-per-policy simulation passed invariants and replay with the same
+content/constants hash and diagnostic results. Build and size passed at
+**90,409/122,880 gzip JS bytes** and **0/409,600 image/font bytes**.
+Production-preview E2E passed **45 tests**, 15 on each of Pixel 7 Chromium,
+iPhone 14 WebKit and desktop Chromium, with zero failures, skips, flakes or
+browser console errors. The document audit and `git diff --check` passed.
+All five untracked review files matched their original SHA-256 hashes.
+
 **Stop at L08 draft review. L09 is pending.**
