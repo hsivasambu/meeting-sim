@@ -38,6 +38,9 @@ export function LunchTitleScreen({
         ref={button}
         disabled={assetStatus === 'loading'}
         onClick={assetStatus === 'failed' ? retry : start}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' && event.repeat) event.preventDefault();
+        }}
       >
         {assetStatus === 'loading'
           ? copy.loading

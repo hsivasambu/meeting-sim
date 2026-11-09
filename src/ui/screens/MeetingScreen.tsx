@@ -261,7 +261,9 @@ export function LunchMeetingScreen({
         ref={callItButton}
         aria-describedby={`${id}-call-it`}
         disabled={beat === 'outcome'}
-        onClick={callIt}
+        onClick={(event) => {
+          if (event.detail <= lunchUiConfig.singleClickCount) callIt();
+        }}
       >
         {copy['call-it']}
       </button>

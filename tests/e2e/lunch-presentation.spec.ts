@@ -200,6 +200,41 @@ test('double-clicks cannot activate the next beat’s button', async ({
   ]);
 });
 
+test('double-clicking Call it leaves Results open even when the second click hits Play again', async ({
+  page,
+}) => {
+  await openLunch(page, undefined, false);
+  await page.getByRole('button', { name: copy.start }).click();
+  // Keep both controls under the same pointer position on every profile.
+  await page.addStyleTag({
+    content:
+      'main > .panel > button:last-of-type { position: fixed; left: 1rem; bottom: 1rem; z-index: 1; }',
+  });
+  const repeatTargets = await page.evaluateHandle(() => {
+    const targets: string[] = [];
+    document.addEventListener(
+      'click',
+      ({ detail, target }) => {
+        if (detail === 2 && target instanceof Element) {
+          targets.push(target.closest('button')?.textContent?.trim() ?? '');
+        }
+      },
+      true,
+    );
+    return targets;
+  });
+
+  await page.getByRole('button', { name: copy['call-it'] }).dblclick({
+    position: { x: 12, y: 12 },
+    delay: 80,
+  });
+  expect(await repeatTargets.jsonValue()).toEqual([copy.replay]);
+  await expect(page.getByRole('heading', { name: copy.results })).toBeVisible();
+  await expect(
+    page.getByText(copy['ended-cancelled'], { exact: true }),
+  ).toBeVisible();
+});
+
 const momentumRoute = {
   seed: '0000000000000091',
   steps: [
@@ -350,7 +385,10 @@ for (const { seed, cuisine, name, branch, steps } of [
     await expect(page.getByText('Pat', { exact: true })).toBeVisible();
     await fits(page);
 
-    if (hasTouch) await choice.tap();
+    // Exercise a standalone touch acknowledgement after a keyboard choice.
+    const tapContinue = hasTouch && branch === 'objections';
+    if (tapContinue) await page.keyboard.press('1');
+    else if (hasTouch) await choice.tap();
     else await choice.click();
     const final = resolve(game, response.id);
     const outcome = response.outcomes.find((entry) => entry.id === branch);
@@ -379,12 +417,18 @@ for (const { seed, cuisine, name, branch, steps } of [
       exact: true,
     });
     await expect(proceed).toBeFocused();
+    await page.keyboard.press('1');
+    await expect(proceed).toBeFocused();
+    await expect(
+      dialogue(page).locator('p[aria-hidden="true"]').first(),
+    ).toHaveText(outcomeLine);
     await fits(page);
     await testInfo.attach(`lunch-${branch}-${cuisine}-outcome-320`, {
       body: await page.screenshot({ fullPage: true }),
       contentType: 'image/png',
     });
-    await page.keyboard.press('Enter');
+    if (tapContinue) await proceed.tap();
+    else await page.keyboard.press('Enter');
     await expect(
       page.getByRole('heading', { name: copy.results }),
     ).toBeFocused();
@@ -452,8 +496,16 @@ for (const { seed, cuisine, name, branch, steps } of [
     });
     await page.keyboard.press('Tab');
     await expect(page.getByRole('button', { name: copy.replay })).toBeFocused();
-    await page.keyboard.press('Enter');
-    await expect(page.getByRole('button', { name: copy.start })).toBeFocused();
+    await page.keyboard.down('Enter');
+    const start = page.getByRole('button', { name: copy.start });
+    await expect(start).toBeFocused();
+    await page.keyboard.down('Enter');
+    await page.keyboard.down('Enter');
+    await page.keyboard.up('Enter');
+    await expect(start).toBeFocused();
+    await expect(page.getByRole('heading', { name: copy.meeting })).toHaveCount(
+      0,
+    );
     await page.keyboard.press('Enter');
     await expect(page.getByText(copy['considering-empty'])).toBeVisible();
     await expect(
@@ -488,6 +540,12 @@ test('invitation updates the passive roster and Call it uses the first arrival',
   await page.keyboard.press('Enter');
   await expect(
     page.getByText(copy['ended-called-early'], { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: "Let's Take This Offline", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText('Suggested: Italian. Not agreed.', { exact: true }),
   ).toBeVisible();
   await expect(
     page.getByText(

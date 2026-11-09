@@ -3,6 +3,7 @@ import { attendees } from '../../core/content/attendees';
 import {
   interfaceCopy as copy,
   epilogues,
+  lunchUiConfig,
   moments,
   parkTopics,
 } from '../../core/content/copy';
@@ -160,7 +161,16 @@ export function LunchResultsScreen({
         <h2>{copy.moment}</h2>
         <p>{meetingMoment(result, agreedCuisine)}</p>
       </div>
-      <button onClick={restart}>{copy.replay}</button>
+      <button
+        onClick={(event) => {
+          if (event.detail <= lunchUiConfig.singleClickCount) restart();
+        }}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' && event.repeat) event.preventDefault();
+        }}
+      >
+        {copy.replay}
+      </button>
     </section>
   );
 }
