@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L05 PR #21 is merged. L06 review corrections are complete with passing local Node 24 gates in draft PR #22. Next task: L07.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Harry accepted original 12a V4 on October 15, 2026, and individual reports remain unsupplied.
+Current: **L06 merged in PR #22. L07 isolated lunch presentation is implemented and locally verified for draft review. L08 is pending.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Harry accepted original 12a V4 on October 15, 2026, and individual reports remain unsupplied.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -51,7 +51,7 @@ Files marked “new” are scheduled artifacts, not existing capabilities.
 | **L05** / L02b + Harry’s D18 approval, L03, L04          | Content/validation transcription: `contentValidation*.ts`, `core/content/events/*.ts`, `attendees.ts`, `engineRules.ts`, `titles.ts`, `copy.ts`, new cuisine/commentary data, content tests.      | Every reviewed row transcribed; branch/weight/speaker/arrival/callback/copy/variant rules; constructed witness for each variant, invite state and outcome; Active.                                                             | Row-to-test checklist and catalog audit. Lunch pack validated through injection before public activation; no UI strings, invented values or tuning. Keep any temporary launch pack isolated until L08, not a permanent second scenario.                                                                                                                                          |
 | **L06** / L01, L02b + approved title catalog             | Persistence adapter: `store/persistence.ts`, `core/content/storeConfig.ts`, title catalogs and persistence tests.                                                                                 | Separate v1 archival read/v2 writes, independent failure guards, unknown/corrupt handling, no v1 overwrite; Active.                                                                                                            | Storage matrix from ADR 0008; byte-preservation assertions. New adapter not bound to live launch store yet; no changes to game rules or current earning.                                                                                                                                                                                                                         |
 | **L07** / L02b + Harry’s D18 approval, L03 preview shape | Presentation components: `ui/screens/{TitleScreen,MeetingScreen,MeetingStats,Roster,ResultsScreen}.tsx`, content copy, `src/index.css`, isolated browser fixtures.                                | Authored descriptions, no numeric choice previews, passive roster, cuisine/three central metrics, branch outcomes; 320 px/44 px, keyboard/focus/live regions; Active.                                                          | Screenshots and rendered/accessibility assertions. Prepare reusable lunch rendering; public launch screen remains until L08. No simulation/formula computation in UI and no polished art.                                                                                                                                                                                        |
-| **L08** / L04–L07                                        | Atomic activation/removal: engine public binding/types/limits, `store/gameStore.ts`, UI wiring, `sim/{policies,runner,invariants,summary}.ts`, obsolete live files and tests, API lint allowlist. | Real Start→nominate→choices→branch outcome→results/replay; six permanent adults, invites, no risk/release APIs/state/controls, new persistence; sim replay; Active.                                                            | Before/after Greedy/Random smoke and fixed-seed E2E across all three browsers. Explicitly replace obsolete assertions/goldens per approved matrix, retain unaffected tests. Consolidate `core/content/lunch/` into the live content paths and remove the temporary directory plus legacy runtime schema/profile/content/adapters in this PR. No new mechanics or balance tuning. |
+| **L08** / L04–L07                                        | Atomic activation/removal: engine public binding/types/limits, `store/gameStore.ts`, UI wiring, `sim/{policies,runner,invariants,summary}.ts`, obsolete live files and tests, API lint allowlist. | Real Start→nominate→choices→branch outcome→results/replay; six permanent adults, invites, no risk/release APIs/state/controls, new persistence; sim replay; Active. Move lunch specs to preview and remove the fixture server. | Before/after Greedy/Random smoke and fixed-seed E2E across all three browsers. Explicitly replace obsolete assertions/goldens per approved matrix, retain unaffected tests. Consolidate `core/content/lunch/` into the live content paths and remove the temporary directory plus legacy runtime schema/profile/content/adapters in this PR. No new mechanics or balance tuning. |
 | **L09** / L08                                            | Early lunch text-only playtest: `docs/lunch-playtest.md`, observed findings in content table and this plan.                                                                                       | Harry several runs + two uncoached people; two-second headline probe, 15-second goal answer, real preference vs tangent, explain likely uncertain tradeoff, observe 2–3-minute duration, confusion and funny/flat lines; Docs. | Record exact words, build/seed if available, device/browser, run count and follow-ups. Missing reports stay pending. Do not complete original 12a or tune/art-polish while comprehension issues are unresolved.                                                                                                                                                                  |
 | **L09a…** / L09 findings                                 | One bounded editorial or clarity correction per blueprint task: content table first, then approved content/UI files and tests.                                                                    | Retest failed comprehension/tradeoff cases with recorded observations; Active for code, Docs otherwise.                                                                                                                        | Actual reported findings linked to each correction, before/after sim for changed effects. Separate new mechanic proposals from copy revisions. Blocks L12 until resolved.                                                                                                                                                                                                        |
 | **L10** / L08 (may precede L09 completion)               | Completes re-scoped **08b**: `sim/{run,runner,summary,settings}.ts`, new CSV/report modules/tests, `docs/sim/`.                                                                                   | CLI argument validation, exact denominators, configuration/rules/content revision, cuisine/outcome-aware CSV and replay traces; Active.                                                                                        | Stable repeated reports, invalid-CLI tests, no browser bundle imports. No full-policy or balance-pass claim before L11.                                                                                                                                                                                                                                                          |
@@ -2336,3 +2336,88 @@ Actual local results for review correction `8c77f50` on **Node 24.21.0 and pnpm
   three untracked review files were restored with matching SHA-256 hashes.
 
 L06 remains in draft review. L07 is next and has not started.
+
+## L07 — Isolated lunch presentation
+
+[PR #22](https://github.com/hsivasambu/meeting-sim/pull/22) was squash-merged as
+`e02682e` after verifying F1–F3, the required quality check and mergeability at
+`035ebcb`. L07 branches from that merged main.
+
+The isolated Title, Meeting, HUD, Roster and Results components use the
+D18-approved copy and take presentation data and action callbacks. The HUD shows
+agreement progress, time and discussion cost. Response controls show authored
+descriptions and disabled reasons. The roster is passive and updates on arrival.
+The outcome beat presents the sampled branch line and can render supplied
+commentary. Results present the score and its components, an authored moment
+and epilogue, and the engine's agreed cuisine on success.
+
+Playwright mounts the components through a dev-server fixture outside the
+production build. The fixture plays back precomputed engine snapshots and
+includes fixed seeds for both branches of the same response near the deadline.
+The 320 px screenshots are attached to the Playwright report. Browser assertions
+cover 44×44 px targets, touch and keyboard input, held keys, focus, live-region
+updates, reduced motion, disabled reasons, a joining attendee, all four
+endings, and successful results for Thai and Mexican.
+
+Actual local results for `b1453e9` on **Node 24.21.0 and pnpm 10.34.6**:
+
+- `pnpm check` passed typecheck, zero-warning lint, formatting and **648 tests
+  in 43 files**. Core coverage was **1101/1112 lines (99.01%)** and **1148/1179
+  branches (97.37%)**.
+- `pnpm sim:ci` passed invariants and deterministic replay on a clean checkout
+  with 2,000 seeds per launch policy. The content/constants hash and diagnostic
+  metrics match L06.
+- `pnpm build` and `pnpm size` passed at **84,710/122,880 gzip JS bytes** and
+  **0/409,600 image/font bytes**. The production build contains the launch and
+  probe entries.
+- `pnpm e2e` passed **48 tests**, including 18 lunch fixture cases across Pixel 7
+  Chromium, iPhone 14 WebKit and desktop Chromium. Zero failures, skips, flaky
+  tests or browser console errors.
+- `python docs/lunch-content-checks.py` and `git diff --check` passed. SHA-256
+  hashes matched for all three untracked review files.
+
+**L07 stops at draft review.** L08 owns public lunch activation, store wiring and
+commentary selection.
+
+### L07 review corrections
+
+[Draft PR #23](https://github.com/hsivasambu/meeting-sim/pull/23) addresses the
+review of `f5a8d61`.
+
+- **F1** Results consume the first earned lunch title ID in engine display
+  priority. They render the catalog heading and flavour beside the cuisine
+  result, with an authored ending-specific heading when the ID is null.
+  Browser cases cover success, failure and both fallback headings.
+- **F2** The tech spec records the separate dev fixture and production preview
+  servers. The L08 row schedules moving the lunch specs to preview and removing
+  the fixture server.
+- **F3** Show choices now uses the same click-count guard as choices and
+  Continue. The browser regression double-clicks a choice and Continue, checks
+  the resulting beats, and verifies that each second click reaches the
+  replacement button. In an isolated desktop Chromium mutation run, replacing
+  all three guards with `true` skipped the outcome and failed the Continue
+  assertion. Replacing only the Show choices guard with `true` skipped the next
+  speaking beat and failed the Show choices assertion. Both mutations were
+  reverted.
+- **F4** `LunchFrame` documents frame identity, raw line and speaker sources,
+  response order, and the origin of agreement and commentary fields.
+
+Local gates for `8f68a76` ran in a clean worktree on **Node 24.21.0 and
+pnpm 10.34.6**.
+
+- `pnpm check` passed typecheck, zero-warning lint, formatting and **648 tests
+  in 43 files**. Core coverage was **1101/1112 lines (99.01%)** and **1148/1179
+  branches (97.37%)**.
+- `pnpm sim:ci` passed invariants and deterministic replay on 2,000 seeds per
+  launch policy. The content/constants hash and diagnostics match the original
+  L07 run.
+- `pnpm build` and `pnpm size` passed at **84,710/122,880 gzip JS bytes** and
+  **0/409,600 image/font bytes**.
+- `pnpm e2e` passed **57 tests**, including 27 lunch fixture cases across Pixel
+  7 Chromium, iPhone 14 WebKit and desktop Chromium, with zero failures,
+  skips or flaky tests. An earlier focused run in the working checkout hit two
+  fixture navigation timeouts. The full clean run passed both cases.
+- `python docs/lunch-content-checks.py` and `git diff --check` passed. The
+  untracked review files retained their original SHA-256 hashes.
+
+PR #23 stays in draft review. L08 is pending.

@@ -664,9 +664,13 @@ GitHub Actions runs every active gate on every PR, per the Gate activation table
 | `lint` | ESLint + `prettier --check` |
 | `test` | `vitest run --coverage` |
 | `sim` / `sim:ci` | `tsx sim/run.ts` with full or CI-sized runs |
-| `e2e` | Playwright against `preview` |
+| `e2e` | Playwright against `preview` and the temporary presentation fixture server |
 | `size` | `scripts/checkSize.ts`: gzips `dist/` with `node:zlib` and checks the budgets (no extra dependency) |
 | `check` | The active subset of `typecheck`, `lint`, `test` and `sim:ci` (see Gate activation) |
+
+During `pnpm e2e`, a second Vite dev server serves isolated presentation fixtures
+under `tests/fixtures/` while production specs run against `preview`. L08 moves
+the lunch specs to `preview` and removes the fixture server.
 
 **CI workflow (`.github/workflows/ci.yml`)**
 

@@ -1,4 +1,4 @@
-// Approved docs/content-table.md — lunch-l02b-reviewed-2; L05 injection only until L08.
+// Approved docs/content-table.md — lunch-l02b-reviewed-2; isolated until L08.
 export const disabledReasons = {
   'alex-present':
     'Alex is already here. Use the menu discussion rather than inviting Alex twice.',
@@ -136,3 +136,13 @@ export const parkTopics = {
   'spice-question / park': 'spice preference',
   'pat-arrives / park': "Pat's questions",
 } satisfies Readonly<Record<string, string>>;
+
+// Interface constants used by the lunch screens.
+export const lunchUiConfig = {
+  choiceKeys: ['1', '2', '3'],
+  lineStart: 0,
+  singleClickCount: 1,
+  charactersPerSecond: 40,
+  meterDurationMs: 400,
+  millisecondsPerSecond: 1000,
+} as const;
