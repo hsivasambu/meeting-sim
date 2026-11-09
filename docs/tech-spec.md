@@ -2,7 +2,7 @@
 
 October 13, 2026 · Approved lunch contracts · @Harry
 
-Reconciled October 7, 2026 with Harry’s D01–D12 direction. Revised October 8, 2026 to apply the accepted pre-implementation architecture review (D13–D26). ADRs 0005–0008 were approved by Harry on October 13, 2026 and now supersede the specifically identified launch contracts. This spec is the lunch target; L03–L07 preserve launch behavior during additive preparation and L08 performs activation. Numerical balance remains unverified until simulation.
+Reconciled October 7, 2026 with Harry’s D01–D12 direction. Revised October 8, 2026 to apply the accepted pre-implementation architecture review (D13–D26). ADRs 0005–0008 were approved by Harry on October 13, 2026 and now supersede the specifically identified launch contracts. L03–L07 preserved launch behavior during preparation. L08 activates the lunch specification. Numerical balance remains unverified until simulation.
 
 ## How to use this spec
 
@@ -664,13 +664,12 @@ GitHub Actions runs every active gate on every PR, per the Gate activation table
 | `lint` | ESLint + `prettier --check` |
 | `test` | `vitest run --coverage` |
 | `sim` / `sim:ci` | `tsx sim/run.ts` with full or CI-sized runs |
-| `e2e` | Playwright against `preview` and the temporary presentation fixture server |
+| `e2e` | Playwright against the production build via `preview` |
 | `size` | `scripts/checkSize.ts`: gzips `dist/` with `node:zlib` and checks the budgets (no extra dependency) |
 | `check` | The active subset of `typecheck`, `lint`, `test` and `sim:ci` (see Gate activation) |
 
-During `pnpm e2e`, a second Vite dev server serves isolated presentation fixtures
-under `tests/fixtures/` while production specs run against `preview`. L08 moves
-the lunch specs to `preview` and removes the fixture server.
+Lunch browser specs inject fixed seed bytes through the browser entropy call and
+replay named choices through the public screens on the production preview.
 
 **CI workflow (`.github/workflows/ci.yml`)**
 

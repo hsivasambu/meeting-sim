@@ -1,9 +1,4 @@
-import {
-  drawEvent,
-  initialState,
-  release,
-  resolve,
-} from '../src/core/engine/index';
+import { drawEvent, initialState, resolve } from '../src/core/engine/index';
 import type { MeetingState } from '../src/core/engine/index';
 import { assertPolicy, assertReplay, assertState } from './invariants';
 import { choose } from './policies';
@@ -24,12 +19,6 @@ function freeze(value: unknown): void {
 export function runMeeting(seed: string, policy: Policy): MeetingState {
   let state = initialState(seed);
   assertState(state);
-  if (policy === 'greedy') {
-    for (const who of ['gary', 'jordan'] as const) {
-      freeze(state);
-      state = checked(state, release(state, who));
-    }
-  }
   while (state.phase === 'running') {
     freeze(state);
     state = checked(state, drawEvent(state));

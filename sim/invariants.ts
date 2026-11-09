@@ -14,7 +14,6 @@ export function assertState(
     state.minute,
     state.personMinutes,
     state.progress,
-    state.risks,
     state.bookingEnd,
     state.peakHeadcount,
   ])
@@ -22,19 +21,11 @@ export function assertState(
       Number.isSafeInteger(value) && value >= 0,
       'Noninteger/negative counter',
     );
-  ok(
-    state.progress <= ENGINE_LIMITS.progressMax &&
-      state.risks <= ENGINE_LIMITS.risksMax,
-    'Progress/risk bounds',
-  );
+  ok(state.progress <= ENGINE_LIMITS.progressMax, 'Progress bounds');
   ok(
     state.present.length >= ENGINE_LIMITS.minHeadcount &&
       state.present.length <= ENGINE_LIMITS.maxHeadcount,
     'Headcount bounds',
-  );
-  ok(
-    state.present.includes(ENGINE_LIMITS.decisionOwner),
-    'Decision owner absent',
   );
   ok(
     new Set(state.present).size === state.present.length,
@@ -48,9 +39,15 @@ export function assertState(
     state.peakHeadcount >= state.present.length &&
       state.peakHeadcount <= ENGINE_LIMITS.maxHeadcount,
   );
+  ok(state.turn === 0 || state.nominatedCuisine !== null, 'Nomination missing');
   ok(
-    state.releasedAttendeeIds.every((id) => !state.present.includes(id)),
-    'Rejoined',
+    (state.ending === 'decision') === (state.agreedCuisine !== null),
+    'Agreement/ending mismatch',
+  );
+  ok(
+    state.agreedCuisine === null ||
+      state.agreedCuisine === state.nominatedCuisine,
+    'Agreement changed cuisine',
   );
   ok(
     state.bookingEnd === ENGINE_LIMITS.reducedBookingEnd ||
@@ -71,6 +68,15 @@ export function assertState(
     );
     ok(state.turn >= previous.turn, 'Turn decreased');
     ok(state.seed === previous.seed, 'Seed changed');
+    ok(
+      previous.present.every((id) => state.present.includes(id)),
+      'Attendance decreased',
+    );
+    ok(
+      previous.nominatedCuisine === null ||
+        state.nominatedCuisine === previous.nominatedCuisine,
+      'Nomination changed',
+    );
   }
   if (state.phase === 'ended') {
     ok(
@@ -91,23 +97,18 @@ export function assertState(
 }
 
 export function assertPolicy(state: MeetingState, policy: Policy): void {
-  const releases = policy === 'greedy' ? ['gary', 'jordan'] : [];
-  deepStrictEqual(
-    state.releasedAttendeeIds,
-    releases,
-    'Unexpected policy releases',
-  );
   ok(
     state.ending === 'decision' || state.ending === 'time-expired',
     'Policy called it early',
   );
-  const firstDraw = state.log.findIndex((entry) => entry.type === 'draw');
-  const prefix = state.log.slice(0, firstDraw);
-  deepStrictEqual(
-    prefix.map((entry) => (entry.type === 'release' ? entry.who : entry.type)),
-    releases,
-    'Policy releases must precede first draw',
-  );
+  if (
+    policy === 'greedy' &&
+    state.decisions.some(({ qualityFraction }) => qualityFraction !== null)
+  )
+    ok(
+      score(state).decisions === 300,
+      'Greedy missed the best expected utility',
+    );
   ok(
     state.log.every((entry) => entry.type !== 'call-it'),
     'Unexpected Call it action',

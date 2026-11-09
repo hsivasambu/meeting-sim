@@ -17,21 +17,16 @@ import {
   ZERO,
 } from './constants';
 import { matchesCondition } from './conditions';
-import { initialLunchState } from './state';
+import { initialState } from './state';
 import { validateNomination } from './lunchValidation';
 import { validateLunchCatalog } from './contentValidationLunchCatalog';
 import type { ContentIssue } from './contentValidationTypes';
-import type {
-  AttendeeId,
-  Condition,
-  LunchCatalog,
-  LunchContentPack,
-} from './types';
+import type { AttendeeId, Condition, LunchCatalog, ContentPack } from './types';
 
-/** Approved lunch structural/authored checks. No live import or activation. */
+/** Structural checks for complete packs, plus authored checks with a catalog. */
 export function validateLunchContent(
-  pack: LunchContentPack,
-  catalog: LunchCatalog,
+  pack: ContentPack,
+  catalog?: LunchCatalog,
 ): readonly ContentIssue[] {
   const issues: ContentIssue[] = [];
   const add = (path: string, rule: string): void => {
@@ -199,8 +194,9 @@ export function validateLunchContent(
         condition(response.requires, rp);
         if (response.requires !== undefined) {
           if (
-            response.disabledReasonKey === undefined ||
-            catalog.disabledReasons[response.disabledReasonKey] === undefined
+            !response.disabledReasonKey?.trim() ||
+            (catalog !== undefined &&
+              catalog.disabledReasons[response.disabledReasonKey] === undefined)
           )
             add(rp, 'disabled-reason');
           else usedReasons.add(response.disabledReasonKey);
@@ -322,7 +318,7 @@ export function validateLunchContent(
     // Enumerate all permanent rosters and inclusive minute boundaries, honoring first-match order.
     for (const present of rosters)
       for (let minute = ZERO; minute < INITIAL_BOOKING_END; minute += ONE) {
-        const state = { ...initialLunchState('validation'), present, minute };
+        const state = { ...initialState('validation'), present, minute };
         if (!matchesCondition(state, event.when)) continue;
         const selected =
           event.variants?.find((v) => matchesCondition(state, v.when)) ?? event;
@@ -356,7 +352,7 @@ export function validateLunchContent(
     ...rules.bookingEventIds,
   ])
     if (!pack.events.some((e) => e.id === id)) add(id, 'event-reference');
-  for (const key of Object.keys(catalog.disabledReasons))
+  for (const key of Object.keys(catalog?.disabledReasons ?? {}))
     if (!usedReasons.has(key)) add(key, 'unused-reason');
   if (
     pack.filler.responses.length !== ONE ||
@@ -367,6 +363,6 @@ export function validateLunchContent(
     pack.filler.negative === true
   )
     add('filler', 'filler-shape');
-  validateLunchCatalog(pack, catalog, add);
+  if (catalog !== undefined) validateLunchCatalog(pack, catalog, add);
   return issues;
 }

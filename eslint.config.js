@@ -5,7 +5,7 @@ import refresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 import { dirname, relative, resolve } from 'node:path';
 
-const mutations = ['initialState', 'drawEvent', 'resolve', 'release', 'callIt'];
+const mutations = ['initialState', 'drawEvent', 'resolve', 'callIt'];
 const api = [
   ...mutations,
   'score',
@@ -13,7 +13,6 @@ const api = [
   'displayCost',
   'formatCost',
   'previewResponse',
-  'previewRelease',
   'getDrawCandidates',
   'getResponseOutcomes',
   'ENGINE_LIMITS',
@@ -245,7 +244,7 @@ export default tseslint.config(
         ...forbidden,
         {
           selector:
-            'CallExpression[callee.property.name=/^(setAssetStatus|start|finishTyping|choose|continue|release|callIt|restart|setState)$/]',
+            'CallExpression[callee.property.name=/^(setAssetStatus|start|finishTyping|choose|continue|callIt|restart|setState)$/]',
           message: 'Stage must never dispatch actions.',
         },
       ],

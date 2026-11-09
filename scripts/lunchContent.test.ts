@@ -2,31 +2,31 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   lunchCatalog as authoredCatalog,
-  lunchContentPack as authoredPack,
-} from '../src/core/content/lunch';
+  contentPack as authoredPack,
+} from '../src/core/content/index';
 import { validateLunchContent } from '../src/core/engine/contentValidationLunch';
 import { drawEventWith, getDrawCandidatesWith } from '../src/core/engine/draw';
 import {
   getResponseOutcomesWithRules,
   resolveWithRules,
 } from '../src/core/engine/resolve';
-import { initialLunchState, callIt } from '../src/core/engine/state';
+import { initialState, callIt } from '../src/core/engine/state';
 import { previewWithRules } from '../src/core/engine/preview';
 import { score } from '../src/core/engine/score';
-import { earnedLunchTitles } from '../src/core/engine/titleRules';
+import { earnedTitles } from '../src/core/engine/titleRules';
 import { W_COST, UTILITY_COST_PM } from '../src/core/engine/constants';
 import { deepFreeze } from '../src/core/engine/fixtures/transitions';
 import type {
   Condition,
-  LunchState,
-  OutcomeResponse,
+  MeetingState,
+  Response,
   PresentedEvent,
-  LunchContentPack,
+  ContentPack,
   LunchCatalog,
-  LunchUtilityRules,
+  UtilityRules,
 } from '../src/core/engine/types';
 
-const pack: LunchContentPack = authoredPack;
+const pack: ContentPack = authoredPack;
 const lunchCatalog: LunchCatalog = authoredCatalog;
 interface Row {
   section: string;
@@ -79,17 +79,14 @@ function condition(value: string): Condition | undefined {
   return object;
 }
 const all = [...pack.events, ...pack.callbacks, pack.filler];
-const rules: LunchUtilityRules = {
-  profile: 'lunch',
+const rules: UtilityRules = {
   costWeight: W_COST,
   costUnit: UTILITY_COST_PM,
   eventRules: pack.eventRules,
   cuisines: pack.cuisines,
+  commentary: pack.commentary,
 };
-function presentation(
-  state: LunchState,
-  id: string,
-): PresentedEvent<OutcomeResponse> {
+function presentation(state: MeetingState, id: string): PresentedEvent {
   const event = getDrawCandidatesWith(
     pack,
     deepFreeze({ ...state, current: null }),
@@ -97,16 +94,16 @@ function presentation(
   if (event === undefined)
     throw new Error(`Ineligible ${id} at ${state.turn}/${state.minute}`);
   const responses = event.responses.filter(
-    (r): r is OutcomeResponse => 'outcomes' in r,
+    (r): r is Response => 'outcomes' in r,
   );
   expect(responses).toHaveLength(event.responses.length);
   return { ...event, responses };
 }
-function pending(state: LunchState, id: string): LunchState {
+function pending(state: MeetingState, id: string): MeetingState {
   const expected = presentation(state, id);
   // Verify eligibility in the full pack, then force only the requested family.
   // The real engine still owns presentation, counters, queue consumption and log.
-  const narrowed: LunchContentPack = {
+  const narrowed: ContentPack = {
     ...pack,
     events: pack.events.filter(
       (e) => e.id === id || state.seenEventIds.includes(e.id),
@@ -117,11 +114,11 @@ function pending(state: LunchState, id: string): LunchState {
   return next;
 }
 function step(
-  state: LunchState,
+  state: MeetingState,
   id: string,
   response: string,
   outcome?: string,
-): LunchState {
+): MeetingState {
   const before = deepFreeze(pending(state, id));
   if (outcome === undefined) return resolveWithRules(before, response, rules);
   const next = getResponseOutcomesWithRules(before, response, rules).find(
@@ -131,11 +128,11 @@ function step(
   return next;
 }
 const nominated = step(
-  initialLunchState('content-witness'),
+  initialState('content-witness'),
   'nominate-cuisine',
   'thai',
 );
-const baseline: LunchState = {
+const baseline: MeetingState = {
   ...nominated,
   turn: 2,
   substantiveDrawCount: 2,
@@ -148,7 +145,7 @@ it('validates the approved injected pack and complete catalogs', () => {
     17, 3, 21,
   ]);
   expect(
-    readdirSync(new URL('../src/core/content/lunch/events/', import.meta.url))
+    readdirSync(new URL('../src/core/content/events/', import.meta.url))
       .map((f) => f.replace('.ts', ''))
       .sort(),
   ).toEqual(all.map((e) => e.id).sort());
@@ -317,9 +314,9 @@ it('audits every catalog and relationship row in order, without extra entries', 
 
 for (const e of all)
   it(`constructed presentation, requirements and every outcome: ${e.id}`, () => {
-    const states: readonly LunchState[] =
+    const states: readonly MeetingState[] =
       e.id === 'nominate-cuisine'
-        ? [initialLunchState('witness')]
+        ? [initialState('witness')]
         : [
             baseline,
             { ...baseline, present: [...baseline.present, 'legal'] },
@@ -328,7 +325,7 @@ for (const e of all)
           ];
     const reached = new Set<string>();
     for (const s of states) {
-      const state: LunchState = {
+      const state: MeetingState = {
         ...s,
         minute: 15,
         scheduled:
@@ -437,7 +434,7 @@ for (const name of [
   'Invitations, higher subsequent cost and a second presentation',
 ])
   it(`engine walkthrough: ${name}`, () => {
-    let state = initialLunchState(name);
+    let state = initialState(name);
     for (const row of rows.filter(
       (r) => r.section === name && 'H billed' in r.cells,
     )) {
@@ -499,11 +496,11 @@ for (const name of [
     const { score: total, titles, ...counters } = expected;
     expect(state).toMatchObject(counters);
     expect(score(state).total).toBe(total);
-    expect(earnedLunchTitles(state, score(state))).toEqual(titles);
+    expect(earnedTitles(state, score(state))).toEqual(titles);
   });
 for (const row of rows.filter((r) => r.section === 'Every callback due at n+2'))
   it(`callback mini-route ${row.line}`, () => {
-    let state = initialLunchState('callback');
+    let state = initialState('callback');
     for (const address of cell(row, 'Ordered resolutions').split('; ')) {
       const [event, response] = address.split('/');
       if (event === undefined || response === undefined)
@@ -517,7 +514,7 @@ for (const row of rows.filter((r) => r.section === 'Every callback due at n+2'))
   });
 it('nomination equality, cancel and early ending retain cuisine truth', () => {
   for (const c of pack.cuisines) {
-    const state = step(initialLunchState(c.id), 'nominate-cuisine', c.id);
+    const state = step(initialState(c.id), 'nominate-cuisine', c.id);
     expect([
       state.progress,
       state.minute,
@@ -534,7 +531,7 @@ it('nomination equality, cancel and early ending retain cuisine truth', () => {
       agreedCuisine: null,
     });
   }
-  expect(callIt(initialLunchState('cancel'))).toMatchObject({
+  expect(callIt(initialState('cancel'))).toMatchObject({
     ending: 'cancelled',
     progress: 0,
     minute: 0,
@@ -582,8 +579,8 @@ it('enforces invitation before/after arrivals and the inclusive Pat doorway boun
 });
 
 it('constructs all twelve title slots from the approved routes and counters', () => {
-  function route(actions: readonly string[]): LunchState {
-    let s = initialLunchState('title');
+  function route(actions: readonly string[]): MeetingState {
+    let s = initialState('title');
     for (const action of actions) {
       const [e, r] = action.split('/');
       if (e === undefined || r === undefined) throw new Error(action);
@@ -600,7 +597,7 @@ it('constructs all twelve title slots from the approved routes and counters', ()
     'spice-question/hear',
   ]);
   expect(score(high).total).toBe(960);
-  expect(earnedLunchTitles(high, score(high))).toEqual([
+  expect(earnedTitles(high, score(high))).toEqual([
     'inbox-zero',
     'efficient-facilitator',
     'lunch-agreed',
@@ -622,17 +619,17 @@ it('constructs all twelve title slots from the approved routes and counters', ()
     parked.personMinutes,
     parked.parkedCount,
   ]).toEqual([29, 12, 72, 4]);
-  expect(earnedLunchTitles(callIt(parked), score(callIt(parked)))).toEqual([
+  expect(earnedTitles(callIt(parked), score(callIt(parked)))).toEqual([
     'take-this-offline',
     'parking-lot-attendant',
   ]);
   const early = callIt(route(['nominate-cuisine/thai', 'menu-needs/hear']));
-  expect(earnedLunchTitles(early, score(early))).toEqual([
+  expect(earnedTitles(early, score(early))).toEqual([
     'played-it-right',
     'take-this-offline',
   ]);
-  const cancel = callIt(initialLunchState('cancel'));
-  expect(earnedLunchTitles(cancel, score(cancel))).toEqual([
+  const cancel = callIt(initialState('cancel'));
+  expect(earnedTitles(cancel, score(cancel))).toEqual([
     'could-have-been-an-email',
   ]);
   const slow = route([
@@ -650,7 +647,7 @@ it('constructs all twelve title slots from the approved routes and counters', ()
     'quick-agreement/hear',
   ]);
   expect([slow.minute, slow.personMinutes]).toEqual([50, 300]);
-  expect(earnedLunchTitles(slow, score(slow))).toEqual([
+  expect(earnedTitles(slow, score(slow))).toEqual([
     'lunch-agreed',
     'death-by-diligence',
     'table-for-six',
@@ -761,7 +758,7 @@ it('covers approved deadline, completing join, clamping and filler witnesses', (
       branches.find((b) => b.outcomeId === 'momentum')?.state.progress,
     ).toBe(Math.min(100, progress + 23));
   }
-  let exhausted: LunchState = {
+  let exhausted: MeetingState = {
     ...baseline,
     seenEventIds: pack.events.map((e) => e.id),
   };
@@ -808,7 +805,7 @@ it('keeps seeded engine draws and varied response replays immutable and bounded'
   const outcomes = new Set<string>();
   for (let seed = 0; seed < 100; seed += 1) {
     const replay = () => {
-      let s = initialLunchState(String(seed));
+      let s = initialState(String(seed));
       let count = 0;
       while (s.phase === 'running') {
         const before = drawEventWith(pack, deepFreeze(s));

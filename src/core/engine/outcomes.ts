@@ -15,32 +15,16 @@ import { reasonFor } from './responseValidation';
 import { evaluateResponse } from './value';
 import { addFractions, fractionNumber } from './utilityFraction';
 import type {
-  EngineResponse,
-  EngineState,
-  OutcomeResponse,
+  MeetingState,
+  Response,
   ResponseOutcome,
   UtilityRules,
 } from './types';
 
-/** Temporary migration discriminator; legacy launch effects stay unchanged until L08. */
-export function hasOutcomes(
-  response: EngineResponse,
-): response is OutcomeResponse {
-  return 'outcomes' in response;
-}
 /** ADR 0006: reject mixed/shared effects and validate the complete schema. */
 export function responseOutcomes(
-  response: EngineResponse,
+  response: Response,
 ): readonly ResponseOutcome[] {
-  if (!hasOutcomes(response))
-    return [
-      {
-        id: response.id,
-        weight: ONE,
-        effect: response.effect,
-        line: response.line,
-      },
-    ];
   const outcomes = response.outcomes;
   if (
     'effect' in response ||
@@ -74,9 +58,9 @@ export function responseOutcomes(
   );
 }
 /** Every branch uses the same validation, clamping and full-duration billing. No sampling. */
-export function evaluateOutcomes<S extends EngineState>(
-  state: S,
-  response: EngineResponse,
+export function evaluateOutcomes(
+  state: MeetingState,
+  response: Response,
   rules: UtilityRules,
 ) {
   if (response.requires !== undefined) reasonFor(response);
@@ -86,29 +70,12 @@ export function evaluateOutcomes<S extends EngineState>(
   const total = outcomes.reduce((sum, outcome) => sum + outcome.weight, ZERO);
   return outcomes.map((outcome) => {
     if (
-      hasOutcomes(response) &&
-      (outcome.effect.minutes < ONE ||
-        (outcome.effect.progress ?? ZERO) < MIN_CONTENT_PROGRESS ||
-        (outcome.effect.progress ?? ZERO) > MAX_CONTENT_PROGRESS)
+      outcome.effect.minutes < ONE ||
+      (outcome.effect.progress ?? ZERO) < MIN_CONTENT_PROGRESS ||
+      (outcome.effect.progress ?? ZERO) > MAX_CONTENT_PROGRESS
     )
       throw new EngineError('invalid-effect');
-    const applied = evaluateResponse(
-      state,
-      {
-        id: response.id,
-        label: response.label,
-        technique: response.technique,
-        ...(response.requires === undefined
-          ? {}
-          : { requires: response.requires }),
-        ...(response.disabledReasonKey === undefined
-          ? {}
-          : { disabledReasonKey: response.disabledReasonKey }),
-        effect: outcome.effect,
-        line: outcome.line,
-      },
-      rules,
-    );
+    const applied = evaluateResponse(state, response, outcome.effect, rules);
     return {
       outcome,
       probability: {

@@ -23,6 +23,23 @@ export function summarize(policy: Policy, states: readonly MeetingState[]) {
   const winRate = (wins / states.length) * 100;
   const medianTurns = median(states.map((state) => state.turn));
   const band = WIN_BANDS[policy];
+  const nominations: Record<string, number> = {};
+  const agreements: Record<string, number> = {};
+  const outcomes: Record<string, number> = {};
+  for (const state of states) {
+    if (state.nominatedCuisine !== null)
+      nominations[state.nominatedCuisine] =
+        (nominations[state.nominatedCuisine] ?? 0) + 1;
+    if (state.agreedCuisine !== null)
+      agreements[state.agreedCuisine] =
+        (agreements[state.agreedCuisine] ?? 0) + 1;
+    for (const entry of state.log) {
+      if (entry.type !== 'resolve') continue;
+      const key =
+        entry.eventId + '/' + entry.responseId + '/' + entry.outcomeId;
+      outcomes[key] = (outcomes[key] ?? 0) + 1;
+    }
+  }
   const bookings = states.flatMap((state) =>
     state.log.filter(
       (entry) => entry.type === 'resolve' && entry.eventId === 'room-booked',
@@ -44,6 +61,9 @@ export function summarize(policy: Policy, states: readonly MeetingState[]) {
         ? medianTurns >= GREEDY_TURN_BAND[0] &&
           medianTurns <= GREEDY_TURN_BAND[1]
         : null,
+    nominations,
+    agreements,
+    outcomes,
     reservationResponses: Object.fromEntries(
       ['hear', 'timebox', 'vp'].map((id) => [
         id,

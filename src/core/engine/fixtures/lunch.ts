@@ -1,20 +1,20 @@
 import type {
   Effect,
-  LunchContentPack,
-  LunchState,
-  LunchUtilityRules,
+  ContentPack,
+  MeetingState,
+  UtilityRules,
   MeetingEvent,
-  OutcomeResponse,
+  Response,
   Technique,
 } from '../types';
-import { initialLunchState } from '../state';
+import { initialState } from '../state';
 
 /** Synthetic rules only: deliberately unrelated to the unapproved lunch table. */
 export function lunchChoice(
   id: string,
   effect: Effect,
   technique: Technique = 'hear',
-): OutcomeResponse {
+): Response {
   return {
     id,
     label: 'Fixture choice',
@@ -23,7 +23,7 @@ export function lunchChoice(
     outcomes: [{ id: 'done', weight: 1, effect, line: 'Fixture outcome.' }],
   };
 }
-export const nomination: MeetingEvent<OutcomeResponse> = {
+export const nomination: MeetingEvent = {
   id: 'fixture-nomination',
   kind: 'substantive',
   rarity: 'common',
@@ -33,7 +33,7 @@ export const nomination: MeetingEvent<OutcomeResponse> = {
     lunchChoice(id, { minutes: 1, progress: 5, nominateCuisine: id }),
   ),
 };
-export const invite: OutcomeResponse = {
+export const invite: Response = {
   ...lunchChoice('invite', { minutes: 2, progress: 10, joins: ['vp'] }),
   requires: { absent: ['vp'] },
   disabledReasonKey: 'fixture-present',
@@ -52,7 +52,7 @@ export const invite: OutcomeResponse = {
     },
   ],
 };
-export const lottery: OutcomeResponse = {
+export const lottery: Response = {
   ...lunchChoice('lottery', { minutes: 1 }),
   outcomes: [
     {
@@ -69,7 +69,7 @@ export const lottery: OutcomeResponse = {
     },
   ],
 };
-const substantive: MeetingEvent<OutcomeResponse> = {
+const substantive: MeetingEvent = {
   id: 'fixture-discussion',
   kind: 'substantive',
   rarity: 'common',
@@ -98,7 +98,7 @@ const callbackTargets = {
   'fixture-parent-c': 'fixture-return-c',
 } as const;
 const parents = Object.entries(callbackTargets).map(
-  ([id, eventId]): MeetingEvent<OutcomeResponse> => ({
+  ([id, eventId]): MeetingEvent => ({
     id,
     kind: 'tangent',
     rarity: 'common',
@@ -114,7 +114,7 @@ const parents = Object.entries(callbackTargets).map(
     ],
   }),
 );
-const arrivals: readonly MeetingEvent<OutcomeResponse>[] = [
+const arrivals: readonly MeetingEvent[] = [
   {
     id: 'fixture-vp',
     kind: 'escalation',
@@ -134,7 +134,8 @@ const arrivals: readonly MeetingEvent<OutcomeResponse>[] = [
     responses: [lunchChoice('ack', { minutes: 1, joins: ['legal'] })],
   },
 ];
-export const lunchPack: LunchContentPack = {
+export const lunchPack: ContentPack = {
+  commentary: [],
   cuisines: [
     { id: 'fixture-a', name: 'Fixture A' },
     { id: 'fixture-b', name: 'Fixture B' },
@@ -173,7 +174,7 @@ export const lunchPack: LunchContentPack = {
         lunchChoice('long', { minutes: 2, bookingEnd: 60 }),
       ],
     },
-    ...Array.from({ length: 8 }, (_, i): MeetingEvent<OutcomeResponse> => ({
+    ...Array.from({ length: 8 }, (_, i): MeetingEvent => ({
       id: 'fixture-noise-' + i,
       kind: 'noise',
       rarity: 'uncommon',
@@ -197,19 +198,21 @@ export const lunchPack: LunchContentPack = {
     rarity: 'common',
     speaker: 'room',
     line: 'Fixture filler.',
-    responses: [lunchChoice('ack', { minutes: 2 })],
+    responses: [lunchChoice('ack', { minutes: 2 }, 'ack')],
   },
 };
-export const lunchRules: LunchUtilityRules = {
-  profile: 'lunch',
+export const lunchRules: UtilityRules = {
   costWeight: 1.2,
   costUnit: 6,
   cuisines: lunchPack.cuisines,
+  commentary: lunchPack.commentary,
   eventRules: lunchPack.eventRules,
 };
-export function lunchState(overrides: Partial<LunchState> = {}): LunchState {
+export function lunchState(
+  overrides: Partial<MeetingState> = {},
+): MeetingState {
   return {
-    ...initialLunchState('fixture-lunch'),
+    ...initialState('fixture-lunch'),
     turn: 2,
     substantiveDrawCount: 2,
     nominatedCuisine: 'fixture-a',
@@ -217,9 +220,9 @@ export function lunchState(overrides: Partial<LunchState> = {}): LunchState {
   };
 }
 export function lunchPending(
-  responses: readonly OutcomeResponse[],
-  overrides: Partial<LunchState> = {},
-): LunchState {
+  responses: readonly Response[],
+  overrides: Partial<MeetingState> = {},
+): MeetingState {
   return lunchState({
     ...overrides,
     current: {

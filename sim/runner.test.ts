@@ -11,20 +11,11 @@ it('replays arbitrary seeds with legal terminating live runs under both policies
       for (const policy of ['greedy', 'random'] as const) {
         const state = verifiedMeeting(seed, policy);
         expect(state.phase).toBe('ended');
-        expect(state.releasedAttendeeIds).toEqual(
-          policy === 'greedy' ? ['gary', 'jordan'] : [],
-        );
+        expect(state.present.length).toBeGreaterThanOrEqual(6);
+        expect(state.nominatedCuisine).not.toBeNull();
         expect(state.log.filter((entry) => entry.type === 'call-it')).toEqual(
           [],
         );
-        if (policy === 'greedy') {
-          const firstDraw = state.log.findIndex(
-            (entry) => entry.type === 'draw',
-          );
-          expect(
-            state.log.slice(0, firstDraw).map((entry) => entry.type),
-          ).toEqual(['release', 'release']);
-        }
       }
     }),
     { seed: 80801, numRuns: 100 },
@@ -35,11 +26,10 @@ it('fails on illegal states, regressing counters, excessive turns and replay mis
   const state = initialState('fixture');
   for (const invalid of [
     { ...state, progress: 101 },
-    { ...state, risks: -1 },
     { ...state, minute: 0.5 },
     { ...state, present: ['dev', 'sam'] as const },
     { ...state, present: ['priya', 'priya'] as const },
-    { ...state, turn: 51 },
+    { ...state, turn: 51, nominatedCuisine: 'thai' },
     { ...state, bookingEnd: 61 },
     { ...state, phase: 'ended' as const, ending: 'decision' as const },
   ])
@@ -61,21 +51,23 @@ it('uses all-run medians and reports balance misses without failing invariants',
 it('rejects policy violations in the per-run invariant gate', () => {
   const greedy = verifiedMeeting('policy-contract', 'greedy');
   const random = verifiedMeeting('policy-contract', 'random');
-  expect(() => assertPolicy(greedy, 'random')).toThrow(
-    'Unexpected policy releases',
-  );
   expect(() =>
     assertPolicy(
-      { ...greedy, releasedAttendeeIds: ['jordan', 'gary'] },
+      {
+        ...greedy,
+        decisions: [
+          {
+            turn: 0,
+            eventId: 'fixture',
+            responseId: 'fixture',
+            quality: 0,
+            qualityFraction: { numerator: '0', denominator: '1' },
+          },
+        ],
+      },
       'greedy',
     ),
-  ).toThrow();
-  expect(() =>
-    assertPolicy(
-      { ...greedy, log: [...greedy.log.slice(2), ...greedy.log.slice(0, 2)] },
-      'greedy',
-    ),
-  ).toThrow('precede first draw');
+  ).toThrow('best expected utility');
   expect(() =>
     assertPolicy({ ...random, ending: 'called-early' }, 'random'),
   ).toThrow('called it early');

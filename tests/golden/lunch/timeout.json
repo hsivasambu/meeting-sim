@@ -703,7 +703,7 @@
         "minute": 21,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -737,7 +737,7 @@
         "minute": 24,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -754,7 +754,7 @@
         "minute": 26,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -771,7 +771,7 @@
         "minute": 28,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -788,7 +788,7 @@
         "minute": 30,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -805,7 +805,7 @@
         "minute": 32,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -822,7 +822,7 @@
         "minute": 34,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -839,7 +839,7 @@
         "minute": 36,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -856,7 +856,7 @@
         "minute": 38,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -873,7 +873,7 @@
         "minute": 40,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -890,7 +890,7 @@
         "minute": 42,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -907,7 +907,7 @@
         "minute": 44,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       },
@@ -924,7 +924,7 @@
         "minute": 46,
         "eventId": "fixture-filler",
         "responseId": "ack",
-        "technique": "hear",
+        "technique": "ack",
         "line": "Fixture outcome.",
         "outcomeId": "done"
       }

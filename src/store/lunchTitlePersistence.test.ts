@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { legacyTitleIds } from '../core/content/legacyTitleIds';
-import { titles as launchTitles } from '../core/content/titles';
+import { legacyTitles } from '../core/content/legacyTitles';
 import { createLunchTitlePersistence } from './persistence';
 
 const v1Key = 'tcbae:v1:titles';
@@ -24,12 +23,25 @@ function blocked(): never {
 
 describe('lunch title persistence (ADR 0008)', () => {
   it('recognizes every ID issued by the launch catalog', () => {
-    const launchIds = launchTitles.map((title) => title.id);
+    const launchIds = [
+      'inbox-zero',
+      'efficient-facilitator',
+      'ship-it-and-pray',
+      'death-by-diligence',
+      'skeleton-crew',
+      'reply-all-royalty',
+      'parking-lot-attendant',
+      'gary-free-zone',
+      'played-it-right',
+      'take-this-offline',
+      'calendar-criminal',
+      'could-have-been-an-email',
+    ];
     const legacy = JSON.stringify(launchIds);
     const storage = storageWith(legacy, null);
     const snapshot = createLunchTitlePersistence(() => storage);
 
-    expect(legacyTitleIds).toEqual(launchIds);
+    expect(legacyTitles.map(({ id }) => id)).toEqual(launchIds);
     expect(snapshot.legacyTitles).toEqual(launchIds);
     expect(snapshot.currentTitles).toEqual([]);
     expect(storage.setItem).not.toHaveBeenCalled();

@@ -1,12 +1,10 @@
-import type { AttendeeId, EventRules, Rarity } from './types';
+import type { AttendeeId, Rarity } from './types';
 
 export const ZERO = 0;
 export const ONE = 1;
 export const INITIAL_BOOKING_END = 60;
 export const REDUCED_BOOKING_END = 45;
 export const PROGRESS_MAX = 100;
-export const RISKS_MAX = 5;
-export const MIN_HEADCOUNT = 2;
 export const MAX_HEADCOUNT = 8;
 export const DECISION_OWNER: AttendeeId = 'priya';
 export const INITIAL_ATTENDEES = [
@@ -27,15 +25,12 @@ export const RARITY_WEIGHTS = {
   rare: 7,
 } as const satisfies Record<Rarity, number>;
 export const OUTCOME_MAX = 400;
-export const RISK_PENALTY = 60;
-export const RISK_PENALTY_CAP = 200;
 export const FAIL_MULTIPLIER = 1.8;
 export const EFFICIENCY_MAX = 300;
 export const COST_REF_PM = 360;
 export const COST_FLOOR_PM = 90;
 export const DECISIONS_MAX = 300;
 export const W_COST = 1.2;
-export const W_RISK = 12;
 export const UTILITY_COST_PM = 6;
 export const DISPLAY_HOURLY_RATE = 1000;
 export const MINUTES_PER_HOUR = 60;
@@ -59,7 +54,6 @@ export const PRNG_OR_SECOND = 61;
 
 export const UTILITY_RULES = {
   costWeight: W_COST,
-  riskWeight: W_RISK,
   costUnit: UTILITY_COST_PM,
 } as const;
 export const MAX_RESPONSE_MINUTES = 10;
@@ -68,8 +62,6 @@ export const MAX_OUTCOME_WEIGHT = 65536;
 export const MAX_RESPONSES = 3;
 export const MIN_CONTENT_PROGRESS = -10;
 export const MAX_CONTENT_PROGRESS = 25;
-export const MIN_CONTENT_RISKS = -1;
-export const MAX_CONTENT_RISKS = 1;
 export const LINE_CODE_POINTS = 90;
 export const LABEL_CODE_POINTS = 24;
 export const TITLE_CODE_POINTS = 28;
@@ -79,28 +71,6 @@ export const ATTENDEE_IDS = [
   'vp',
   'legal',
 ] as const satisfies readonly AttendeeId[];
-export const EXPERT_ATTENDEE_IDS = [
-  'dev',
-  'sam',
-  'morgan',
-] as const satisfies readonly AttendeeId[];
-export const CONDITION_KEYS = [
-  'present',
-  'absent',
-  'minMinute',
-  'maxMinute',
-  'minRisks',
-  'maxRisks',
-] as const;
-export const MVP_EVENT_RULES = {
-  arrivalAttendees: { legal: 'legal', 'vp-joins': 'vp' },
-  callbackTargets: {
-    'circle-back': 'circle-back-return',
-    'support-training': 'support-follow-up',
-    'p1-bug': 'p1-follow-up',
-  },
-  bookingEventIds: ['room-booked'],
-} as const satisfies EventRules;
 
 export const DECIMAL_BASE = 10n;
 export const BIGINT_ZERO = 0n;
@@ -108,17 +78,14 @@ export const BIGINT_ONE = 1n;
 export const UTILITY_RATIO_DIGITS = 17;
 export const TITLE_SCORE_INBOX = 950;
 export const TITLE_SCORE_EFFICIENT = 850;
-export const TITLE_RISK_SHIP = 3;
 export const TITLE_COST_DILIGENCE_PM = 270;
-export const TITLE_HEADCOUNT_SKELETON = 3;
 export const TITLE_PARKED_MIN = 4;
 export const TITLE_QUALITY_FAIR = 0.85;
 
 // Readonly observation contract; every rule value has its existing canonical source.
 export const ENGINE_LIMITS = Object.freeze({
   progressMax: PROGRESS_MAX,
-  risksMax: RISKS_MAX,
-  minHeadcount: MIN_HEADCOUNT,
+  minHeadcount: INITIAL_ATTENDEES.length,
   maxHeadcount: MAX_HEADCOUNT,
   decisionOwner: DECISION_OWNER,
   initialBookingEnd: INITIAL_BOOKING_END,
@@ -130,3 +97,12 @@ export const ENGINE_LIMITS = Object.freeze({
 // Conservative authored display bounds, docs/content-table.md → copy substitutions.
 export const LUNCH_COPY_MINUTE_BOUND = 69;
 export const LUNCH_COPY_PM_BOUND = 552;
+
+// D18 commentary thresholds and ADR 0008 cadence.
+export const COMMENTARY_INTERVAL = 3;
+export const COMMENTARY_LIMIT = 3;
+export const COMMENTARY_NEAR_PROGRESS = 80;
+export const COMMENTARY_COST_PM = 180;
+export const COMMENTARY_POSTPONED = 2;
+export const COMMENTARY_STALLED_PROGRESS = 30;
+export const COMMENTARY_STALLED_MINUTE = 15;

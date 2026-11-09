@@ -17,14 +17,11 @@ export interface Condition {
   readonly maxMinute?: number;
   readonly present?: readonly AttendeeId[];
   readonly absent?: readonly AttendeeId[];
-  readonly minRisks?: number;
-  readonly maxRisks?: number;
 }
 export interface Effect {
   readonly nominateCuisine?: CuisineId;
   readonly progress?: number;
   readonly minutes: number;
-  readonly risks?: number;
   readonly joins?: readonly AttendeeId[];
   readonly bookingEnd?: typeof REDUCED_BOOKING_END | typeof INITIAL_BOOKING_END;
   readonly callback?: {
@@ -32,40 +29,32 @@ export interface Effect {
     readonly afterTurns: typeof CALLBACK_DELAY;
   };
 }
-export interface Response {
-  readonly id: string;
-  readonly label: string;
-  readonly technique: Technique;
-  readonly requires?: Condition;
-  readonly disabledReasonKey?: string;
-  readonly effect: Effect;
-  readonly line: string;
-}
-// Temporary launch defaults are removed at L08; outcome fixtures share the engine.
 export interface ResponseOutcome {
   readonly id: string;
   readonly weight: number;
   readonly effect: Effect;
   readonly line: string;
 }
-export interface OutcomeResponse extends Omit<Response, 'effect' | 'line'> {
+export interface Response {
+  readonly id: string;
+  readonly label: string;
+  readonly technique: Technique;
+  readonly requires?: Condition;
+  readonly disabledReasonKey?: string;
   readonly description: string;
   readonly outcomes: readonly ResponseOutcome[];
-  readonly effect?: never;
-  readonly line?: never;
 }
-export type EngineResponse = Response | OutcomeResponse;
 export interface ExactFraction {
   readonly numerator: string;
   readonly denominator: string;
 }
-export interface EventVariant<R extends EngineResponse = Response> {
+export interface EventVariant {
   readonly when: Condition;
   readonly speaker: AttendeeId | 'room';
   readonly line: string;
-  readonly responses: readonly R[];
+  readonly responses: readonly Response[];
 }
-export interface MeetingEvent<R extends EngineResponse = Response> {
+export interface MeetingEvent {
   readonly id: string;
   readonly kind: EventKind;
   readonly rarity: Rarity;
@@ -73,18 +62,18 @@ export interface MeetingEvent<R extends EngineResponse = Response> {
   readonly line: string;
   readonly weight?: number;
   readonly negative?: boolean;
-  readonly variants?: readonly EventVariant<R>[];
+  readonly variants?: readonly EventVariant[];
   readonly when?: Condition;
-  readonly responses: readonly R[];
+  readonly responses: readonly Response[];
 }
-export interface PresentedEvent<R extends EngineResponse = Response> {
+export interface PresentedEvent {
   readonly id: string;
   readonly kind: EventKind;
   readonly rarity: Rarity;
   readonly negative: boolean;
   readonly speaker: AttendeeId | 'room';
   readonly line: string;
-  readonly responses: readonly R[];
+  readonly responses: readonly Response[];
 }
 export interface DecisionRecord {
   readonly turn: number;
@@ -112,13 +101,8 @@ export type LogEntry =
       readonly responseId: string;
       readonly technique: Technique;
       readonly line: string;
-      readonly outcomeId?: string;
-    }
-  | {
-      readonly type: 'release';
-      readonly turn: number;
-      readonly minute: number;
-      readonly who: AttendeeId;
+      readonly outcomeId: string;
+      readonly commentaryId?: string;
     }
   | {
       readonly type: 'join';
@@ -131,24 +115,8 @@ export type LogEntry =
       readonly turn: number;
       readonly minute: number;
     };
-export type ResponsePreview =
-  | {
-      readonly enabled: false;
-      readonly responseId: string;
-      readonly reasonKey: string;
-    }
-  | {
-      readonly enabled: true;
-      readonly responseId: string;
-      readonly effect: Effect;
-      readonly progressDelta: number;
-      readonly risksDelta: number;
-      readonly minutesDelta: number;
-      readonly personMinutesDelta: number;
-      readonly utility: number;
-    };
-export interface DrawCandidate<R extends EngineResponse = Response> {
-  readonly event: PresentedEvent<R>;
+export interface DrawCandidate {
+  readonly event: PresentedEvent;
   readonly probability: number;
 }
 export interface OutcomePreview {
@@ -161,8 +129,12 @@ export interface OutcomePreview {
   readonly utility: number;
   readonly utilityFraction: ExactFraction;
 }
-export type OutcomeResponsePreview =
-  | Extract<ResponsePreview, { enabled: false }>
+export type ResponsePreview =
+  | {
+      readonly enabled: false;
+      readonly responseId: string;
+      readonly reasonKey: string;
+    }
   | {
       readonly enabled: true;
       readonly responseId: string;
@@ -173,18 +145,11 @@ export type OutcomeResponsePreview =
       readonly minutesDelta: number;
       readonly personMinutesDelta: number;
     };
-export interface ResponseSuccessor<R extends EngineResponse = Response> {
+export interface ResponseSuccessor {
   readonly outcomeId: string;
   readonly probabilityFraction: ExactFraction;
-  readonly state: MeetingState<R>;
+  readonly state: MeetingState;
 }
-export type ReleasePreview =
-  | { readonly enabled: true }
-  | {
-      readonly enabled: false;
-      readonly reasonKey:
-        'release-owner' | 'release-absent' | 'release-minimum';
-    };
 export interface ScoreBreakdown {
   readonly outcome: number;
   readonly efficiency: number;
@@ -204,22 +169,7 @@ export type LegacyTitleId =
   | 'take-this-offline'
   | 'calendar-criminal'
   | 'could-have-been-an-email';
-export type TitleId = LegacyTitleId;
-export interface EventRules {
-  readonly arrivalAttendees: Readonly<Record<string, AttendeeId>>;
-  readonly callbackTargets: Readonly<Record<string, string>>;
-  readonly bookingEventIds: readonly string[];
-}
-export interface ContentPack<
-  R extends EngineResponse = Response,
-  Rules = EventRules,
-> {
-  readonly eventRules: Rules;
-  readonly events: readonly MeetingEvent<R>[];
-  readonly callbacks: readonly MeetingEvent<R>[];
-  readonly filler: MeetingEvent<R>;
-}
-export interface SharedMeetingState<R extends EngineResponse = Response> {
+export interface MeetingState {
   readonly seed: string;
   readonly turn: number;
   readonly minute: number;
@@ -237,36 +187,25 @@ export interface SharedMeetingState<R extends EngineResponse = Response> {
     readonly eventId: string;
     readonly dueTurn: number;
   }[];
-  readonly current: PresentedEvent<R> | null;
+  readonly current: PresentedEvent | null;
   readonly decisions: readonly DecisionRecord[];
   readonly log: readonly LogEntry[];
   readonly phase: 'running' | 'ended';
   readonly ending:
     'decision' | 'called-early' | 'time-expired' | 'cancelled' | null;
-}
-
-export interface MeetingState<
-  R extends EngineResponse = Response,
-> extends SharedMeetingState<R> {
-  readonly risks: number;
-  readonly releasedAttendeeIds: readonly AttendeeId[];
-}
-
-// Temporary fixture-injected migration profile; L08 removes the launch schema.
-export type CuisineId = string;
-export interface Cuisine {
-  readonly id: CuisineId;
-  readonly name: string;
-}
-export interface LunchState extends SharedMeetingState<OutcomeResponse> {
   readonly nominatedCuisine: CuisineId | null;
   readonly agreedCuisine: CuisineId | null;
   readonly resolvedCallbackCount: number;
   readonly shownCommentaryIds: readonly string[];
   readonly lastCommentaryTurn: number | null;
 }
-export type EngineState = MeetingState<EngineResponse> | LunchState;
-export interface LunchEventRules {
+
+export type CuisineId = string;
+export interface Cuisine {
+  readonly id: CuisineId;
+  readonly name: string;
+}
+export interface EventRules {
   readonly nominationEventId: string;
   readonly arrivalPermissions: readonly {
     readonly eventId: string;
@@ -277,11 +216,13 @@ export interface LunchEventRules {
   readonly callbackTargets: Readonly<Record<string, string>>;
   readonly bookingEventIds: readonly string[];
 }
-export interface LunchContentPack extends ContentPack<
-  OutcomeResponse,
-  LunchEventRules
-> {
+export interface ContentPack {
+  readonly eventRules: EventRules;
   readonly cuisines: readonly Cuisine[];
+  readonly commentary: readonly LunchCommentary[];
+  readonly events: readonly MeetingEvent[];
+  readonly callbacks: readonly MeetingEvent[];
+  readonly filler: MeetingEvent;
 }
 export interface LunchAttendee {
   readonly id: AttendeeId;
@@ -292,16 +233,23 @@ export interface LunchAttendee {
 }
 export interface LunchTitle {
   readonly slot: number;
-  readonly id: LunchTitleId;
+  readonly id: TitleId;
   readonly name: string;
   /** Review annotation; predicates are evaluated only by titleRules.ts. */
   readonly predicate: string;
   readonly flavour: string;
 }
 export interface LunchCommentary {
-  readonly id: string;
+  readonly id:
+    | 'agreement-commentary'
+    | 'nearly-there'
+    | 'full-room'
+    | 'topic-returned'
+    | 'expensive-discussion'
+    | 'postponed-again'
+    | 'still-considering';
   readonly priority: number;
-  /** Authored post-resolution predicate; activation/evaluation belongs to L07/L08. */
+  /** Review annotation for the engine-owned post-resolution predicate. */
   readonly predicate: string;
   readonly line: string;
 }
@@ -316,7 +264,7 @@ export interface LunchCatalog {
   readonly moments: Readonly<Record<string, string>>;
   readonly parkTopics: Readonly<Record<string, string>>;
 }
-export type LunchTitleId =
+export type TitleId =
   | Exclude<
       LegacyTitleId,
       'ship-it-and-pray' | 'skeleton-crew' | 'gary-free-zone'
@@ -325,18 +273,10 @@ export type LunchTitleId =
   | 'table-for-six'
   | 'second-helping';
 
-export interface LaunchUtilityRules {
-  readonly profile?: 'launch';
-  readonly costWeight: number;
-  readonly riskWeight: number;
-  readonly costUnit: number;
-  readonly eventRules?: EventRules;
-}
-export interface LunchUtilityRules {
-  readonly profile: 'lunch';
+export interface UtilityRules {
   readonly costWeight: number;
   readonly costUnit: number;
-  readonly eventRules: LunchEventRules;
+  readonly eventRules: EventRules;
   readonly cuisines: readonly Cuisine[];
+  readonly commentary: readonly LunchCommentary[];
 }
-export type UtilityRules = LaunchUtilityRules | LunchUtilityRules;

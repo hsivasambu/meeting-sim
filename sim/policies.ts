@@ -1,6 +1,11 @@
 import { createHash } from 'node:crypto';
 import { previewResponse } from '../src/core/engine/index';
-import type { MeetingState, Response } from '../src/core/engine/index';
+import type {
+  ExactFraction,
+  MeetingState,
+  OutcomePreview,
+  Response,
+} from '../src/core/engine/index';
 import type { Policy } from './settings';
 
 export function enabledResponses(state: MeetingState): readonly Response[] {
@@ -11,16 +16,41 @@ export function enabledResponses(state: MeetingState): readonly Response[] {
   return responses;
 }
 
+function compare(left: ExactFraction, right: ExactFraction): number {
+  const difference =
+    BigInt(left.numerator) * BigInt(right.denominator) -
+    BigInt(right.numerator) * BigInt(left.denominator);
+  return difference < 0n ? -1 : difference > 0n ? 1 : 0;
+}
+
+function expectedMinutes(outcomes: readonly OutcomePreview[]): ExactFraction {
+  let numerator = 0n;
+  let denominator = 1n;
+  for (const { minutesDelta, probabilityFraction } of outcomes) {
+    const weight = BigInt(probabilityFraction.numerator);
+    const total = BigInt(probabilityFraction.denominator);
+    numerator = numerator * total + BigInt(minutesDelta) * weight * denominator;
+    denominator *= total;
+  }
+  return {
+    numerator: numerator.toString(),
+    denominator: denominator.toString(),
+  };
+}
+
 export function greedy(state: MeetingState): Response {
   const candidates = enabledResponses(state).map((response) => {
     const preview = previewResponse(state, response);
     if (!preview.enabled) throw new Error('Disabled candidate');
-    return { response, preview };
+    return { response, preview, minutes: expectedMinutes(preview.outcomes) };
   });
   candidates.sort(
     (a, b) =>
-      b.preview.utility - a.preview.utility ||
-      a.preview.minutesDelta - b.preview.minutesDelta ||
+      compare(
+        b.preview.expectedUtilityFraction,
+        a.preview.expectedUtilityFraction,
+      ) ||
+      compare(a.minutes, b.minutes) ||
       (a.response.id < b.response.id
         ? -1
         : a.response.id > b.response.id

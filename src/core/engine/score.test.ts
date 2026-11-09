@@ -17,6 +17,7 @@ import {
   fixtureResponse,
   fixtureUtilityRules,
 } from './fixtures/transitions';
+import { lunchChoice } from './fixtures/lunch';
 import { resolveWithRules } from './resolve';
 
 describe('Design Doc v2 scoring', () => {
@@ -30,15 +31,10 @@ describe('Design Doc v2 scoring', () => {
   );
 
   it.each([
-    [99, 0, 178],
-    [100, 0, 400],
-    [100, 1, 340],
-    [100, 2, 280],
-    [100, 3, 220],
-    [100, 4, 200],
-    [100, 5, 200],
-  ])('P=%i R=%i has outcome %i', (progress, risks, outcome) => {
-    expect(score(scoreState({ progress, risks })).outcome).toBe(outcome);
+    [99, 178],
+    [100, 400],
+  ])('P=%i has outcome %i', (progress, outcome) => {
+    expect(score(scoreState({ progress })).outcome).toBe(outcome);
   });
 
   it.each([
@@ -123,12 +119,9 @@ describe('Design Doc v2 scoring', () => {
     ).toBe(expected);
   });
 
-  it('later attendance, risk and narrative changes cannot rewrite past decision quality', () => {
+  it('later attendance and narrative changes cannot rewrite past decision quality', () => {
     const resolved = resolveWithRules(
-      pending([
-        fixtureResponse,
-        { ...fixtureResponse, id: 'worse', effect: { minutes: 5 } },
-      ]),
+      pending([fixtureResponse, lunchChoice('worse', { minutes: 5 })]),
       fixtureResponse.id,
       fixtureUtilityRules,
     );
@@ -136,8 +129,7 @@ describe('Design Doc v2 scoring', () => {
     const original = score(ended).decisions;
     expect(original).toBe(300);
     expect(
-      score({ ...ended, present: ['priya', 'sam'], risks: 5, log: [] })
-        .decisions,
+      score({ ...ended, present: [...ended.present, 'vp'], log: [] }).decisions,
     ).toBe(original);
   });
 
@@ -145,16 +137,14 @@ describe('Design Doc v2 scoring', () => {
     fc.assert(
       fc.property(
         fc.integer({ min: 0, max: 100 }),
-        fc.integer({ min: 0, max: 5 }),
         fc.integer({ min: 0, max: 552 }),
         fc.array(fc.option(fc.integer({ min: 0, max: 1000 }), { nil: null }), {
           maxLength: 50,
         }),
-        (progress, risks, personMinutes, qualities) => {
+        (progress, personMinutes, qualities) => {
           const state = deepFreeze(
             scoreState({
               progress,
-              risks,
               personMinutes,
               ending: progress === 100 ? 'decision' : 'time-expired',
               decisions: qualityRecords(
@@ -174,9 +164,9 @@ describe('Design Doc v2 scoring', () => {
           expect(result.total).toBe(
             result.outcome + result.efficiency + result.decisions,
           );
-          expect(
-            score(scoreState({ progress: 100, risks })).outcome,
-          ).toBeGreaterThan(score(scoreState({ progress: 99, risks })).outcome);
+          expect(score(scoreState({ progress: 100 })).outcome).toBeGreaterThan(
+            score(scoreState({ progress: 99 })).outcome,
+          );
         },
       ),
       { seed: 51005, numRuns: 300 },

@@ -1,124 +1,77 @@
 import { expect, it } from 'vitest';
 import { previewWithRules } from './preview';
 import { resolveWithRules } from './resolve';
-import { previewResponse, resolve } from './index';
-import {
-  deepFreeze,
-  pending,
-  fixtureResponse,
-  fixtureUtilityRules,
-} from './fixtures/transitions';
-import type { Response } from './types';
+import { lunchChoice, lunchRules, lunchState } from './fixtures/lunch';
+import { deepFreeze, pending } from './fixtures/transitions';
+import type { Effect, MeetingState } from './types';
+
+const park = lunchChoice(
+  'park',
+  {
+    minutes: 2,
+    callback: { eventId: 'fixture-return-a', afterTurns: 2 },
+  },
+  'park',
+);
 
 it.each([
-  { ...fixtureResponse, technique: 'ack' as const, effect: { minutes: 0 } },
-  { ...fixtureResponse, effect: { minutes: 1, bookingEnd: 45 as const } },
-  { ...fixtureResponse, effect: { minutes: 1, joins: ['legal'] as const } },
-  {
-    ...fixtureResponse,
-    technique: 'park' as const,
-    effect: {
-      minutes: 1,
-      callback: { eventId: 'support-follow-up', afterTurns: 2 as const },
-    },
-  },
-])(
-  'rejects the same malformed context in public preview and resolve',
-  (response) => {
-    const state = deepFreeze(pending([response]));
-    expect(() => previewResponse(state, response)).toThrow();
-    expect(() => resolve(state, response.id)).toThrow();
+  { scheduled: [{ eventId: 'fixture-return-a', dueTurn: 5 }] },
+  { scheduled: [{ eventId: 'another-return', dueTurn: 4 }] },
+  { seenEventIds: ['fixture-return-a'] },
+] satisfies Partial<MeetingState>[])(
+  'rejects repeated targets and due-turn collisions atomically',
+  (patch) => {
+    const state = deepFreeze(
+      pending([park], { turn: 2, ...patch }, { id: 'fixture-parent-a' }),
+    );
+    const before = JSON.stringify(state);
+    expect(() => previewWithRules(state, park, lunchRules)).toThrow(
+      'invalid-schedule',
+    );
+    expect(() => resolveWithRules(state, park.id, lunchRules)).toThrow(
+      'invalid-schedule',
+    );
+    expect(JSON.stringify(state)).toBe(before);
   },
 );
-it('uses authored Sam/Dev reasons instead of deriving player copy in the engine', () => {
-  const sam: Response = {
-    ...fixtureResponse,
-    id: 'sam',
-    requires: { present: ['sam'] },
-    disabledReasonKey: 'needs-sam',
-  };
-  const dev: Response = {
-    ...fixtureResponse,
-    id: 'dev',
-    requires: { present: ['dev'] },
-    disabledReasonKey: 'needs-dev',
-  };
-  const state = deepFreeze(pending([sam, dev], { present: ['priya'] }));
-  expect(previewResponse(state, sam)).toEqual({
-    enabled: false,
-    responseId: 'sam',
-    reasonKey: 'needs-sam',
-  });
-  expect(previewResponse(state, dev)).toEqual({
-    enabled: false,
-    responseId: 'dev',
-    reasonKey: 'needs-dev',
-  });
-});
-it('rejects missing/empty content reasons for conditional responses', () => {
-  const { disabledReasonKey, ...base } = fixtureResponse;
-  expect(disabledReasonKey).toBeDefined();
-  for (const response of [
-    { ...base, requires: { present: ['legal'] as const } },
-    { ...base, requires: { present: ['sam'] as const }, disabledReasonKey: '' },
-  ]) {
-    expect(() => previewResponse(pending([response]), response)).toThrow(
-      'invalid-response',
-    );
+
+it('requires pending context for every event-dependent effect', () => {
+  const state = lunchState();
+  expect(
+    previewWithRules(state, lunchChoice('plain', { minutes: 1 }), lunchRules)
+      .enabled,
+  ).toBe(true);
+  for (const effect of [
+    { minutes: 1, joins: ['vp'] },
+    { minutes: 1, bookingEnd: 45 },
+    { minutes: 1, callback: { eventId: 'fixture-return-a', afterTurns: 2 } },
+    { minutes: 1, nominateCuisine: 'fixture-a' },
+  ] satisfies Effect[]) {
+    expect(() =>
+      previewWithRules(state, lunchChoice('test', effect), lunchRules),
+    ).toThrow('missing-event');
   }
 });
-it('injects renamed fixture arrival, callback and booking IDs without engine changes', () => {
-  const rules = {
-    ...fixtureUtilityRules,
-    eventRules: {
-      arrivalAttendees: { 'fixture-arrival': 'legal' as const },
-      callbackTargets: { 'fixture-parent': 'fixture-return' },
-      bookingEventIds: ['fixture-booking'],
-    },
-  };
-  const join: Response = {
-    ...fixtureResponse,
-    effect: { minutes: 1, joins: ['legal'] },
-  };
-  const joinState = deepFreeze(pending([join], {}, { id: 'fixture-arrival' }));
-  expect(previewWithRules(joinState, join, rules).enabled).toBe(true);
-  expect(resolveWithRules(joinState, join.id, rules).present).toContain(
-    'legal',
+
+it('rejects a missing or invalid booking and unsafe accumulated time or cost', () => {
+  const plain = lunchChoice('plain', { minutes: 2 });
+  const booking = pending([plain], {}, { id: 'fixture-booking' });
+  expect(() => resolveWithRules(booking, plain.id, lunchRules)).toThrow(
+    'invalid-effect',
   );
-  const callback: Response = {
-    ...fixtureResponse,
-    technique: 'park',
-    effect: {
-      minutes: 1,
-      callback: { eventId: 'fixture-return', afterTurns: 2 },
-    },
-  };
-  expect(
-    resolveWithRules(
-      pending([callback], {}, { id: 'fixture-parent' }),
-      callback.id,
-      rules,
-    ).scheduled,
-  ).toEqual([{ eventId: 'fixture-return', dueTurn: 2 }]);
-  const booked: Response = {
-    ...fixtureResponse,
-    effect: { minutes: 1, bookingEnd: 45 },
-  };
-  expect(
-    resolveWithRules(
-      pending([booked], {}, { id: 'fixture-booking' }),
-      booked.id,
-      rules,
-    ).bookingEnd,
-  ).toBe(45);
-});
-it('requires pending context for event-dependent preview effects', () => {
-  const response: Response = {
-    ...fixtureResponse,
-    effect: { minutes: 1, joins: ['legal'] },
-  };
-  const state = pending([response]);
-  expect(() => previewResponse({ ...state, current: null }, response)).toThrow(
-    'missing-event',
+  const invalid = lunchChoice('invalid', {
+    minutes: 1,
+    bookingEnd: 46,
+  } as unknown as Effect);
+  expect(() => previewWithRules(booking, invalid, lunchRules)).toThrow(
+    'invalid-effect',
   );
+  for (const patch of [
+    { minute: Number.MAX_SAFE_INTEGER },
+    { personMinutes: Number.MAX_SAFE_INTEGER },
+  ]) {
+    expect(() =>
+      previewWithRules(pending([plain], patch), plain, lunchRules),
+    ).toThrow('invalid-effect');
+  }
 });

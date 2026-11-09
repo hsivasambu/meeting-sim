@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest';
 import fc from 'fast-check';
-import { fixturePack } from './fixtures/packs';
+import { lunchPack } from './fixtures/lunch';
 import { selectWeightedEvent } from './weighted';
 import type { MeetingEvent, Rarity } from './types';
 
@@ -16,7 +16,7 @@ function choose(
 ): MeetingEvent {
   return selectWeightedEvent(events, rng, fixtureWeights);
 }
-const example = fixturePack.filler;
+const example = lunchPack.filler;
 const pool: readonly MeetingEvent[] = Object.freeze([
   Object.freeze({ ...example, id: 'z', rarity: 'rare', weight: 1 }),
   Object.freeze({ ...example, id: 'a', rarity: 'common' }),

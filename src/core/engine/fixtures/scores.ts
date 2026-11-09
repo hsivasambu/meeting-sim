@@ -4,7 +4,7 @@ import type {
   ScoreBreakdown,
   TitleId,
 } from '../types';
-import { fixtureState } from './packs';
+import { lunchState } from './lunch';
 import { decimalFraction } from '../utilityFraction';
 
 /** Supports Design Doc v2 → Scoring: synthetic persisted decision qualities. */
@@ -30,11 +30,17 @@ export function qualityRecords(
 export function scoreState(
   overrides: Partial<MeetingState> = {},
 ): MeetingState {
+  const ending =
+    overrides.ending ??
+    (overrides.progress === undefined || overrides.progress === 100
+      ? 'decision'
+      : 'called-early');
   return {
-    ...fixtureState,
+    ...lunchState(),
     phase: 'ended',
-    ending: 'decision',
-    progress: 100,
+    ending,
+    agreedCuisine: ending === 'decision' ? 'fixture-a' : null,
+    progress: ending === 'decision' ? 100 : 0,
     personMinutes: 180,
     decisions: qualityRecords([0.5]),
     ...overrides,
@@ -61,17 +67,16 @@ export const scoreExamples = [
       decisions: qualityRecords([0.85]),
     }),
     expected: { outcome: 400, efficiency: 40, decisions: 255, total: 695 },
-    title: 'death-by-diligence',
+    title: 'lunch-agreed',
   },
   {
-    name: 'Fast and reckless',
+    name: 'Fast agreement, weaker choices',
     state: scoreState({
-      risks: 3,
       personMinutes: 108,
       decisions: qualityRecords([0.6]),
     }),
-    expected: { outcome: 220, efficiency: 280, decisions: 180, total: 680 },
-    title: 'ship-it-and-pray',
+    expected: { outcome: 400, efficiency: 280, decisions: 180, total: 860 },
+    title: 'efficient-facilitator',
   },
   {
     name: 'Good play, rough draw',

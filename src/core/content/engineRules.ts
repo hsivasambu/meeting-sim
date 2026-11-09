@@ -1,11 +1,52 @@
+// Approved docs/content-table.md — lunch-l02b-reviewed-2.
 import type { EventRules } from '../engine/types';
-// Approved docs/content-table-launch.md → Families and draw eligibility.
 export const engineRules = {
-  arrivalAttendees: { legal: 'legal', 'vp-joins': 'vp' },
+  nominationEventId: 'nominate-cuisine',
+  arrivalPermissions: [
+    {
+      eventId: 'menu-needs',
+      responseId: 'invite',
+      attendeeId: 'legal',
+    },
+    {
+      eventId: 'quick-agreement',
+      responseId: 'invite',
+      attendeeId: 'vp',
+    },
+    {
+      eventId: 'alex-arrives',
+      responseId: 'hear',
+      attendeeId: 'legal',
+    },
+    {
+      eventId: 'alex-arrives',
+      responseId: 'timebox',
+      attendeeId: 'legal',
+    },
+    {
+      eventId: 'pat-arrives',
+      responseId: 'hear',
+      attendeeId: 'vp',
+    },
+    {
+      eventId: 'pat-arrives',
+      responseId: 'timebox',
+      attendeeId: 'vp',
+    },
+    {
+      eventId: 'pat-arrives',
+      responseId: 'park',
+      attendeeId: 'vp',
+    },
+  ],
+  arrivalAttendees: {
+    'alex-arrives': 'legal',
+    'pat-arrives': 'vp',
+  },
   callbackTargets: {
-    'circle-back': 'circle-back-return',
-    'support-training': 'support-follow-up',
-    'p1-bug': 'p1-follow-up',
+    'menu-needs': 'menu-return',
+    'soup-debate': 'soup-return',
+    'spice-question': 'spice-return',
   },
   bookingEventIds: ['room-booked'],
-} as const satisfies EventRules;
+} satisfies EventRules;

@@ -1,11 +1,11 @@
 import { expect, it } from 'vitest';
 import fc from 'fast-check';
-import { initialLunchState, callIt } from './state';
+import { initialState, callIt } from './state';
 import { drawEventWith, getDrawCandidatesWith } from './draw';
 import { resolveWithRules, getResponseOutcomesWithRules } from './resolve';
 import { previewWithRules } from './preview';
 import { score } from './score';
-import { earnedLunchTitles } from './titleRules';
+import { earnedTitles } from './titleRules';
 import { EngineError } from './errors';
 import {
   lunchPack,
@@ -18,10 +18,10 @@ import {
 } from './fixtures/lunch';
 import { deepFreeze } from './fixtures/transitions';
 import { qualityRecords } from './fixtures/scores';
-import type { LunchState } from './types';
+import type { MeetingState } from './types';
 
 it('initializes six permanent adults without launch fields, and cancellation retains the nomination prompt', () => {
-  const start = deepFreeze(initialLunchState('任意 seed'));
+  const start = deepFreeze(initialState('任意 seed'));
   expect(start).not.toHaveProperty('risks');
   expect(start).not.toHaveProperty('releasedAttendeeIds');
   expect(start.present).toHaveLength(6);
@@ -53,7 +53,7 @@ it('initializes six permanent adults without launch fields, and cancellation ret
 it.each(['fixture-a', 'fixture-b', 'fixture-c'])(
   'nominates %s with identical unscored effects and a common substantive second draw',
   (id) => {
-    const pending = drawEventWith(lunchPack, initialLunchState('nominations'));
+    const pending = drawEventWith(lunchPack, initialState('nominations'));
     const next = resolveWithRules(deepFreeze(pending), id, lunchRules);
     expect(next).toMatchObject({
       turn: 1,
@@ -193,7 +193,7 @@ it('validates cuisine/state boundaries, nomination-only effects, and lunch-only 
     { progress: 100 },
     { agreedCuisine: 'fixture-b' },
     { present: ['priya'] as const },
-    { present: [...initialLunchState('').present, 'vp', 'vp'] as const },
+    { present: [...initialState('').present, 'vp', 'vp'] as const },
   ])
     expect(() => drawEventWith(lunchPack, lunchState(overrides))).toThrow(
       new EngineError('invalid-state'),
@@ -285,7 +285,7 @@ it('rejects per-response permission mismatches and uses future headcount for lat
   const response = lunchChoice('wait', { minutes: 2 });
   const next = resolveWithRules(
     lunchPending([response], {
-      present: [...initialLunchState('').present, 'vp', 'legal'],
+      present: [...initialState('').present, 'vp', 'legal'],
     }),
     'wait',
     lunchRules,
@@ -365,7 +365,7 @@ it('rejects unknown cuisines, missing nomination context, and outcome permission
   ).toThrow(new EngineError('invalid-state'));
   expect(() =>
     previewWithRules(
-      { ...initialLunchState(''), current: null },
+      { ...initialState(''), current: null },
       lunchChoice('nominate', { minutes: 1, nominateCuisine: 'fixture-a' }),
       lunchRules,
     ),
@@ -389,7 +389,7 @@ it('rejects unknown cuisines, missing nomination context, and outcome permission
 });
 
 it('rejects malformed nominations and forces the nominated family before any callback', () => {
-  const start = initialLunchState('bad-nomination');
+  const start = initialState('bad-nomination');
   const event = lunchPack.events[0];
   if (event === undefined) throw new Error('fixture');
   for (const responses of [
@@ -454,7 +454,7 @@ it('retains negative adjacency guards and throws on broken first-two pool', () =
     ),
   ).toBe(true);
   const one = resolveWithRules(
-    drawEventWith(lunchPack, initialLunchState('first')),
+    drawEventWith(lunchPack, initialState('first')),
     'fixture-a',
     lunchRules,
   );
@@ -482,7 +482,7 @@ it('retains all lunch title predicates and priorities using counters rather than
     log: [],
   });
   expect(
-    earnedLunchTitles(state, {
+    earnedTitles(state, {
       outcome: 400,
       efficiency: 300,
       decisions: 300,
@@ -505,24 +505,21 @@ it('retains all lunch title predicates and priorities using counters rather than
     ending: 'time-expired' as const,
     decisions: qualityRecords([0.85]),
   };
-  expect(earnedLunchTitles(failure, score(failure)).slice(0, 2)).toEqual([
+  expect(earnedTitles(failure, score(failure)).slice(0, 2)).toEqual([
     'played-it-right',
     'calendar-criminal',
   ]);
   expect(
-    earnedLunchTitles(
+    earnedTitles(
       { ...state, present: [...state.present, 'vp'], resolvedCallbackCount: 0 },
       score(state),
     ),
   ).not.toContain('table-for-six');
   expect(
-    earnedLunchTitles({ ...state, resolvedCallbackCount: 0 }, score(state)),
+    earnedTitles({ ...state, resolvedCallbackCount: 0 }, score(state)),
   ).not.toContain('second-helping');
   expect(
-    earnedLunchTitles(
-      callIt(initialLunchState('')),
-      score(callIt(initialLunchState(''))),
-    ),
+    earnedTitles(callIt(initialState('')), score(callIt(initialState('')))),
   ).toEqual(['could-have-been-an-email']);
 });
 
@@ -532,8 +529,8 @@ it('properties: immutable replay, permanent attendance, fixed cuisine, integral 
       fc.string(),
       fc.array(fc.nat(), { minLength: 1, maxLength: 50 }),
       (seed, choices) => {
-        const run = (): LunchState => {
-          let state = initialLunchState(seed);
+        const run = (): MeetingState => {
+          let state = initialState(seed);
           while (state.phase === 'running') {
             const before = deepFreeze(state);
             state = drawEventWith(lunchPack, before);
@@ -619,7 +616,7 @@ it('exhausts 17 unique families and three callbacks, then ends on two-minute fil
     }),
   };
   const rules = { ...lunchRules, eventRules };
-  let state = initialLunchState('exhaust-lunch');
+  let state = initialState('exhaust-lunch');
   while (state.phase === 'running') {
     state = drawEventWith(pack, deepFreeze(state));
     const response = state.current?.responses[0];

@@ -8,19 +8,16 @@ import {
 } from './constants';
 import { EngineError } from './errors';
 import type {
-  EngineState,
-  LunchState,
-  LunchUtilityRules,
+  MeetingState,
+  UtilityRules,
   PresentedEvent,
-  EngineResponse,
+  Effect,
   Response,
 } from './types';
 
 /** ADR 0005 invariants, shared by draw, preview, resolution and results. */
-export function validateLunchState(state: LunchState): void {
+export function validateMeetingState(state: MeetingState): void {
   if (
-    'risks' in state ||
-    'releasedAttendeeIds' in state ||
     !Number.isSafeInteger(state.progress) ||
     state.progress < ZERO ||
     state.progress > PROGRESS_MAX ||
@@ -46,23 +43,33 @@ export function validateLunchState(state: LunchState): void {
 
 /** Permission checks apply independently to every complete outcome branch. */
 export function validateLunchResponse(
-  state: EngineState,
+  state: MeetingState,
   response: Response,
-  rules: LunchUtilityRules,
+  effect: Effect,
+  rules: UtilityRules,
 ): void {
-  if (!('nominatedCuisine' in state)) throw new EngineError('invalid-state');
-  validateLunchState(state);
+  validateMeetingState(state);
   if (
     state.nominatedCuisine !== null &&
     !rules.cuisines.some((cuisine) => cuisine.id === state.nominatedCuisine)
   )
     throw new EngineError('invalid-state');
-  const effect = response.effect;
   if (
-    'risks' in effect ||
-    'removes' in effect ||
+    Object.keys(effect).some(
+      (key) =>
+        ![
+          'minutes',
+          'progress',
+          'joins',
+          'bookingEnd',
+          'callback',
+          'nominateCuisine',
+        ].includes(key),
+    ) ||
     (response.requires !== undefined &&
-      ('minRisks' in response.requires || 'maxRisks' in response.requires))
+      Object.keys(response.requires).some(
+        (key) => !['present', 'absent', 'minMinute', 'maxMinute'].includes(key),
+      ))
   )
     throw new EngineError('invalid-effect');
   const event = state.current;
@@ -91,6 +98,11 @@ export function validateLunchResponse(
   ) {
     throw new EngineError('invalid-effect');
   }
+  if (
+    (effect.bookingEnd !== undefined) !==
+    rules.eventRules.bookingEventIds.includes(event.id)
+  )
+    throw new EngineError('invalid-effect');
   const joins = effect.joins ?? [];
   const permissions = rules.eventRules.arrivalPermissions.filter(
     (permission) =>
@@ -113,11 +125,9 @@ export function validateLunchResponse(
 }
 
 /** Nomination is three equal deterministic alternatives; never a hidden lottery. */
-export function validateNomination(
-  event: PresentedEvent<EngineResponse>,
-): void {
+export function validateNomination(event: PresentedEvent): void {
   const choices = event.responses.map((response) => {
-    if (!('outcomes' in response) || response.outcomes.length !== ONE)
+    if (response.outcomes.length !== ONE)
       throw new EngineError('invalid-response');
     const effect = response.outcomes[ZERO]?.effect;
     if (

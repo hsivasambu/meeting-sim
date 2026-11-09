@@ -1,19 +1,7 @@
-import {
-  ZERO,
-  INITIAL_BOOKING_END,
-  INITIAL_ATTENDEES,
-  DECISION_OWNER,
-  MIN_HEADCOUNT,
-} from './constants';
+import { ZERO, INITIAL_BOOKING_END, INITIAL_ATTENDEES } from './constants';
 import { assertRunning } from './errors';
-import { validateLunchState } from './lunchValidation';
-import type {
-  AttendeeId,
-  MeetingState,
-  ReleasePreview,
-  EngineState,
-  LunchState,
-} from './types';
+import { validateMeetingState } from './lunchValidation';
+import type { MeetingState } from './types';
 /** Implements Design Doc v2 → Game state model: the fixed starting meeting. */
 export function initialState(seed: string): MeetingState {
   return {
@@ -22,10 +10,8 @@ export function initialState(seed: string): MeetingState {
     minute: ZERO,
     bookingEnd: INITIAL_BOOKING_END,
     progress: ZERO,
-    risks: ZERO,
     personMinutes: ZERO,
     present: [...INITIAL_ATTENDEES],
-    releasedAttendeeIds: [],
     peakHeadcount: INITIAL_ATTENDEES.length,
     seenEventIds: [],
     spokenAttendeeIds: [],
@@ -38,39 +24,17 @@ export function initialState(seed: string): MeetingState {
     log: [],
     phase: 'running',
     ending: null,
-  };
-}
-/** ADR 0004 → read-only release restrictions shared with the state transition. */
-export function previewRelease(
-  state: MeetingState,
-  who: AttendeeId,
-): ReleasePreview {
-  assertRunning(state);
-  if (who === DECISION_OWNER)
-    return { enabled: false, reasonKey: 'release-owner' };
-  if (!state.present.includes(who))
-    return { enabled: false, reasonKey: 'release-absent' };
-  if (state.present.length <= MIN_HEADCOUNT)
-    return { enabled: false, reasonKey: 'release-minimum' };
-  return { enabled: true };
-}
-/** Implements Design Doc v2 → Core loop → Anytime actions: owner/minimum-safe release. */
-export function release(state: MeetingState, who: AttendeeId): MeetingState {
-  if (!previewRelease(state, who).enabled) return { ...state };
-  return {
-    ...state,
-    present: state.present.filter((id) => id !== who),
-    releasedAttendeeIds: [...state.releasedAttendeeIds, who],
-    log: [
-      ...state.log,
-      { type: 'release', turn: state.turn, minute: state.minute, who },
-    ],
+    nominatedCuisine: null,
+    agreedCuisine: null,
+    resolvedCallbackCount: ZERO,
+    shownCommentaryIds: [],
+    lastCommentaryTurn: null,
   };
 }
 /** Implements Design Doc v2 → Endings, titles and the results card → Endings. */
-export function callIt<S extends EngineState>(state: S): S {
+export function callIt(state: MeetingState): MeetingState {
   assertRunning(state);
-  if ('nominatedCuisine' in state) validateLunchState(state);
+  validateMeetingState(state);
   return {
     ...state,
     phase: 'ended',
@@ -79,36 +43,5 @@ export function callIt<S extends EngineState>(state: S): S {
       ...state.log,
       { type: 'call-it', turn: state.turn, minute: state.minute },
     ],
-  };
-}
-
-/** ADR 0005: temporary lunch initialization without launch risk/release fields. */
-export function initialLunchState(seed: string): LunchState {
-  const state = initialState(seed);
-  return {
-    seed: state.seed,
-    turn: state.turn,
-    minute: state.minute,
-    bookingEnd: state.bookingEnd,
-    progress: state.progress,
-    personMinutes: state.personMinutes,
-    present: state.present,
-    peakHeadcount: state.peakHeadcount,
-    seenEventIds: state.seenEventIds,
-    spokenAttendeeIds: state.spokenAttendeeIds,
-    parkedCount: state.parkedCount,
-    substantiveDrawCount: state.substantiveDrawCount,
-    previousDrawWasUncommonNegative: state.previousDrawWasUncommonNegative,
-    scheduled: state.scheduled,
-    decisions: state.decisions,
-    log: state.log,
-    phase: state.phase,
-    ending: state.ending,
-    current: null,
-    nominatedCuisine: null,
-    agreedCuisine: null,
-    resolvedCallbackCount: ZERO,
-    shownCommentaryIds: [],
-    lastCommentaryTurn: null,
   };
 }

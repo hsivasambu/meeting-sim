@@ -1,6 +1,6 @@
 # This Could've Been an Email — Implementation Plan
 
-Current: **L06 merged in PR #22. L07 isolated lunch presentation is implemented and locally verified for draft review. L08 is pending.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18. Lunch rules and named acceptance replacements were approved on October 13, 2026. Live gameplay remains the launch binding until L08. Harry accepted original 12a V4 on October 15, 2026, and individual reports remain unsupplied.
+Current: **L07 merged in PR #23. L08 activates lunch and stops at draft review. L09 is pending.** Harry approved L02b and D18 on October 14, 2026 for lunch-l02b-reviewed-2 in draft PR #18. Lunch rules and named acceptance replacements were approved on October 13, 2026. Harry accepted original 12a V4 on October 15, 2026, and individual reports remain unsupplied.
 
 Historical launch baseline: D01–D26 remain resolved. Tasks 01–05 implemented and verified with all active local and hosted Node 24 gates. Task 06 complete with review fixes and local/hosted Node 24 evidence in PR #7. Dependency PRs #4 and #5 are merged into main. Task 06b complete: content table authored, locally verified and approved by Harry on October 12, 2026 (D18); Claude review addressed; PR #8 has passing hosted Node 24 evidence. Task 02 Android evidence remains deferred (ADR 0002). Task 07a complete: Claude review addressed in PR #9 with passing hosted Node 24 evidence. Approved synthetic/playable validation distinction recorded in the tech spec. Task 07b complete: Claude review fixes committed in PR #10 with passing hosted Node 24 evidence. Acceptance criteria are preserved; dependency PRs #11 (line endings) and #10 (07b) are now merged into main. Task 08a complete: review fixes, clean committed V3 evidence and passing hosted Node 24 checks in PR #12, now merged into main with the 11a stack. Task 11a complete with approved ADR 0004 review fixes, committed delivery in explicitly stacked PR #13 and passing local/hosted Node 24 evidence (see execution record below). Historical 12a status: text-only loop implemented with passing local/hosted automated checks; V4 human playtest evidence pending. The former next-task pointer to 08b is historical; the approved lunch sequence below owns current work.
 
@@ -2421,3 +2421,94 @@ pnpm 10.34.6**.
   untracked review files retained their original SHA-256 hashes.
 
 PR #23 stays in draft review. L08 is pending.
+
+## L08 — Atomic lunch cutover
+
+[PR #23](https://github.com/hsivasambu/meeting-sim/pull/23) was marked ready and
+squash-merged as `670a75f` after verifying F1–F4, mergeability and the required
+`quality` check at `407cd3f3bec9c8ed88f29720f9a34915c0e7e4ad`. L08 branches
+from that merged main.
+
+The public engine and browser now share a single lunch pack transcribed from
+D18 revision `lunch-l02b-reviewed-2`. Start draws nomination. The store resolves
+one sampled branch, waits for acknowledgment, and draws again or opens Results.
+The screens use authored qualitative descriptions, an always-present HUD and
+passive roster. Success displays the agreed cuisine. Endings use the engine's
+ending ID and the first title in engine priority. The engine selects commentary
+after resolution using the approved priority, eligibility and cadence. The
+collection saves lunch unlocks under v2 and reads v1 only for the archive.
+
+The [approved replacement matrix](lunch-redesign-plan.md#explicitly-approved-acceptance-replacements)
+governs the deletions. Attendance/invitation/arrival tests replace release checks.
+The live transcription, structural validation and authored negative cases check
+the lunch schema and all reviewed rows, variants, outcomes and callbacks. The
+six lunch score examples and seven existing lunch goldens cover cancellation,
+agreement, expiry, callback and early ending, invitation and both seeded branches.
+The timeout golden changes only the synthetic filler technique from `hear` to
+`ack` so the complete fixture passes the authored filler rule. The actions,
+state counters, score and other six lunch goldens are unchanged.
+The old launch goldens remain in Git history. Exact fractions, seeded RNG, draw
+and callback rejection, score rounding and display-rate independence, title
+boundaries, storage recovery, build budgets and probe checks remain covered.
+The defensive Results headings use component tests because valid terminal states
+always earn a title. The browser tests run only on the production preview.
+
+Local verification at `63b1af7` in a clean checkout on **Node 24.21.0 and
+pnpm 10.34.6**, with a frozen install:
+
+- `pnpm check` passed typecheck, zero-warning lint, formatting, **498 tests in
+  31 files** and the simulation smoke. Core coverage was **788/797 lines
+  (98.87%)** and **758/774 branches (97.93%)**.
+- `pnpm build` and `pnpm size` passed at **90,384/122,880 gzip JS bytes** and
+  **0/409,600 image/font bytes**.
+- `pnpm e2e` passed **42 tests**, 14 each on Pixel 7 Chromium, iPhone 14 WebKit
+  and desktop Chromium. Each ran eight lunch cases against the production
+  preview. Seed `0000000000000091` reached Thai and Mexican agreements on
+  the momentum branch and showed agreement commentary. Seed
+  `00000000000001ac` sampled objections and expired with no agreement. Seed
+  `0000000000000008` covered nomination, the Alex invitation then Call it,
+  cancellation, replay and the v1/v2 reload check. The run had zero failures,
+  skips, flakes or browser console errors.
+- `python docs/lunch-content-checks.py` and `git diff --check` passed. All
+  four untracked review files matched their original SHA-256 hashes.
+
+The before and after `pnpm sim:ci` runs used `v3:0` through `v3:1999` for each
+policy and checked invariants and deterministic replay. The launch baseline ran
+in a clean checkout of `670a75f`. The lunch run used the approved content and
+unchanged tuning values.
+
+| Runtime | Policy |   Wins / runs | Win rate | Median score | Median resolutions |
+| ------- | ------ | ------------: | -------: | -----------: | -----------------: |
+| Launch  | Greedy | 2,000 / 2,000 |     100% |          920 |                 11 |
+| Launch  | Random | 1,392 / 2,000 |    69.6% |        552.5 |                 15 |
+| Lunch   | Greedy | 2,000 / 2,000 |     100% |          859 |                 11 |
+| Lunch   | Random | 1,415 / 2,000 |   70.75% |          574 |                 13 |
+
+Lunch Greedy met the 9–12 median-turn diagnostic. Both policies exceeded their
+future win-rate bands. L12 owns balance acceptance.
+
+### L08 review corrections
+
+- **F1** Call it and Play again now use the meeting's click-count guard. The
+  browser regression places both buttons under the same pointer position and
+  verifies Results stays open when the second click hits Play again.
+- **F2** Play again and Start suppress repeated Enter activation. The browser
+  holds Enter across replay, verifies the title screen stays open, then
+  presses Enter afresh to start the next meeting.
+- **F3** The expiry route taps Continue on both touch profiles. The terminal
+  routes press a number during the outcome and check the outcome and Continue
+  focus. The invitation route checks the called-early title and the line
+  naming Italian as the suggestion.
+
+The F1 and F2 regressions reproduced both skipped screens on desktop Chromium
+against the reviewed `e86ac3b` build. A clean checkout of `6405f91` on Node
+24.21.0 and pnpm 10.34.6 passed `pnpm check` with **498 tests in 31 files**.
+The 2,000-seed-per-policy simulation passed invariants and replay with the same
+content/constants hash and diagnostic results. Build and size passed at
+**90,409/122,880 gzip JS bytes** and **0/409,600 image/font bytes**.
+Production-preview E2E passed **45 tests**, 15 on each of Pixel 7 Chromium,
+iPhone 14 WebKit and desktop Chromium, with zero failures, skips, flakes or
+browser console errors. The document audit and `git diff --check` passed.
+All five untracked review files matched their original SHA-256 hashes.
+
+**Stop at L08 draft review. L09 is pending.**

@@ -3,8 +3,7 @@ import { ENGINE_LIMITS } from './index';
 import {
   DECISION_OWNER,
   PROGRESS_MAX,
-  RISKS_MAX,
-  MIN_HEADCOUNT,
+  INITIAL_ATTENDEES,
   MAX_HEADCOUNT,
   INITIAL_BOOKING_END,
   REDUCED_BOOKING_END,
@@ -17,8 +16,7 @@ import {
 it('exposes frozen observations backed by the canonical engine constants', () => {
   expect(ENGINE_LIMITS).toEqual({
     progressMax: PROGRESS_MAX,
-    risksMax: RISKS_MAX,
-    minHeadcount: MIN_HEADCOUNT,
+    minHeadcount: INITIAL_ATTENDEES.length,
     maxHeadcount: MAX_HEADCOUNT,
     decisionOwner: DECISION_OWNER,
     initialBookingEnd: INITIAL_BOOKING_END,

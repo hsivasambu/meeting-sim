@@ -1,9 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import fc from 'fast-check';
 import { drawEventWith, getDrawCandidatesWith } from './draw';
-import { fixturePack, fixtureState } from './fixtures/packs';
+import {
+  lunchPack as fixturePack,
+  lunchState,
+  lunchRules as rules,
+} from './fixtures/lunch';
 import { deepFreeze } from './fixtures/transitions';
-import { callIt, initialState, release } from './state';
+import { callIt, initialState } from './state';
 import { resolveWithRules } from './resolve';
 import { drawRng } from './rng';
 import * as drawStream from './rng';
@@ -12,12 +16,13 @@ import { EngineError } from './errors';
 import type { ContentPack, MeetingEvent, MeetingState } from './types';
 
 const weights = { common: 5, uncommon: 3, rare: 2 } as const;
-const rules = {
-  costWeight: 2,
-  riskWeight: 3,
-  costUnit: 4,
-  eventRules: fixturePack.eventRules,
-};
+const fixtureState = lunchState();
+const firstCallback = fixturePack.callbacks.find(
+  ({ id }) => id === 'fixture-return-a',
+);
+const parent = fixturePack.events.find(({ id }) => id === 'fixture-parent-a');
+if (firstCallback === undefined || parent === undefined)
+  throw new Error('Missing fixture callback');
 const later: MeetingState = {
   ...fixtureState,
   turn: 2,
@@ -52,8 +57,8 @@ describe('draw eligibility and presentation', () => {
       drawEventWith(pack([]), later, weights);
       const due = {
         ...later,
-        seenEventIds: ['support-training'],
-        scheduled: [{ eventId: 'support-follow-up', dueTurn: 2 }],
+        seenEventIds: ['fixture-parent-a'],
+        scheduled: [{ eventId: 'fixture-return-a', dueTurn: 2 }],
       };
       getDrawCandidatesWith(fixturePack, due, weights);
       drawEventWith(fixturePack, due, weights);
@@ -78,19 +83,23 @@ describe('draw eligibility and presentation', () => {
         rules,
       );
     }
-    expect(
-      getDrawCandidatesWith(fixturePack, { ...state, log: [] }, weights).map(
-        (c) => c.event.id,
-      ),
-    ).toEqual(['fixture-gamma']);
+    const candidates = getDrawCandidatesWith(
+      fixturePack,
+      { ...state, log: [] },
+      weights,
+    );
+    expect(candidates).toEqual(
+      getDrawCandidatesWith(fixturePack, state, weights),
+    );
+    expect(candidates.some(({ event }) => event.kind === 'tangent')).toBe(true);
   });
   it('throws a typed content error rather than filler for an impossible opening', () => {
     for (const state of [
-      fixtureState,
+      initialState('no nomination'),
       {
         ...fixtureState,
         substantiveDrawCount: 1,
-        seenEventIds: ['support-training', 'fixture-beta'],
+        seenEventIds: ['fixture-parent-a', 'fixture-beta'],
       },
     ]) {
       expect(() => drawEventWith(pack([]), state, weights)).toThrow(
@@ -108,8 +117,6 @@ describe('draw eligibility and presentation', () => {
         when: {
           minMinute: 15,
           maxMinute: 15,
-          minRisks: 2,
-          maxRisks: 2,
           present: ['sam'],
           absent: ['vp'],
         },
@@ -125,7 +132,6 @@ describe('draw eligibility and presentation', () => {
     const state = {
       ...later,
       minute: 15,
-      risks: 2,
       seenEventIds: ['seen'],
       previousDrawWasUncommonNegative: true,
     };
@@ -158,20 +164,24 @@ describe('draw eligibility and presentation', () => {
       ['z', 6 / 17],
     ]);
     fc.assert(
-      fc.property(fc.string(), fc.nat({ max: 100 }), (seed, turn) => {
-        const state = { ...later, seed, turn };
-        const expected = selectWeightedEvent(
-          events,
-          drawRng(seed, turn),
-          weights,
-        );
-        expect(drawEventWith(content, state, weights).current?.id).toBe(
-          expected.id,
-        );
-        expect(
-          drawEventWith(pack([...events].reverse()), state, weights),
-        ).toEqual(drawEventWith(content, state, weights));
-      }),
+      fc.property(
+        fc.string(),
+        fc.integer({ min: 2, max: 100 }),
+        (seed, turn) => {
+          const state = { ...later, seed, turn };
+          const expected = selectWeightedEvent(
+            events,
+            drawRng(seed, turn),
+            weights,
+          );
+          expect(drawEventWith(content, state, weights).current?.id).toBe(
+            expected.id,
+          );
+          expect(
+            drawEventWith(pack([...events].reverse()), state, weights),
+          ).toEqual(drawEventWith(content, state, weights));
+        },
+      ),
       { numRuns: 100 },
     );
   });
@@ -184,7 +194,7 @@ describe('draw eligibility and presentation', () => {
         weight: 4,
         variants: [
           {
-            when: { absent: ['sam'] },
+            when: { absent: ['vp'] },
             speaker: 'priya',
             line: 'First absence.',
             responses: ack,
@@ -193,7 +203,7 @@ describe('draw eligibility and presentation', () => {
         ],
       }),
     ]);
-    const state = release(initialState('variants'), 'sam');
+    const state = lunchState({ seed: 'variants' });
     expect(drawEventWith(content, deepFreeze(state), weights).current).toEqual({
       id: 'variants',
       kind: 'substantive',
@@ -204,13 +214,13 @@ describe('draw eligibility and presentation', () => {
       responses: ack,
     });
   });
-  it('marks heard speakers on draw and keeps pending presentation fixed through release', () => {
+  it('marks heard speakers on draw and keeps pending presentation fixed even with changed context', () => {
     const content = pack([
       event('gary-event', {
         speaker: 'gary',
         variants: [
           {
-            when: { absent: ['gary'] },
+            when: { present: ['vp'] },
             speaker: 'priya',
             line: 'Absent.',
             responses: ack,
@@ -220,12 +230,15 @@ describe('draw eligibility and presentation', () => {
     ]);
     const state = drawEventWith(content, later, weights);
     expect(state.spokenAttendeeIds).toEqual(['gary']);
-    const released = deepFreeze(release(state, 'gary'));
-    const again = drawEventWith(content, released, weights);
-    expect(again).toEqual(released);
-    expect(again).not.toBe(released);
-    expect(getDrawCandidatesWith(content, released, weights)).toEqual([
-      { event: released.current, probability: 1 },
+    const pending = deepFreeze({
+      ...state,
+      present: [...state.present, 'vp' as const],
+    });
+    const again = drawEventWith(content, pending, weights);
+    expect(again).toEqual(pending);
+    expect(again).not.toBe(pending);
+    expect(getDrawCandidatesWith(content, pending, weights)).toEqual([
+      { event: pending.current, probability: 1 },
     ]);
     expect(again.current?.speaker).toBe('gary');
   });
@@ -234,7 +247,7 @@ describe('draw eligibility and presentation', () => {
     let state: MeetingState = { ...later, spokenAttendeeIds: ['priya'] };
     for (let n = 0; n < 3; n++) {
       const drawn = drawEventWith(content, deepFreeze(state), weights);
-      expect(drawn.current?.id).toBe('filler');
+      expect(drawn.current?.id).toBe('fixture-filler');
       expect(drawn.seenEventIds).toEqual([]);
       expect(drawn.spokenAttendeeIds).toEqual(['priya']);
       expect(drawn.previousDrawWasUncommonNegative).toBe(false);
@@ -264,7 +277,7 @@ describe('draw eligibility and presentation', () => {
 describe('callback scheduler', () => {
   it('schedules n+2 before advancement, delivers after one intervening event, and removes only the due entry', () => {
     const content = pack([
-      fixturePack.events[0],
+      parent,
       event('intervening', { kind: 'substantive' }),
     ]);
     const first = drawEventWith(
@@ -274,11 +287,11 @@ describe('callback scheduler', () => {
     );
     const scheduled = resolveWithRules(first, 'park', rules);
     expect(scheduled.scheduled).toEqual([
-      { eventId: 'support-follow-up', dueTurn: 2 },
+      { eventId: 'fixture-return-a', dueTurn: 4 },
     ]);
     const intervening = drawEventWith(
       content,
-      { ...scheduled, seenEventIds: ['support-training'] },
+      { ...scheduled, seenEventIds: ['fixture-parent-a'] },
       weights,
     );
     expect(intervening.current?.id).toBe('intervening');
@@ -288,15 +301,15 @@ describe('callback scheduler', () => {
         c.event.id,
         c.probability,
       ]),
-    ).toEqual([['support-follow-up', 1]]);
+    ).toEqual([['fixture-return-a', 1]]);
     const callback = drawEventWith(content, deepFreeze(due), weights);
     expect(callback.current?.kind).toBe('callback');
     expect(callback.scheduled).toEqual([]);
-    expect(callback.seenEventIds).toContain('support-follow-up');
+    expect(callback.seenEventIds).toContain('fixture-return-a');
     expect(callback.previousDrawWasUncommonNegative).toBe(false);
-    expect(callback.turn).toBe(2);
+    expect(callback.turn).toBe(4);
   });
-  it('forces callbacks ahead of random filtering, selects absence variants and preserves future entries', () => {
+  it('forces callbacks ahead of random filtering and preserves future entries', () => {
     const second = event('second-return', { kind: 'callback' });
     const content: ContentPack = {
       ...fixturePack,
@@ -308,58 +321,44 @@ describe('callback scheduler', () => {
         },
       },
       events: [...fixturePack.events, event('second-parent')],
-      callbacks: [
-        {
-          ...fixturePack.callbacks[0],
-          speaker: 'sam',
-          variants: [
-            {
-              when: { absent: ['sam'] },
-              speaker: 'priya',
-              line: 'Callback without Sam.',
-              responses: ack,
-            },
-          ],
-        },
-        second,
-      ],
+      callbacks: [firstCallback, second],
     };
     const state = {
-      ...release(later, 'sam'),
-      seenEventIds: ['support-training', 'second-parent'],
+      ...later,
+      seenEventIds: ['fixture-parent-a', 'second-parent'],
       previousDrawWasUncommonNegative: true,
       scheduled: [
-        { eventId: 'support-follow-up', dueTurn: 2 },
+        { eventId: 'fixture-return-a', dueTurn: 2 },
         { eventId: 'second-return', dueTurn: 3 },
       ],
     };
     const drawn = drawEventWith(content, deepFreeze(state), weights);
-    expect(drawn.current?.line).toBe('Callback without Sam.');
+    expect(drawn.current?.id).toBe(firstCallback.id);
     expect(drawn.scheduled).toEqual([{ eventId: 'second-return', dueTurn: 3 }]);
     expect(drawn.substantiveDrawCount).toBe(2);
     expect(getDrawCandidatesWith(content, callIt(drawn), weights)).toEqual([]);
   });
   it.each([
     [
-      { eventId: 'support-follow-up', dueTurn: 2 },
-      { eventId: 'support-follow-up', dueTurn: 3 },
+      { eventId: 'fixture-return-a', dueTurn: 2 },
+      { eventId: 'fixture-return-a', dueTurn: 3 },
     ],
     [
-      { eventId: 'support-follow-up', dueTurn: 2 },
+      { eventId: 'fixture-return-a', dueTurn: 2 },
       { eventId: 'unknown', dueTurn: 2 },
     ],
     [{ eventId: 'unknown', dueTurn: 4 }],
-    [{ eventId: 'support-follow-up', dueTurn: 1 }],
-    [{ eventId: 'support-follow-up', dueTurn: 2.5 }],
-    [{ eventId: 'support-follow-up', dueTurn: 5 }],
-    [{ eventId: 'support-follow-up', dueTurn: 40 }],
-    [{ eventId: 'support-follow-up', dueTurn: 1000000 }],
+    [{ eventId: 'fixture-return-a', dueTurn: 1 }],
+    [{ eventId: 'fixture-return-a', dueTurn: 2.5 }],
+    [{ eventId: 'fixture-return-a', dueTurn: 5 }],
+    [{ eventId: 'fixture-return-a', dueTurn: 40 }],
+    [{ eventId: 'fixture-return-a', dueTurn: 1000000 }],
   ])(
     'rejects invalid schedules without delaying or discarding them: %j',
     (...scheduled) => {
       const state = deepFreeze({
         ...later,
-        seenEventIds: ['support-training'],
+        seenEventIds: ['fixture-parent-a'],
         scheduled,
       });
       expect(() => drawEventWith(fixturePack, state, weights)).toThrow(
@@ -373,23 +372,23 @@ describe('callback scheduler', () => {
   it('rejects already-seen targets and malformed callback definitions', () => {
     const state = {
       ...later,
-      seenEventIds: ['support-training'],
-      scheduled: [{ eventId: 'support-follow-up', dueTurn: 2 }],
+      seenEventIds: ['fixture-parent-a'],
+      scheduled: [{ eventId: 'fixture-return-a', dueTurn: 2 }],
     };
     expect(() =>
       drawEventWith(
         fixturePack,
-        { ...state, seenEventIds: ['support-follow-up'] },
+        { ...state, seenEventIds: ['fixture-return-a'] },
         weights,
       ),
     ).toThrow(new EngineError('invalid-schedule'));
     for (const callbacks of [
       [],
-      [fixturePack.callbacks[0], fixturePack.callbacks[0]],
-      [{ ...fixturePack.callbacks[0], when: {} }],
-      [{ ...fixturePack.callbacks[0], kind: 'noise' as const }],
-      [{ ...fixturePack.callbacks[0], rarity: 'rare' as const }],
-      [{ ...fixturePack.callbacks[0], negative: true }],
+      [firstCallback, firstCallback],
+      [{ ...firstCallback, when: {} }],
+      [{ ...firstCallback, kind: 'noise' as const }],
+      [{ ...firstCallback, rarity: 'rare' as const }],
+      [{ ...firstCallback, negative: true }],
     ]) {
       expect(() =>
         getDrawCandidatesWith({ ...fixturePack, callbacks }, state, weights),
@@ -399,7 +398,7 @@ describe('callback scheduler', () => {
   it('rejects orphan, ambiguous and nonexistent callback parents using counters, not logs', () => {
     const state = deepFreeze({
       ...later,
-      scheduled: [{ eventId: 'support-follow-up', dueTurn: 3 }],
+      scheduled: [{ eventId: 'fixture-return-a', dueTurn: 3 }],
     });
     const orphan = {
       ...state,
@@ -408,7 +407,7 @@ describe('callback scheduler', () => {
           type: 'draw' as const,
           turn: 0,
           minute: 0,
-          eventId: 'support-training',
+          eventId: 'fixture-parent-a',
           speaker: 'sam' as const,
         },
       ],
@@ -419,7 +418,7 @@ describe('callback scheduler', () => {
     expect(() => getDrawCandidatesWith(fixturePack, orphan, weights)).toThrow(
       new EngineError('invalid-schedule'),
     );
-    const seen = { ...state, seenEventIds: ['support-training'] };
+    const seen = { ...state, seenEventIds: ['fixture-parent-a'] };
     for (const content of [
       { ...fixturePack, events: [] },
       {
@@ -431,8 +430,8 @@ describe('callback scheduler', () => {
         eventRules: {
           ...fixturePack.eventRules,
           callbackTargets: {
-            'support-training': 'support-follow-up',
-            'fixture-beta': 'support-follow-up',
+            'fixture-parent-a': 'fixture-return-a',
+            'fixture-beta': 'fixture-return-a',
           },
         },
       },

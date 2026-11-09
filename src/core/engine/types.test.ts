@@ -6,7 +6,7 @@ import type {
   PresentedEvent,
   ResponsePreview,
 } from './index';
-import { fixturePack, fixtureState } from './fixtures/packs';
+import { lunchPack, lunchState } from './fixtures/lunch';
 
 it('exposes the locked readonly, serializable contracts through the public type surface', () => {
   expectTypeOf<
@@ -21,8 +21,8 @@ it('exposes the locked readonly, serializable contracts through the public type 
     readonly responseId: string;
     readonly reasonKey: string;
   }>();
-  const pack: ContentPack = fixturePack;
-  const state: MeetingState = fixtureState;
+  const pack: ContentPack = lunchPack;
+  const state: MeetingState = lunchState();
   expect(JSON.parse(JSON.stringify(pack))).toEqual(pack);
   expect(JSON.parse(JSON.stringify(state))).toEqual(state);
 });

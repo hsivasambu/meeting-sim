@@ -1,25 +1,31 @@
+// Approved docs/content-table.md — lunch-l02b-reviewed-2.
 import type { MeetingEvent } from '../../engine/types';
-
-// Approved docs/content-table-launch.md → filler.
-export const filler = {
+export const event = {
   id: 'filler',
   kind: 'noise',
   rarity: 'common',
   weight: 1,
   negative: false,
   speaker: 'room',
-  line: 'Awkward silence.',
+  line: 'Nobody speaks. Everyone waits for someone else to take responsibility for the pause.',
   responses: [
     {
       id: 'ack',
-      label: 'Wait through the silence',
+      label: 'Wait through the pause',
+      description:
+        'Let the silence pass. Discussion time still passes, without moving the cuisine forward.',
       technique: 'ack',
-      effect: {
-        minutes: 2,
-        progress: 0,
-        risks: 0,
-      },
-      line: 'Someone caps a marker. Two minutes have passed.',
+      outcomes: [
+        {
+          id: 'waited',
+          weight: 1,
+          effect: {
+            minutes: 2,
+            progress: 0,
+          },
+          line: 'Someone caps a marker. The room has spent another pause considering {cuisine}.',
+        },
+      ],
     },
   ],
-} as const satisfies MeetingEvent;
+} satisfies MeetingEvent;

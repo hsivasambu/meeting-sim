@@ -73,16 +73,10 @@ dd {
   display: block;
   font-size: 0.875rem;
 }
-.dialogue,
-.release {
+.dialogue {
   padding: 1rem;
   border: 1px solid #52644c;
   background: #fff;
-}
-.release {
-  margin-top: 0.5rem;
-  display: grid;
-  gap: 0.5rem;
 }
 .choices {
   display: grid;
